@@ -16,3 +16,4 @@ desktop.ini
 *.key
 *.pem
 secrets/
+.claudian/claudian-settings.json
