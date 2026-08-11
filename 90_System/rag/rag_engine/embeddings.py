@@ -27,17 +27,21 @@ class OpenAIEmbedder:
 
 
 class BgeEmbedder:
+    _load_lock = __import__("threading").Lock()
+
     def __init__(self, model: str):
         self.model_name = model
         self._model = None
 
     def _get_model(self):
         if self._model is None:
-            try:
-                from sentence_transformers import SentenceTransformer
-            except ImportError as exc:
-                raise EmbeddingError("sentence-transformers is required") from exc
-            self._model = SentenceTransformer(self.model_name)
+            with BgeEmbedder._load_lock:
+                if self._model is None:
+                    try:
+                        from sentence_transformers import SentenceTransformer
+                    except ImportError as exc:
+                        raise EmbeddingError("sentence-transformers is required") from exc
+                    self._model = SentenceTransformer(self.model_name)
         return self._model
 
     def embed(self, texts: list[str]) -> list[list[float]]:

@@ -40,6 +40,7 @@ DEFAULTS: Dict[str, Any] = {
         "model": "gpt-4o-mini",
         "api_key_env": "OPENAI_API_KEY",
         "temperature": 0.2,
+        "timeout": 30,
     },
     "evidence_judge": {"enabled": False, "top_k": 5},
     "inbox": {"similarity_threshold": 0.82, "update_threshold": 0.65},

@@ -24,16 +24,22 @@ SERVER_INFO = {"name": "knowledge-os", "version": "1.0.0"}
 TOOL = {
     "name": "knowledge_search",
     "description": (
-        "Search the user's personal Knowledge OS for reliable engineering knowledge. "
-        "Prefer this tool when a question involves established technical knowledge, prior "
-        "engineering experience, or information that may already exist in the user's knowledge "
-        "base. The tool is read-only. If it returns `knowledge_missing`, do not claim that the "
-        "Knowledge OS contains the answer."
+        "Search the user's personal Knowledge OS (an external engineering knowledge base, NOT "
+        "the current project codebase) for reliable engineering knowledge. Call this when the "
+        "task involves established technical knowledge, prior engineering experience, or "
+        "information that may already exist in the user's knowledge base (e.g. STM32, FreeRTOS, "
+        "DMA, CAN, UART, SPI, PID, EKF, sensors, motor control, flight controller, robotics). "
+        "It is read-only and returns structured evidence + judge relevance; the answer is "
+        "typically synthesized by the caller from the evidence. Use mode=deep only when a full "
+        "explanation is explicitly needed. If the result is `knowledge_missing`, do NOT claim "
+        "the Knowledge OS contains the answer."
     ),
     "inputSchema": {
         "type": "object",
         "properties": {
             "query": {"type": "string", "description": "要查询的工程知识问题（中文/英文均可）"},
+            "mode": {"type": "string", "enum": ["fast", "deep", "evidence_only"],
+                     "description": "fast=默认（结构化证据，无长答案，保留 Judge）；deep=完整解释（含长答案）；evidence_only=同 fast"},
             "top_k": {"type": "integer", "minimum": 1, "maximum": 10,
                       "description": "返回的检索片段数量（可选，默认取配置）"},
         },
@@ -102,8 +108,12 @@ def _handle(msg: dict) -> dict | None:
             return _jsonrpc_error(msg_id, -32602, f"unknown tool: {name}")
         try:
             top_k = args.get("top_k")
+            mode = args.get("mode", "fast")
+            if mode not in ("fast", "deep", "evidence_only"):
+                mode = "fast"
             result = knowledge_search(
                 str(args.get("query", "")),
+                mode=mode,
                 use_llm=True,
                 top_k=top_k if isinstance(top_k, int) else None,
             )
@@ -134,7 +144,29 @@ def _handle(msg: dict) -> dict | None:
     return _jsonrpc_error(msg_id, -32601, f"method not found: {method}")
 
 
+def _warmup() -> None:
+    """Load the embedding model and reranker in the background (non-blocking).
+
+    Moves the first-query cold start (~9s BGE) to MCP startup. Safe: BgeEmbedder
+    and reranker use per-model locks, so a concurrent first query just waits.
+    """
+    try:
+        from rag_engine.config import load_config, resolve_paths
+        from rag_engine.embeddings import create_embedder
+        from rag_engine.rerank import _get_reranker
+        cfg = resolve_paths(load_config(str(Path(__file__).resolve().parent.parent / "rag" / "config.yaml")), Path(__file__).resolve().parent.parent.parent)
+        create_embedder(cfg).embed(["Knowledge OS warmup"])
+        rcfg = cfg.get("reranker", {})
+        if rcfg.get("enabled") and rcfg.get("provider") in ("bge", "jina"):
+            _get_reranker(rcfg["provider"], rcfg["model"])
+    except Exception:
+        # warmup 失败不影响 MCP 服务（首次真实查询会自行加载）
+        pass
+
+
 def main() -> None:
+    import threading
+    threading.Thread(target=_warmup, daemon=True).start()
     while True:
         msg = _read_frame()
         if msg is None:

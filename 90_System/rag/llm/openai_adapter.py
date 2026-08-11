@@ -18,7 +18,11 @@ class OpenAIAdapter(BaseAdapter):
             from openai import OpenAI
         except ImportError as exc:
             raise RuntimeError("openai package is required") from exc
-        client = OpenAI(api_key=api_key, base_url=llm_cfg.get("base_url") or None)
+        client = OpenAI(
+            api_key=api_key,
+            base_url=llm_cfg.get("base_url") or None,
+            timeout=llm_cfg.get("timeout", 30),
+        )
         response = client.chat.completions.create(
             model=llm_cfg["model"],
             messages=build_messages(question, context, self.cfg),

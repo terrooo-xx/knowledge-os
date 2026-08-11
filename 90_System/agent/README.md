@@ -83,3 +83,53 @@ STM32 / FreeRTOS / DMA / CAN / UART / SPI / PID / EKF /
 
 - MCP 接口只读：不暴露 approve/reject/resolve/edit/merge/write 等任何写工具；
 - 不绕过 Evidence 与 LLM Judge；LLM 不可用 / 异常 → fail-closed 返回 `knowledge_missing` / `error`。
+
+## 实际项目使用方式
+
+项目代码与 Knowledge OS 物理独立、互不复制：
+
+```text
+D:\KnowledgeBase\Obsidian Vault      # Knowledge OS（唯一）
+D:\Projects\DroneFlightController    # 独立工程项目
+D:\Projects\MobileChassis            # 独立工程项目
+D:\Projects\OtherProject             # 独立工程项目
+```
+
+- 项目代码：独立保存，不复制 Knowledge OS；
+- Knowledge OS：独立保存，不复制进任何项目；
+- Codex：在任意项目目录启动，通过 MCP `knowledge_search` 访问 Knowledge OS；
+- 各项目之间不需要复制知识库，Knowledge OS 是它们共享的外部长期知识层。
+
+最小调用（默认 `mode=fast`：返回结构化证据 + Judge，Codex 自行组织回答）：
+
+```python
+knowledge_search(query="STM32 DMA怎么配置？", mode="fast")
+```
+
+需要完整知识解释时才用 `mode=deep`（此时才生成 Answer）：
+
+```python
+knowledge_search(query="详细解释STM32 DMA工作机制，并结合我的当前问题", mode="deep")
+```
+
+## 推荐查询策略（Codex）
+
+- 情况 A（当前代码问题，如"这个 FreeRTOS 任务为什么没有运行？"）：先分析当前项目代码；只当涉及通用原理时再查 Knowledge OS，最后结合项目代码 + 知识库回答。
+- 情况 B（通用工程知识，如"STM32 DMA 怎么工作？"）：直接调用 `knowledge_search`。
+- 情况 C（未知硬件 / 知识库可能缺失，如"ICM-42688-P 的 SPI 读取注意什么？"）：查询；若返回 `knowledge_missing`，必须明确"Knowledge OS 当前没有足够资料"，可在明确区分 `[Knowledge OS]` 与 `[Agent Reasoning]` 之后基于自身知识继续，不得声称来自知识库。
+- 情况 D（设计决策，如"无人机用 ICM-42688-P 还是 MPU6000？"）：查询获取已有工程资料，再结合当前项目需求给出设计建议。
+
+## Knowledge OS 与项目知识边界
+
+```text
+Knowledge OS                          Project
+├── 通用工程知识                        ├── 当前代码
+├── 已验证技术知识                      ├── 当前硬件
+├── 历史资料                            ├── 当前设计
+├── Wiki                                ├── 当前 Bug
+├── Source                              ├── 当前实验结果
+└── Knowledge Gap                       └── 当前项目决策
+```
+
+- Knowledge OS 沉淀可复用、已验证的长期知识；Project 保存当前项目的代码、硬件、设计、Bug、实验结果与决策。
+- 本阶段不实现 Project → Knowledge OS 的 Knowledge Capture；项目知识如要沉淀，走 `00_Inbox` → 审核流程。

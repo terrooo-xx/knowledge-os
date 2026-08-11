@@ -27,6 +27,7 @@ from rag_engine.config import load_config, resolve_paths  # noqa: E402
 from rag_engine.embeddings import create_embedder  # noqa: E402
 from rag_engine.vector_store import create_store  # noqa: E402
 from rag_engine.retrieval import answer_query  # noqa: E402
+from rag_engine.evidence import assess_evidence  # noqa: E402
 
 
 def _evidence_list(chunks) -> list[dict]:
@@ -43,9 +44,15 @@ def _evidence_list(chunks) -> list[dict]:
     return out
 
 
+def _is_timeout_error(exc: Exception) -> bool:
+    import openai
+    return isinstance(exc, (TimeoutError, openai.APITimeoutError, openai.APIConnectionError))
+
+
 def knowledge_search(
     query: str,
     *,
+    mode: str = "deep",
     use_llm: bool = True,
     record_gap: bool = False,
     top_k: int | None = None,
@@ -58,8 +65,14 @@ def knowledge_search(
 ) -> dict:
     """Query Knowledge OS and return a stable structured result (READ-ONLY).
 
-    Args mirror the existing query chain; components may be injected for offline
-    testing. Defaults build the production main index from config.
+    mode:
+      - "deep" (default): Retrieval + Evidence + Judge + Answer Generation.
+      - "fast" / "evidence_only": Retrieval + Evidence + Judge, NO long answer
+        (returns structured evidence so Codex can continue without a second LLM pass).
+
+    Evidence / Judge / fail-closed are always preserved. In deep mode an Answer
+    timeout returns `answer_generation_timeout` with evidence/judge/source_trace
+    preserved (never a guessed answer).
     """
     if cfg is None:
         cfg = resolve_paths(
@@ -74,16 +87,20 @@ def knowledge_search(
     if wiki_store is None:
         wiki_store = raw_store
 
+    generate_answer = mode == "deep"
     provider = (cfg.get("llm") or {}).get("provider", "none")
-    if llm_answer is None and use_llm and provider not in ("none", "mock"):
+    if llm_answer is None and use_llm and generate_answer and provider not in ("none", "mock"):
         from rag_engine.llm import answer as _answer
         llm_answer = _answer
 
+    # Phase 1: Retrieval + Evidence + Judge (no answer yet), so a later Answer
+    # timeout can still preserve the already-confirmed evidence.
     try:
-        result = answer_query(query, cfg, embedder, raw_store, wiki_store, llm_answer=llm_answer)
+        result = answer_query(query, cfg, embedder, raw_store, wiki_store, llm_answer=None)
     except Exception as exc:
         return {
             "query": query,
+            "mode": mode,
             "status": "error",
             "answer": None,
             "evidence": [],
@@ -100,23 +117,48 @@ def knowledge_search(
     sufficient = bool(evidence.get("sufficient"))
     gap_type = evidence.get("gap_type") or "knowledge_missing"
     judge = result.get("judge")
-    # Defensive: judge "irrelevant" must never be answerable (normally handled inside answer_query).
     if sufficient and judge is not None and judge.get("relevance") != "relevant":
         sufficient = False
         gap_type = "knowledge_missing"
 
     status = "answerable" if sufficient else gap_type
-    answer = result.get("answer") if sufficient else None
-    # Reuse existing Gap semantics in the response (read-only; no auto-write).
-    # record_gap=True is reserved for future opt-in; not implemented this phase.
+    answer = None
+    if sufficient and generate_answer and llm_answer is not None:
+        # Phase 2: Answer generation (deep mode only), timeout preserves evidence.
+        try:
+            answer = llm_answer(query, chunks, cfg)
+            evidence = assess_evidence(query, chunks, cfg, answer=answer)
+            if not evidence["sufficient"]:
+                status = evidence.get("gap_type") or "answer_quality_problem"
+                answer = None
+                sufficient = False
+        except Exception as exc:
+            if _is_timeout_error(exc):
+                status = "answer_generation_timeout"
+                answer = None
+            else:
+                return {
+                    "query": query,
+                    "mode": mode,
+                    "status": "error",
+                    "answer": None,
+                    "evidence": ev_list,
+                    "sufficient": False,
+                    "judge": judge,
+                    "gap": None,
+                    "source_trace": sorted({e["source"] for e in ev_list if e["source"]}),
+                    "reason": f"Answer generation failed (fail closed): {exc}",
+                }
+
     return {
         "query": query,
+        "mode": mode,
         "status": status,
         "answer": answer,
         "evidence": ev_list,
         "sufficient": sufficient,
         "judge": judge,
-        "gap": {"status": "pending"} if not sufficient else None,
+        "gap": {"status": "pending"} if status not in ("answerable", "answer_generation_timeout") else None,
         "source_trace": sorted({e["source"] for e in ev_list if e["source"]}),
         "reason": evidence.get("reason"),
     }

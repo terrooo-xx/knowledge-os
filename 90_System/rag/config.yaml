@@ -49,6 +49,7 @@ llm:
   model:
     name: deepseek-chat
   api_key_env: DEEPSEEK_API_KEY
+  timeout: 30
   api:
     base_url: https://api.deepseek.com
   temperature: 0.2
