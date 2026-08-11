@@ -88,12 +88,19 @@
 - 90_System/control_center/launch_test.cmd
 - 90_System/control_center/launcher_test.log
 - 90_System/control_center/test2.log
+- 90_System/agent/README.md
+- 90_System/agent/__init__.py
+- 90_System/agent/knowledge_cli.py
+- 90_System/agent/knowledge_service.py
+- 90_System/rag/tests/test_agent_knowledge_service.py
+- 90_System/阶段11A_Agent知识接口.md
 
 ### 修改
 - 90_System/KNOWLEDGE_OS.md
 
 ### 提交
 - 提交 c121a31：Knowledge OS v1.0 baseline
+- 提交 38115dc：Knowledge OS: add Control Center desktop launcher
 
 ## 2026-08-10 LLM-Wiki MVP
 
