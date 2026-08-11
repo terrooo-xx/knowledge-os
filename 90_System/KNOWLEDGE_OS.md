@@ -161,7 +161,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `90_System/rag/`                                                                  | RAG + LLM-Wiki 引擎（代码、配置、测试）                                           |
 | `90_System/rag/database/`                                                         | 向量库与索引清单（派生数据，gitignored）                                             |
 | `90_System/rag/cache/`                                                            | 模型缓存（派生数据，gitignored）                                                 |
-| `90_System/control_center/`                                                     | 人机协同管理界面（server.py / service.py / static / activity_log.jsonl，阶段⑦）     |
+| `90_System/control_center/`                                                     | 人机协同管理界面（server.py / service.py / static / activity_log.jsonl，阶段⑦）；支持 Windows 桌面一键启动（start_control_center.bat / create_desktop_shortcut.bat，阶段⑩.5）     |
 | `.agents/agents/`                                                                 | Agent 工作流定义（ingest/retrieval/review/wiki_compile）                     |
 | `.agents/skills/`                                                                 | Codex Skills（knowledge-compiler/project-doc-maintainer/weekly-review） |
 

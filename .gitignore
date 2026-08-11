@@ -25,3 +25,6 @@ secrets/
 *.index
 __pycache__/
 *.pyc
+
+# Control Center 启动器运行时日志
+90_System/control_center/launcher.log

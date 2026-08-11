@@ -82,6 +82,18 @@
 - 90_System/阶段08_Knowledge_OS_稳定化与闭环验证.md
 - 90_System/阶段09_Evidence_Intelligence与知识回答安全增强.md
 - 90_System/阶段10_Knowledge_OS_v1.0基线与生产运行验证.md
+- 90_System/control_center/create_desktop_shortcut.bat
+- 90_System/control_center/start_control_center.bat
+- 90_System/阶段10.5_Control_Center启动体验优化.md
+- 90_System/control_center/launch_test.cmd
+- 90_System/control_center/launcher_test.log
+- 90_System/control_center/test2.log
+
+### 修改
+- 90_System/KNOWLEDGE_OS.md
+
+### 提交
+- 提交 c121a31：Knowledge OS v1.0 baseline
 
 ## 2026-08-10 LLM-Wiki MVP
 
