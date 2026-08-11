@@ -16,4 +16,12 @@ desktop.ini
 *.key
 *.pem
 secrets/
-.claudian/claudian-settings.json
+.claudian/
+
+# Knowledge OS RAG engine
+90_System/rag/database/
+90_System/rag/cache/
+*.bin
+*.index
+__pycache__/
+*.pyc

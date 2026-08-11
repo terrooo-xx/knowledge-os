@@ -1,0 +1,8 @@
+PyYAML>=6.0
+pypdf>=4.0
+trafilatura>=1.8
+openai>=1.30
+sentence-transformers>=3.0
+# Optional: Chroma store (default is local JSONL)
+chromadb>=0.5
+

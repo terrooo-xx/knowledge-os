@@ -28,6 +28,16 @@
 - `90_System`：模板、规范、提示词、日志和归档。
 - `.agents/skills`：Codex 可复用工作流。
 
+
+## Knowledge OS 规则
+
+- RAG 引擎位于 `90_System/rag`；默认生产索引为 `main_vector_db`（`20_Wiki + 30_Projects` 合并，`update_index.py --target main` 维护）；`00_Inbox` 的 raw 检索仅通过显式 `--target raw` / `--store raw` 启用，不是默认生产路径。
+- Wiki 生命周期为 `draft` -> `reviewed` -> `stable`，状态写在 frontmatter，不按状态建目录。
+- `90_System/rag/database` 与 `90_System/rag/cache` 不提交 Git。
+- AI 生成的 Wiki 必须保留来源，禁止覆盖 `reviewed` / `stable` 笔记。
+- 系统级架构、目录职责、AI 权限、知识生命周期与 Source of Truth 的唯一依据是 `90_System/KNOWLEDGE_OS.md`。
+- 执行结构性操作（创建/移动/删除/更新索引/更新 Wiki）前，先阅读 `90_System/KNOWLEDGE_OS.md`。
+
 ## 原始资料处理规则
 
 1. 处理新资料前，先搜索现有 Wiki。
@@ -62,8 +72,8 @@
 7. 笔记状态只能使用：
 
    - `draft`
-   - `verified`
-   - `deprecated`
+   - `reviewed`
+   - `stable`
 
 8. 无法确认正确性的内容保持 `draft`。
 9. 不因为同一个词在多个领域出现，就错误地将内容合并。
@@ -107,3 +117,18 @@
 8. 如果工作区存在未提交修改，不得擅自覆盖用户修改。
 9. 无法安全判断时停止修改对应文件，并写入报告。
 10. 不允许使用危险性删除命令。
+
+## Inbox 与 Knowledge Gap 规则
+
+- 新资料统一进入 `00_Inbox`，用户不需要手工判断领域；来源子目录只表示输入来源，不代表最终知识分类。
+- 使用 `90_System/rag/scripts/inbox_processor.py` 做“分析 → 建议 → Draft”：第一版不自动覆盖正式 Wiki，`create_wiki` 只生成 `status: draft`，`update_wiki` 只生成更新建议。
+- 查询证据不足时记录 Knowledge Gap 到 `90_System/rag/tests/knowledge_gaps.yaml`，不让 LLM 自动用外部知识补全。
+- 原始资料禁止自动删除、覆盖、移动或重命名；处理记录写入 `90_System/任务记录/`。
+
+## LLM-Wiki 编译规则
+
+- `wiki_compile.py` 只能生成 `status: draft`，禁止直接修改 `reviewed` / `stable` Wiki。
+- AI 不自动把 draft 升级为 reviewed/stable；状态流转由用户通过 `wiki_review.py` 人工确认。
+- `update_wiki` 只生成更新建议和可审查内容，用户确认后才可修改 Wiki。
+- Wiki 正文必须来自 Inbox 资料或已有 Wiki，禁止用 LLM 自身知识补写无来源细节。
+- 增量 RAG 使用 `index_manifest.json`，未变化文档不重新 embedding。

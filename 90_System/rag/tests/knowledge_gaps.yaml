@@ -1,0 +1,105 @@
+- question: STM32F405 DMA如何搬运数据？
+  topic: STM32F405 DMA如何搬运数据？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - 30_Projects\无人机飞控\硬件选型.md
+  - 30_Projects\移动底盘控制器\硬件选型\STM32主控选型.md
+  - 30_Projects\移动底盘控制器\硬件系统框架.md
+  - 20_Wiki\05_通信协议\PPM与S.Bus接收机信号.md
+  - 20_Wiki\02_嵌入式基础\MPU-6050惯性测量单元.md
+  related_wiki:
+  - 20_Wiki\05_通信协议\PPM与S.Bus接收机信号.md
+  - 20_Wiki\02_嵌入式基础\MPU-6050惯性测量单元.md
+  status: resolved
+  priority: medium
+  detected_at: '2026-08-10T08:06:39+00:00'
+  resolved_at: '2026-08-11T07:45:11+00:00'
+  resolved_by: user
+  resolved_sources:
+  - 30_Projects\无人机飞控\硬件选型.md
+  - 30_Projects\移动底盘控制器\硬件选型\STM32主控选型.md
+  - 30_Projects\移动底盘控制器\硬件系统框架.md
+  - 20_Wiki\05_通信协议\PPM与S.Bus接收机信号.md
+  - 20_Wiki\02_嵌入式基础\MPU-6050惯性测量单元.md
+- question: Obsidian 的 Git 怎么配置？
+  topic: Obsidian 的 Git 怎么配置？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - Git 配置.note.pdf
+  - 电容.note.pdf
+  related_wiki: []
+  status: pending
+  priority: medium
+  detected_at: '2026-08-11T06:41:37+00:00'
+- question: PX4 无人机 EKF 卡尔曼滤波参数怎么调？
+  topic: PX4 无人机 EKF 卡尔曼滤波参数怎么调？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - 30_Projects/无人机飞控/硬件选型.md
+  - 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
+  - 30_Projects/无人机飞控/00_项目索引.md
+  - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+  - 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
+  related_wiki:
+  - 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
+  - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+  - 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
+  status: pending
+  priority: medium
+  detected_at: '2026-08-11T06:42:01+00:00'
+- question: PX4 EKF 卡尔曼滤波参数怎么调？
+  topic: PX4 EKF 卡尔曼滤波参数怎么调？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - 20_Wiki/02_嵌入式基础/LED限流电阻选型.md
+  - 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
+  - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+  - 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
+  - 20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md
+  related_wiki:
+  - 20_Wiki/02_嵌入式基础/LED限流电阻选型.md
+  - 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
+  - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+  - 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
+  - 20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md
+  status: pending
+  priority: medium
+  detected_at: '2026-08-11T07:46:11+00:00'
+- question: WSL 里怎么装 Ubuntu？
+  topic: WSL 里怎么装 Ubuntu？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - 30_Projects/移动底盘控制器/功能说明.md
+  - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+  - 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
+  - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+  - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+  related_wiki:
+  - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+  - 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
+  - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+  - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+  status: pending
+  priority: medium
+  detected_at: '2026-08-11T07:46:46+00:00'
+- question: ROS2 Nav2 代价地图怎么配置？
+  topic: ROS2 Nav2 代价地图怎么配置？
+  type: knowledge_missing
+  suggested_action: create_wiki
+  related_sources:
+  - 30_Projects/移动底盘控制器/硬件选型/工控机选型.md
+  - 30_Projects/移动底盘控制器/项目适配/项目适配场景.md
+  - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+  - 30_Projects/移动底盘控制器/项目适配/适配电机选型.md
+  - 20_Wiki/02_嵌入式基础/电容选型.md
+  related_wiki:
+  - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+  - 20_Wiki/02_嵌入式基础/电容选型.md
+  status: pending
+  priority: medium
+  detected_at: '2026-08-11T08:19:23+00:00'

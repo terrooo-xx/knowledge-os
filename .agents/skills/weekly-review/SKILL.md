@@ -9,7 +9,7 @@ description: 定期复盘知识库质量。用于检查 00_Inbox、20_Wiki 和 3
 
 ## 工作流程
 
-1. 阅读根目录 `AGENTS.md`。
+1. 阅读根目录 `AGENTS.md` 及其引用的系统级规范 `90_System/KNOWLEDGE_OS.md`（目录职责、AI 权限、审核边界）。
 2. 默认检查：
 
    - `00_Inbox`

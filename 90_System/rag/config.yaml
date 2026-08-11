@@ -1,0 +1,59 @@
+# Knowledge OS RAG 配置
+# 路径均为相对 Vault 根目录的路径
+
+paths:
+  inbox: "00_Inbox"
+  wiki: "20_Wiki"
+  projects: "30_Projects"
+  raw_vector_db: "90_System/rag/database/raw_vector_db"
+  wiki_vector_db: "90_System/rag/database/wiki_vector_db"
+  main_vector_db: "90_System/rag/database/main_vector_db"
+  knowledge_gaps: "90_System/rag/tests/knowledge_gaps.yaml"
+  cache: "90_System/rag/cache"
+
+chunking:
+  size: 800
+  overlap: 100
+
+embedding:
+  provider: bge
+  model: BAAI/bge-small-zh-v1.5
+  api_key_env: OPENAI_API_KEY
+
+store:
+  provider: local
+
+retrieval:
+  wiki_first: true
+  confidence_threshold: 0.78
+  top_k: 5
+  dense_weight: 0.6
+  bm25_weight: 0.4
+
+inbox:
+  similarity_threshold: 0.82
+  update_threshold: 0.65
+
+evidence_judge:
+  enabled: true
+  top_k: 5
+
+reranker:
+  enabled: true
+  provider: bge
+  model: "C:/Users/陶权煜/.cache/modelscope/models/BAAI--bge-reranker-v2-m3/snapshots/master"
+  top_k: 5
+
+llm:
+  provider: deepseek
+  model:
+    name: deepseek-chat
+  api_key_env: DEEPSEEK_API_KEY
+  api:
+    base_url: https://api.deepseek.com
+  temperature: 0.2
+  template: "90_System/prompts/rag_answer.md"
+
+wiki:
+  default_domain: "01_计算机基础"
+  status: draft

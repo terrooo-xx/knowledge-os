@@ -40,3 +40,15 @@
 - 不直接删除原始资料。
 - 批量修改前先使用 Git 保存版本。
 - 详细规则见 `AGENTS.md`。
+
+## Knowledge OS（RAG + LLM-Wiki）
+
+本库按 Knowledge OS 思路运行：`00_Inbox` 保存原始资料，`20_Wiki` 沉淀长期知识，RAG 引擎负责检索。
+
+- 架构（生产 RAG）：`20_Wiki + 30_Projects` -> `90_System/rag/scripts/update_index.py`（默认 `--target main`）-> `main_vector_db` -> `hybrid_query.py`（默认 `--store main`）-> LLM / Wiki。
+- 系统级架构与管理规范（目录职责、AI 权限、知识生命周期、Source of Truth）：`90_System/KNOWLEDGE_OS.md`。
+- 添加资料：把 PDF / Markdown / TXT / HTML 放入 `00_Inbox`，运行 `inbox_processor.py` 分析分类，经人工审核成为 Wiki / 项目知识资产后，运行 `update_index.py --changed` 更新生产索引 `main_vector_db`。`raw_vector_db` 是可选 Source 检索工具，不是默认生产索引。
+- 运行检索：`python 90_System/rag/scripts/hybrid_query.py "问题"`。
+- 生成 Wiki：`python 90_System/rag/scripts/wiki_compile.py --action create --file "00_Inbox/xxx.md" --domain 03_STM32`。
+- Obsidian 使用：Wiki 状态用 frontmatter 的 `status`（`draft` / `reviewed` / `stable`），笔记间用 `[[双链]]`。
+- 详细配置和数据流见 `90_System/rag/README.md`。

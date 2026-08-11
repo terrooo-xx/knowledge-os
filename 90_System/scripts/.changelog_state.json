@@ -1,0 +1,181 @@
+﻿{
+    "lastHead":  "5dbc8dda73188c207db5281606377e9fd9917d81",
+    "baseline":  [
+                     {
+                         "Type":  "修改",
+                         "Path":  ".agents/skills/knowledge-compiler/SKILL.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  ".agents/skills/project-doc-maintainer/SKILL.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  ".agents/skills/weekly-review/SKILL.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  ".gitignore"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  "30_Projects/无人机飞控/00_项目索引.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  "30_Projects/移动底盘控制器/00_项目索引.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  "AGENTS.md"
+                     },
+                     {
+                         "Type":  "修改",
+                         "Path":  "README.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  ".agents/agents/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "00_Inbox/待处理文件/FreeRTOS任务通知补充资料.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "00_Inbox/待处理文件/STM32_DMA资料.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "00_Inbox/待处理文件/个人笔记/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/01_计算机基础/CPU与寄存器.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/AS5600磁编码器.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/DC-DC与LDO选择.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/DC电源插座引脚.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/DRV8845电机驱动.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/LED限流电阻选型.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/电容选型.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/电机驱动选型.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/锂电池参数计算.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/02_嵌入式基础/阻抗匹配.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/03_STM32/STM32 USART配置与使用.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/03_STM32/STM32-DMA-配置与使用.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/03_STM32/STM32CubeMX定时器配置.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/03_STM32/STM32时钟树.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "20_Wiki/05_通信协议/串口通信协议基础.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "30_Projects/无人机飞控/硬件选型.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "30_Projects/移动底盘控制器/功能说明.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "30_Projects/移动底盘控制器/硬件系统框架.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "30_Projects/移动底盘控制器/硬件选型/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "30_Projects/移动底盘控制器/项目适配/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/KNOWLEDGE_OS.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/archive/嵌入式课程设计/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/prompts/rag_answer.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/prompts/wiki_compile.md"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/rag/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "90_System/任务记录/"
+                     },
+                     {
+                         "Type":  "新增",
+                         "Path":  "interfaces.md"
+                     }
+                 ]
+}
