@@ -51,3 +51,35 @@ print(r["status"], r["answer"], r["judge"])
 ## 未来
 
 阶段⑪-B 将把 `knowledge_search` 包装为 MCP Tool（当前未实现）。
+
+
+## MCP（Codex 正式接入，阶段⑪-B）
+
+本地 stdio MCP Server：`90_System/agent/mcp_server.py`（Python 标准库，零外部依赖，只暴露一个只读 Tool `knowledge_search`）。
+
+- Vault 根目录由环境变量 `KNOWLEDGE_OS_VAULT` 指定（缺省按本文件位置反推），**不依赖当前工作目录**。
+- Codex 配置（`~/.codex/config.toml`）：`[mcp_servers.knowledge-os]` command=python, args=[mcp_server.py], env 含 `KNOWLEDGE_OS_VAULT`。
+- 改配置后需**重启 Codex** 才会加载该 MCP Server；本会话不会自动出现该工具。
+
+### Agent 使用规则
+
+**应该调用 knowledge_search 的场景**（通用/长期工程知识）：
+
+```text
+STM32 / FreeRTOS / DMA / CAN / UART / SPI / PID / EKF /
+传感器 / 电机控制 / 飞控原理 / 机器人控制 / 过去项目经验 / 已沉淀的工程知识
+```
+
+**不应该调用（直接读当前项目）**：
+
+```text
+当前项目代码 / 编译错误 / Git 状态 / 文件路径 / 变量定义 /
+函数实现 / 构建系统 / 项目临时设计
+```
+
+**knowledge_missing 时**：可以基于当前项目 + 自身通用知识继续分析，但必须区分 `[Knowledge OS]` 与 `[Agent Reasoning]`，不得声称 Knowledge OS 包含答案。
+
+## 安全
+
+- MCP 接口只读：不暴露 approve/reject/resolve/edit/merge/write 等任何写工具；
+- 不绕过 Evidence 与 LLM Judge；LLM 不可用 / 异常 → fail-closed 返回 `knowledge_missing` / `error`。

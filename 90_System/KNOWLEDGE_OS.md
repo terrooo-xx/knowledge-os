@@ -45,7 +45,7 @@ updated: 2026-08-10
 | AI Agent / Skill  | `.agents/`                                           | AI 可复用工作流定义            |
 | Obsidian          | `.obsidian/`                                         | 本地笔记查看与编辑配置            |
 | Control Center    | `90_System/control_center/`（阶段⑦ MVP 已实现）              | 人机协同控制面板（见第二十三章）        |
-| Agent Interface  | `90_System/agent/`（阶段⑪-A）                            | 只读知识查询接口：Codex/Agent 经此查询，不直接访问 Wiki/Vector DB；MCP 接入规划中（阶段⑪-B） |
+| Agent Interface  | `90_System/agent/`（阶段⑪-A + ⑪-B）                     | 只读知识查询接口：Codex/Agent 经 MCP（`knowledge-os`，ACTIVE）调用 `knowledge_search`，不直接访问 Wiki/Vector DB；**Agent Write = NOT ALLOWED** |
 
 ## 三、总体架构
 
@@ -240,6 +240,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `control_center/activity_log.jsonl` | LOG | 人工决策审计日志（追加式） | SAFE_WRITE（追加） |
 | `agent/knowledge_service.py` | CODE | Agent 只读知识查询接口（封装 retrieval→evidence→judge） | CONTROLLED_WRITE（只读运行） |
 | `agent/knowledge_cli.py` | CODE | Agent 接口 CLI（`python 90_System/agent/knowledge_cli.py "问题"`） | CONTROLLED_WRITE |
+| `agent/mcp_server.py` | CODE | 本地 stdio MCP Server（仅只读 `knowledge_search`，零外部依赖，阶段⑪-B） | CONTROLLED_WRITE（只读运行） |
 | `阶段06/07/08_*.md` | SYSTEM | 各阶段评估与稳定化报告（status: draft） | REVIEW_REQUIRED |
 | `prompts/rag_answer.md` | WORKFLOW | RAG 回答提示词 | CONTROLLED_WRITE |
 | `prompts/wiki_compile.md` | WORKFLOW | Wiki 编译提示词 | CONTROLLED_WRITE |
@@ -564,7 +565,7 @@ Knowledge OS（本文档：定义知识库如何工作）
 │   ├── archive/ logs/ prompts/ schemas/ scripts/ templates/ 任务记录/
 │   ├── KNOWLEDGE_OS.md          # 本文档（系统级唯一入口）
 │   ├── control_center/          # 人机协同管理 UI/API（阶段⑦）
-│   ├── agent/                   # Agent 只读知识查询接口（阶段⑪-A）
+│   ├── agent/                   # Agent 只读知识查询接口 + MCP Server（阶段⑪-A/B）
 │   └── rag/                     # RAG + LLM-Wiki 引擎
 │       ├── rag_engine/ llm/ scripts/ tests/
 │       └── database/ cache/     # 派生数据，gitignored

@@ -94,13 +94,20 @@
 - 90_System/agent/knowledge_service.py
 - 90_System/rag/tests/test_agent_knowledge_service.py
 - 90_System/阶段11A_Agent知识接口.md
+- 90_System/agent/mcp_server.py
+- 90_System/rag/tests/test_mcp_server.py
+- 90_System/阶段11B_Codex_MCP集成.md
 
 ### 修改
 - 90_System/KNOWLEDGE_OS.md
+- 90_System/agent/README.md
+- 90_System/agent/knowledge_service.py
+- 90_System/阶段11A_Agent知识接口.md
 
 ### 提交
 - 提交 c121a31：Knowledge OS v1.0 baseline
 - 提交 38115dc：Knowledge OS: add Control Center desktop launcher
+- 提交 cd01a5a：Knowledge OS: add agent knowledge query interface
 
 ## 2026-08-10 LLM-Wiki MVP
 

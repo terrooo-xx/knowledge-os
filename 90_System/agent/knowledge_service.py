@@ -9,13 +9,17 @@ never a guessed answer.
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 AGENT_DIR = Path(__file__).resolve().parent
-SYSTEM_DIR = AGENT_DIR.parent
-VAULT_ROOT = SYSTEM_DIR.parent
-RAG_DIR = SYSTEM_DIR / "rag"
+# Vault 根目录：优先环境变量 KNOWLEDGE_OS_VAULT（供 MCP/外部调用覆盖），
+# 否则按本文件位置反推（<vault>/90_System/agent/）。绝不依赖当前工作目录。
+VAULT_ROOT = Path(
+    os.environ.get("KNOWLEDGE_OS_VAULT", str(AGENT_DIR.parent.parent))
+).resolve()
+RAG_DIR = VAULT_ROOT / "90_System" / "rag"
 if str(RAG_DIR) not in sys.path:
     sys.path.insert(0, str(RAG_DIR))
 
