@@ -3,7 +3,7 @@ type: system
 status: draft
 domain: 系统规范
 created: 2026-08-10
-updated: 2026-08-10
+updated: 2026-08-12
 ---
 
 # KNOWLEDGE_OS.md —— 知识库系统级架构与管理规范
@@ -28,7 +28,7 @@ updated: 2026-08-10
 - AI 如何处理冲突、重复、过时、待审核、无法确定归属的知识；
 - 本架构文档自身的维护规则。
 
-**规则关系**：本文档是知识库结构、AI 权限、数据生命周期相关规则的唯一系统级来源。根目录 `AGENTS.md`、`90_System/rag/AGENTS.md`、`.agents/skills/*`、`.agents/agents/*` 等只应**引用**本文档，不复制本文档内容，避免规则冲突。
+**规则关系**：本文档是知识库结构、AI 权限、数据生命周期相关规则的唯一系统级来源。根目录 `AGENTS.md`、`90_System/rag/AGENTS.md`、`.agents/skills/*` 等只应**引用**本文档，不复制本文档内容，避免规则冲突。
 
 ## 二、知识库是什么（系统组成）
 
@@ -41,11 +41,12 @@ updated: 2026-08-10
 | LLM-Wiki（知识沉淀）    | `20_Wiki/` + `90_System/rag/scripts/wiki_compile.py` | 把资料编译成结构化、可持续维护的知识笔记   |
 | RAG（检索系统）         | `90_System/rag/`                                     | 从原始资料和 Wiki 中检索、重排、回答  |
 | Projects（项目文档）    | `30_Projects/`                                       | 具体项目的架构、模块、接口、决策、任务、问题 |
-| Outputs / Reviews | `40_Outputs/` `50_Reviews/`                          | 对外输出、知识库检查与复盘报告        |
+| Outputs（含 Reviews） | `40_Outputs/`（含 `reviews/`）                  | 对外输出、知识库检查与复盘报告        |
 | AI Agent / Skill  | `.agents/`                                           | AI 可复用工作流定义            |
 | Obsidian          | `.obsidian/`                                         | 本地笔记查看与编辑配置            |
 | Control Center    | `90_System/control_center/`（阶段⑦ MVP 已实现）              | 人机协同控制面板（见第二十三章）        |
-| Agent Interface  | `90_System/agent/`（阶段⑪-A + ⑪-B）                     | 只读知识查询接口：Codex/Agent 经 MCP（`knowledge-os`，ACTIVE）调用 `knowledge_search`，不直接访问 Wiki/Vector DB；**Agent Write = NOT ALLOWED** |
+| Weekly Review（周期性复盘） | `90_System/rag/scripts/review/` + `40_Outputs/reviews/每周复盘/` | 周期性知识审计：确定性统计 → 周报 + snapshot → Control Center 查看（阶段⑭） |
+| Agent Interface  | `90_System/rag/interface/`（阶段⑪-A + ⑪-B）                     | 只读知识查询接口：Codex/Agent 经 MCP（`knowledge-os`，ACTIVE）调用 `knowledge_search`，不直接访问 Wiki/Vector DB；**Agent Write = NOT ALLOWED** |
 
 ## 三、总体架构
 
@@ -127,8 +128,8 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `10_Sources/` | 知识层 | 长期来源与证据 | 数据手册、资料原文 | 长期 | 可新增引用；不修改原文 | 可写 |
 | `20_Wiki/` | 知识层 | 结构化长期知识 | Wiki 笔记 | 长期 | CONTROLLED_WRITE：只生成 draft；禁止覆盖 reviewed/stable | 审核、改状态 |
 | `30_Projects/` | 知识层 | 项目文档 | 架构/模块/接口/决策/任务/问题 | 项目生命周期 | CONTROLLED_WRITE：只生成项目 draft | 审核 |
-| `40_Outputs/` | 输出层 | 对外输出 | 学习总结/技术方案/报告 | 长期 | 可生成候选 | 审核 |
-| `50_Reviews/` | 输出层 | 检查与复盘 | 复盘报告/知识缺口/过期检查 | 定期 | 可生成报告 | 审核 |
+| `40_Outputs/` | 输出层 | 对外输出与复盘 | 学习总结/技术方案/报告/复盘（reviews/） | 长期 | 可生成候选 | 审核 |
+
 | `90_System/` | 系统层 | 系统运行 | 规范/脚本/模板/提示词/日志/归档/RAG | 长期 | 见文件级权限，谨慎 | 可写 |
 | `.agents/` | 系统层 | AI Agent 与 Skill 定义 | agent / skill 规范 | 长期 | REVIEW_REQUIRED | 可写 |
 | `.obsidian/` | 配置 | Obsidian 本地配置 | json | 本地 | NO_TOUCH | 可写 |
@@ -150,12 +151,13 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `20_Wiki/01_计算机基础/` ~ `20_Wiki/09_ROS2/`                                          | 按领域存放 Wiki 知识，不按状态建目录                                                 |
 | `30_Projects/<项目>/architecture/ modules/ interfaces/ decisions/ tasks/ problems/` | 项目六类文档                                                                |
 | `30_Projects/移动底盘控制器/硬件选型/ 项目适配/`                                                 | 项目专属子目录（选型、场景适配）                                                      |
-| `40_Outputs/学习总结/ 技术方案/ 项目报告/ 对外材料/`                                              | 四类对外输出                                                                |
-| `50_Reviews/每周复盘/ 知识缺口/ 过期内容检查/`                                                  | 三类检查报告                                                                |
+| `40_Outputs/学习总结/ 技术方案/ 项目报告/ 对外材料/`                              | 四类对外输出                                                                |
+| `40_Outputs/reviews/每周复盘/ 知识缺口/ 过期内容检查/`                        | 复盘与检查报告（人工知识缺口，区别于 RAG 自动记录）                             |
+
 | `90_System/archive/`                                                              | 归档目录（替代删除）                                                            |
-| `90_System/logs/`                                                                 | 系统日志                                                                  |
+
 | `90_System/prompts/`                                                              | 提示词模板                                                                 |
-| `90_System/schemas/`                                                              | 数据结构定义（预留）                                                            |
+
 | `90_System/scripts/`                                                              | PowerShell 自动化脚本                                                      |
 | `90_System/templates/`                                                            | 笔记模板                                                                  |
 | `90_System/任务记录/`                                                                 | AI 任务处理记录与更新建议                                                        |
@@ -163,8 +165,8 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `90_System/rag/database/`                                                         | 向量库与索引清单（派生数据，gitignored）                                             |
 | `90_System/rag/cache/`                                                            | 模型缓存（派生数据，gitignored）                                                 |
 | `90_System/control_center/`                                                     | 人机协同管理界面（server.py / service.py / static / activity_log.jsonl，阶段⑦）；支持 Windows 桌面一键启动（start_control_center.bat / create_desktop_shortcut.bat，阶段⑩.5）     |
-| `90_System/agent/`                                                            | Agent Knowledge Interface（knowledge_service.py / knowledge_cli.py / README.md，只读，阶段⑪-A）  |
-| `.agents/agents/`                                                                 | Agent 工作流定义（ingest/retrieval/review/wiki_compile）                     |
+| `90_System/rag/interface/`                                                  | RAG 查询接口（knowledge_service.py / knowledge_cli.py / mcp_server.py / README.md，只读，阶段⑪-A/B） |
+| `90_System/archive/agents/`                                                    | 早期 Agent 工作流文档（已归档，仅历史追溯）                              |
 | `.agents/skills/`                                                                 | Codex Skills（knowledge-compiler/project-doc-maintainer/weekly-review） |
 
 ## 六、文件分类体系
@@ -199,7 +201,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `KNOWLEDGE_OS.md`（本文档，位于 90_System/） | SYSTEM | 系统级架构与管理规范，唯一入口 | 用户 + AI | REVIEW_REQUIRED（结构性变更后必须同步更新） | 高 |
 | `README.md` | KNOWLEDGE | 人类入口说明 | 用户 + AI | SAFE_WRITE（小幅更新） | 低 |
 | `HOME.md` | KNOWLEDGE | Obsidian 首页 | 用户 + AI | SAFE_WRITE | 低 |
-| `interfaces.md` | KNOWLEDGE | 接口总览（当前为空，待补充） | 用户 | SAFE_WRITE（按需补充） | 低 |
+
 | `CHANGELOG.md` | DERIVED | 变更记录，由 `update_changelog.ps1` 自动维护 | 脚本 | NO_TOUCH（人工不手写，交给脚本） | 低 |
 | `.gitignore` | CONFIG | 忽略派生数据与本地配置 | 用户 | REVIEW_REQUIRED | 中 |
 
@@ -211,8 +213,8 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `AGENTS.md` | POLICY | RAG 引擎规则 | - | - | REVIEW_REQUIRED |
 | `config.yaml` | CONFIG | RAG 配置（路径/分块/embedding/检索/reranker/LLM） | - | - | CONTROLLED_WRITE（改路径需同步本规范） |
 | `requirements.txt` | CONFIG | Python 依赖 | - | - | CONTROLLED_WRITE |
-| `scripts/ingest_rag.py` | CODE | 默认 `--target main` 摄取 20_Wiki + 30_Projects → main_vector_db（生产）；`--target raw/wiki` 为可选路径 | 20_Wiki/30_Projects（main）或 00_Inbox（raw） | main_vector_db / raw_vector_db / wiki_vector_db + metadata | CONTROLLED_WRITE（必须过测试） |
-| `scripts/update_index.py` | CODE | 20_Wiki + 30_Projects → main_vector_db（默认活动索引）；`--target wiki` 为可选 | 20_Wiki/30_Projects | main_vector_db + index_manifest.json | CONTROLLED_WRITE |
+| `scripts/ingest_rag.py` | CODE | raw / 特殊 ingestion：`--target raw`（00_Inbox → raw_vector_db）、`--target wiki`（20_Wiki → wiki_vector_db）；**main_vector_db 由 update_index.py 独占** | 00_Inbox（raw）或 20_Wiki（wiki） | raw_vector_db / wiki_vector_db + metadata | CONTROLLED_WRITE（必须过测试） |
+| `scripts/update_index.py` | CODE | **main_vector_db 标准索引入口**：20_Wiki + 30_Projects → main_vector_db（全量/`--changed` 增量/`--file` 单文档）；`--target wiki` 为可选 | 20_Wiki/30_Projects | main_vector_db + index_manifest.json | CONTROLLED_WRITE |
 | `scripts/hybrid_query.py` | CODE | 混合检索 + 重排 + 回答（默认 `--store main`） | 用户问题 | 回答 / evidence / gap | CONTROLLED_WRITE |
 | `scripts/inbox_processor.py` | CODE | Inbox 分析 → 建议 | 00_Inbox 文件 | 任务记录日志 / draft | CONTROLLED_WRITE |
 | `scripts/wiki_compile.py` | CODE | 编译 Wiki draft / 更新建议 / 项目 draft（`--action create/update/project --file`） | 00_Inbox 源资料 | 20_Wiki draft 或 任务记录建议 | CONTROLLED_WRITE |
@@ -235,14 +237,17 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `scripts/knowledge_os_check.ps1` | CODE | 架构漂移检测（见第二十章），汇总 RAG Health | CONTROLLED_WRITE |
 | `scripts/rag_health_check.py` | CODE | RAG 索引完整性只读健康检查（records/manifest/NUL/重复/orphan/一致性/gaps） | CONTROLLED_WRITE（默认只读运行） |
 | `scripts/wiki_health_check.py` | CODE | Wiki frontmatter/status/source 只读健康检查 | CONTROLLED_WRITE（默认只读运行） |
+| `scripts/review/metrics.py` | CODE | 确定性统计层（Wiki/Growth/Gaps/Project Status/Stale/Health/Activity），不写文件 | CONTROLLED_WRITE |
+| `scripts/review/weekly_review.py` | CODE | 周报生成器：`weekly-review.md` + `snapshot.json`（幂等，`--week/--force`，LLM 可选只做摘要） | CONTROLLED_WRITE |
+| `scripts/review/register_task.ps1` | CODE | 注册 Windows 计划任务 `Knowledge OS Weekly Review`（读 config 的 weekly_review 段） | CONTROLLED_WRITE |
 | `control_center/server.py` | CODE | 本地 Control Center HTTP 服务（localhost:8765，stdlib http.server） | CONTROLLED_WRITE |
 | `control_center/service.py` | CODE | Action 模型 / 幂等执行 / Activity Log / Health 聚合（调用现有 Wiki/Gap 函数） | CONTROLLED_WRITE |
 | `control_center/activity_log.jsonl` | LOG | 人工决策审计日志（追加式） | SAFE_WRITE（追加） |
-| `agent/knowledge_service.py` | CODE | Agent 只读知识查询接口（封装 retrieval→evidence→judge） | CONTROLLED_WRITE（只读运行） |
-| `agent/knowledge_cli.py` | CODE | Agent 接口 CLI（`python 90_System/agent/knowledge_cli.py "问题"`） | CONTROLLED_WRITE |
-| `agent/mcp_server.py` | CODE | 本地 stdio MCP Server（仅只读 `knowledge_search`，零外部依赖，阶段⑪-B） | CONTROLLED_WRITE（只读运行） |
-| `阶段06/07/08_*.md` | SYSTEM | 各阶段评估与稳定化报告（status: draft） | REVIEW_REQUIRED |
-| `prompts/rag_answer.md` | WORKFLOW | RAG 回答提示词 | CONTROLLED_WRITE |
+| `rag/interface/knowledge_service.py` | CODE | Agent 只读知识查询接口（封装 retrieval→evidence→judge） | CONTROLLED_WRITE（只读运行） |
+| `rag/interface/knowledge_cli.py` | CODE | Agent 接口 CLI（`python 90_System/rag/interface/knowledge_cli.py "问题"`） | CONTROLLED_WRITE |
+| `rag/interface/mcp_server.py` | CODE | 本地 stdio MCP Server（仅只读 `knowledge_search`，零外部依赖，阶段⑪-B） | CONTROLLED_WRITE（只读运行） |
+| `archive/stages/阶段06~12C_*.md` | SYSTEM | 历史阶段评估与稳定化报告（已归档，仅历史追溯，不属于活动规范） | REVIEW_REQUIRED |
+| `rag/prompts/rag_answer.md` | WORKFLOW | RAG 回答提示词 | CONTROLLED_WRITE |
 | `prompts/wiki_compile.md` | WORKFLOW | Wiki 编译提示词 | CONTROLLED_WRITE |
 | `prompts/处理单篇资料.md` 等 | WORKFLOW | 各类任务提示词 | CONTROLLED_WRITE |
 | `templates/*.md` | WORKFLOW | 笔记模板（知识/任务/问题/复盘/决策/功能模块） | CONTROLLED_WRITE |
@@ -253,11 +258,13 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 
 | 文件                             | 类型       | 用途           | AI 修改权限         |
 | ------------------------------ | -------- | ------------ | --------------- |
-| `agents/ingest_agent.md`       | WORKFLOW | 摄取工作流定义      | REVIEW_REQUIRED |
-| `agents/retrieval_agent.md`    | WORKFLOW | 检索工作流定义      | REVIEW_REQUIRED |
-| `agents/review_agent.md`       | WORKFLOW | 审核工作流定义      | REVIEW_REQUIRED |
-| `agents/wiki_compile_agent.md` | WORKFLOW | Wiki 编译工作流定义 | REVIEW_REQUIRED |
-| `skills/*/SKILL.md`            | WORKFLOW | Codex 可复用技能  | REVIEW_REQUIRED |
+
+
+
+
+| `skills/knowledge-compiler/SKILL.md` | WORKFLOW | Inbox → Wiki/项目 编译工作流（当前工作流规范） | REVIEW_REQUIRED |
+| `skills/project-doc-maintainer/SKILL.md` | WORKFLOW | 项目文档一致性检查（默认只生成检查报告） | REVIEW_REQUIRED |
+| `skills/weekly-review/SKILL.md` | WORKFLOW | 每周复盘工作流（报告输出到 `40_Outputs/reviews/每周复盘/`） | REVIEW_REQUIRED |
 
 ## 八、源数据（Source of Truth）与派生数据
 
@@ -295,7 +302,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | 权限 | 含义 | 典型目录/文件 |
 |---|---|---|
 | `READ_ONLY` | 可读，不能修改 | `00_Inbox` 原文、`10_Sources`、`个人笔记`、向量库 |
-| `SAFE_WRITE` | 可创建、可修改、可移动 | `40_Outputs`、`50_Reviews`、`任务记录`（追加） |
+| `SAFE_WRITE` | 可创建、可修改、可移动 | `40_Outputs`（含 `reviews/`）、`任务记录`（追加） |
 | `CONTROLLED_WRITE` | 可修改，但必须符合规则并验证 | `20_Wiki`（只生成 draft）、RAG 脚本、模板 |
 | `REVIEW_REQUIRED` | 可生成候选修改，不能直接生效 | `AGENTS.md`、`.agents/*`、Knowledge OS 文档、`wiki_review.py` 状态流转 |
 | `NO_TOUCH` | 禁止自动修改 | `.obsidian/`、`.git/`、`database/`、`cache/`、`CHANGELOG.md` |
@@ -530,10 +537,11 @@ Knowledge OS（本文档：定义知识库如何工作）
 - **Vector DB**：提供语义检索索引（派生，可重建）。活动索引为 `main_vector_db`（20_Wiki + 30_Projects 合并）；`raw_vector_db` / `wiki_vector_db` 为可选路径（当前为空）。
 - **Inbox**：接收新资料（源数据）。
 - **Obsidian**：本地查看与编辑，不做结构管理。
+- **Knowledge Gap（两种，不合并）**：人工知识缺口存 `40_Outputs/reviews/知识缺口/`（人工复盘、知识治理、Wiki 建设计划、长期缺口）；RAG 自动记录存 `90_System/rag/tests/knowledge_gaps.yaml`（查询失败、检索质量分析、自动化测试、RAG 调优）。
 
 ## 二十三、Control Center 管理边界（Status: ACTIVE，阶段⑦ MVP 已实现）
 
-**Status: ACTIVE（第一版）** —— Control Center 已作为本地人机协同控制面板实现（`90_System/control_center/`，`python server.py` → http://127.0.0.1:8765，Python 标准库 http.server，无新增依赖）。审核、approve、reject、resolve、ignore 等人工决策通过 UI → API → service 调用现有 Knowledge OS 函数（`wiki_review.set_status` / `gaps.resolve_gap` / health check），**不复制 Wiki 状态逻辑、不直接修改 Markdown 或 Vector DB**。
+**Status: ACTIVE（第一版）** —— Control Center 已作为本地人机协同控制面板实现（`90_System/control_center/`，`python server.py` → http://127.0.0.1:8765 ，Python 标准库 http.server，无新增依赖）。审核、approve、reject、resolve、ignore 等人工决策通过 UI → API → service 调用现有 Knowledge OS 函数（`wiki_review.set_status` / `gaps.resolve_gap` / health check），**不复制 Wiki 状态逻辑、不直接修改 Markdown 或 Vector DB**。
 
 未来 Control Center 的定位是 **Knowledge OS 的人机协同控制面板**，不是另一个独立知识系统：
 
@@ -543,13 +551,14 @@ Knowledge OS（本文档：定义知识库如何工作）
 
 规划统一管理：Inbox、Review、Approve、Resolve、Conflict、Wiki 状态、AI Task、Workflow、错误、系统状态、架构健康度。实现时必须与本规范保持一致，不新增独立知识系统。
 
+阶段⑭ 已新增：`Weekly Review` 查看（打开实际 weekly-review.md，不复制内容）、`Project Status` 可视化、统一 `Activity Timeline`、`🔄 同步知识库`（POST /api/sync，复用 `update_index.py --changed`）、`📝 生成本周复盘`（POST /api/weekly_review/generate）、首页状态栏（Last Sync / Last Weekly Review / Next Weekly Review）。状态与快照不建独立数据库：last_sync 存 `90_System/rag/database/sync_state.json`（gitignored 派生数据），周报即 `40_Outputs/reviews/每周复盘/YYYY/WNN/`。
+
 ## 二十四、知识库结构地图（实际结构）
 
 ```text
 个人工程知识库/
-├── .agents/                     # AI Agent 与 Skill 定义
-│   ├── agents/                  # ingest / retrieval / review / wiki_compile
-│   └── skills/                  # knowledge-compiler / project-doc-maintainer / weekly-review
+├── .agents/                     # AI 工作流规范
+│   └── skills/                  # knowledge-compiler / project-doc-maintainer / weekly-review（当前工作流规范）
 ├── .obsidian/                   # Obsidian 配置（本地）
 ├── 00_Inbox/                    # 原始资料入口
 │   ├── AI聊天记录/ 临时笔记/ 图片截图/ 网页剪藏/ 行业情报/
@@ -559,20 +568,21 @@ Knowledge OS（本文档：定义知识库如何工作）
 ├── 30_Projects/                 # 项目文档
 │   ├── 无人机飞控/              # architecture/ modules/ interfaces/ decisions/ tasks/ problems/
 │   └── 移动底盘控制器/          # 同左 + 硬件选型/ 项目适配/
-├── 40_Outputs/                  # 学习总结/ 技术方案/ 项目报告/ 对外材料
-├── 50_Reviews/                  # 每周复盘/ 知识缺口/ 过期内容检查
+├── 40_Outputs/                  # 学习总结/ 技术方案/ 项目报告/ 对外材料 + reviews/（复盘与检查）
+│   └── reviews/                 # 每周复盘/（YYYY/WNN/weekly-review.md + snapshot.json） 知识缺口/ 过期内容检查
 ├── 90_System/                   # 系统运行
-│   ├── archive/ logs/ prompts/ schemas/ scripts/ templates/ 任务记录/
+│   ├── archive/                 # 归档（agents/ 早期 Agent 文档、stages/ 历史阶段报告，仅历史追溯）
+│   ├── prompts/                 # 任务类提示词（Knowledge Compiler / 复盘 / 项目检查）
+│   ├── scripts/ templates/ 任务记录/
 │   ├── KNOWLEDGE_OS.md          # 本文档（系统级唯一入口）
 │   ├── control_center/          # 人机协同管理 UI/API（阶段⑦）
-│   ├── agent/                   # Agent 只读知识查询接口 + MCP Server（阶段⑪-A/B）
-│   └── rag/                     # RAG + LLM-Wiki 引擎
-│       ├── rag_engine/ llm/ scripts/ tests/
+│   └── rag/                     # RAG + LLM-Wiki 引擎（ingestion / indexing / retrieval / interface / prompts / tests）
+│       ├── interface/           # Agent 只读知识查询接口 + MCP Server（knowledge_service / mcp_server / knowledge_cli）
+│       ├── rag_engine/ llm/ scripts/（含 review/ 周报系统） prompts/ tests/
 │       └── database/ cache/     # 派生数据，gitignored
 ├── 00_Inbox/待处理文件/个人笔记/  # 个人学习原始笔记（.note.pdf 为主，用户 2026-08-10 移入，归属待确认）
-├── AGENTS.md / README.md / HOME.md / CHANGELOG.md / interfaces.md / .gitignore
+├── AGENTS.md / README.md / HOME.md / CHANGELOG.md / .gitignore
 ```
-
 ## 二十五、文件重要性等级
 
 | 等级 | 说明 | 示例 | 修改要求 |
@@ -591,7 +601,7 @@ Knowledge OS（本文档：定义知识库如何工作）
 - 权限一致性：AI 权限与实际 Workflow（AGENTS.md / RAG AGENTS.md / Skill）对比；
 - Wiki 一致性：frontmatter 状态是否符合 draft → reviewed → stable；
 - RAG 一致性：Source → Chunk → Embedding → `main_vector_db`（活动索引）链路是否按脚本运行；`raw_vector_db` / `wiki_vector_db` 为空属正常（可选路径未启用）。
-- Control Center 一致性：当前未实现（Status: PLANNED），待实现后按第二十三章验证。
+- Control Center 一致性：阶段⑦ MVP + 阶段⑭（Weekly Review / Project Status / Activity / Sync / Generate）已实现，按第二十三章验证。
 
 ## 二十七、Knowledge OS 自维护规则
 

@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 RAG_DIR = Path(__file__).resolve().parents[1]
-AGENT_DIR = RAG_DIR.parent / "agent"
+AGENT_DIR = RAG_DIR / "interface"
 sys.path.insert(0, str(RAG_DIR))
 sys.path.insert(0, str(AGENT_DIR))
 

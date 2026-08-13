@@ -15,11 +15,11 @@ from pathlib import Path
 
 AGENT_DIR = Path(__file__).resolve().parent
 # Vault 根目录：优先环境变量 KNOWLEDGE_OS_VAULT（供 MCP/外部调用覆盖），
-# 否则按本文件位置反推（<vault>/90_System/agent/）。绝不依赖当前工作目录。
+# 否则按本文件位置反推（<vault>/90_System/rag/interface/）。绝不依赖当前工作目录。
+RAG_DIR = AGENT_DIR.parent
 VAULT_ROOT = Path(
-    os.environ.get("KNOWLEDGE_OS_VAULT", str(AGENT_DIR.parent.parent))
+    os.environ.get("KNOWLEDGE_OS_VAULT", str(RAG_DIR.parent.parent))
 ).resolve()
-RAG_DIR = VAULT_ROOT / "90_System" / "rag"
 if str(RAG_DIR) not in sys.path:
     sys.path.insert(0, str(RAG_DIR))
 

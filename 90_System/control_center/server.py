@@ -59,6 +59,12 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = unquote(parsed.path)
         try:
+            if path == "/api/sync":
+                self._send(200, service.sync_kb())
+                return
+            if path == "/api/weekly_review/generate":
+                self._send(200, service.generate_weekly_review())
+                return
             if path.startswith("/api/actions/"):
                 self._route_action(path)
                 return
@@ -77,8 +83,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, service.list_gaps())
         elif path == "/api/sources":
             self._send(200, service.list_sources())
+        elif path == "/api/weekly_review":
+            self._send(200, service.weekly_review_list())
+        elif path == "/api/project_status":
+            self._send(200, service.project_status())
+        elif path == "/api/status":
+            self._send(200, service.cc_status())
         elif path == "/api/activity":
-            self._send(200, service._activity_records()[::-1])
+            self._send(200, service.activity_timeline())
         elif path == "/api/health":
             self._send(200, service.health())
         elif path.startswith("/api/actions/"):

@@ -24,8 +24,8 @@ function Add-Result([string]$Level, [string]$Message) {
 }
 
 # ---------- 规范清单（与 KNOWLEDGE_OS.md 同步） ----------
-$ExpectedTopDirs = @('00_Inbox','10_Sources','20_Wiki','30_Projects','40_Outputs','50_Reviews','90_System','.agents','.claudian','.obsidian','.git')
-$ExpectedRootFiles = @('AGENTS.md','README.md','HOME.md','CHANGELOG.md','interfaces.md','.gitignore')
+$ExpectedTopDirs = @('00_Inbox','10_Sources','20_Wiki','30_Projects','40_Outputs','90_System','.agents','.claudian','.obsidian','.git')
+$ExpectedRootFiles = @('AGENTS.md','README.md','HOME.md','CHANGELOG.md','.gitignore')
 $ExpectedSystemFiles = @(
     '90_System/KNOWLEDGE_OS.md',
     '90_System/rag/README.md',
@@ -42,10 +42,12 @@ $ExpectedSystemFiles = @(
     '90_System/rag/scripts/wiki_health_check.py',
     '90_System/scripts/update_changelog.ps1',
     '90_System/scripts/knowledge_os_check.ps1',
-    '.agents/agents/ingest_agent.md',
-    '.agents/agents/retrieval_agent.md',
-    '.agents/agents/review_agent.md',
-    '.agents/agents/wiki_compile_agent.md'
+    '90_System/rag/interface/knowledge_service.py',
+    '90_System/rag/interface/mcp_server.py'
+
+
+
+
 )
 
 Write-Host '===== Knowledge OS 架构漂移检测 ====='
@@ -61,10 +63,10 @@ $ExpectedSecondDirs = @(
     '30_Projects/移动底盘控制器/architecture','30_Projects/移动底盘控制器/modules','30_Projects/移动底盘控制器/interfaces','30_Projects/移动底盘控制器/decisions','30_Projects/移动底盘控制器/tasks','30_Projects/移动底盘控制器/problems',
     '30_Projects/移动底盘控制器/硬件选型','30_Projects/移动底盘控制器/项目适配',
     '40_Outputs/学习总结','40_Outputs/技术方案','40_Outputs/项目报告','40_Outputs/对外材料',
-    '50_Reviews/每周复盘','50_Reviews/知识缺口','50_Reviews/过期内容检查',
-    '90_System/archive','90_System/logs','90_System/prompts','90_System/schemas','90_System/scripts','90_System/templates','90_System/任务记录','90_System/rag',
-    '90_System/rag/rag_engine','90_System/rag/llm','90_System/rag/scripts','90_System/rag/tests','90_System/rag/database','90_System/rag/cache',
-    '.agents/agents','.agents/skills'
+    '40_Outputs/reviews/每周复盘','40_Outputs/reviews/知识缺口','40_Outputs/reviews/过期内容检查',
+    '90_System/archive','90_System/archive/agents','90_System/archive/stages','90_System/prompts','90_System/scripts','90_System/templates','90_System/任务记录','90_System/rag',
+    '90_System/rag/rag_engine','90_System/rag/llm','90_System/rag/scripts','90_System/rag/tests','90_System/rag/prompts','90_System/rag/interface','90_System/rag/database','90_System/rag/cache',
+    '.agents/skills'
 )
 
 # ---------- 1. 一级目录 ----------
@@ -109,14 +111,7 @@ foreach ($d in $ExpectedSecondDirs) {
     }
 }
 
-# ---------- 4. 空占位文件 ----------
-$interfaces = Join-Path $VaultRoot 'interfaces.md'
-if (Test-Path -LiteralPath $interfaces) {
-    $len = (Get-Item -LiteralPath $interfaces).Length
-    if ($len -le 3) { Add-Result 'WARNING' 'interfaces.md 为空（已知占位，待补充）' }
-}
-
-# ---------- 5. Inbox 待处理 ----------
+# ---------- 4. Inbox 待处理 ----------
 $inboxFiles = Get-ChildItem -LiteralPath (Join-Path $VaultRoot '00_Inbox') -Recurse -File |
     Where-Object { $_.Name -ne '.gitkeep' }
 if ($inboxFiles.Count -gt 0) {

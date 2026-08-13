@@ -6,10 +6,21 @@
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Microsoft YaHei", system-ui, sans-serif; background: #f4f6f8; color: #222; }
-  header { background: #1f2937; color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+  header { background: #1f2937; color: #fff; padding: 12px 20px; }
+  header .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   header h1 { font-size: 18px; margin: 0; }
   header .sub { color: #9ca3af; font-size: 12px; }
-  .layout { display: flex; min-height: calc(100vh - 52px); }
+  .statusbar { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; font-size: 12px; color: #d1d5db; }
+  .statusbar b { color: #fbbf24; font-weight: 600; }
+  .btn { border: 1px solid #cbd5e1; background: #fff; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-right: 6px; }
+  .btn:hover { background: #f3f4f6; }
+  .btn.sync { border-color: #2563eb; color: #1d4ed8; }
+  .btn.review { border-color: #7c3aed; color: #6d28d9; }
+  .btn.approve { border-color: #16a34a; color: #15803d; }
+  .btn.reject { border-color: #dc2626; color: #b91c1c; }
+  .btn.resolve { border-color: #2563eb; color: #1d4ed8; }
+  .btn.ignore { border-color: #6b7280; color: #4b5563; }
+  .layout { display: flex; min-height: calc(100vh - 110px); }
   nav { width: 170px; background: #fff; border-right: 1px solid #e5e7eb; padding: 12px 0; }
   nav button { display: block; width: 100%; border: none; background: none; text-align: left; padding: 10px 18px; font-size: 14px; cursor: pointer; color: #374151; }
   nav button:hover { background: #f3f4f6; }
@@ -28,24 +39,32 @@
   .b-stable { background: #d1fae5; color: #065f46; }
   .b-pending { background: #fee2e2; color: #991b1b; }
   .b-resolved { background: #d1fae5; color: #065f46; }
-  .btn { border: 1px solid #cbd5e1; background: #fff; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-right: 6px; }
-  .btn:hover { background: #f3f4f6; }
-  .btn.approve { border-color: #16a34a; color: #15803d; }
-  .btn.reject { border-color: #dc2626; color: #b91c1c; }
-  .btn.resolve { border-color: #2563eb; color: #1d4ed8; }
-  .btn.ignore { border-color: #6b7280; color: #4b5563; }
+  .b-planning { background: #e0e7ff; color: #3730a3; }
+  .b-active { background: #d1fae5; color: #065f46; }
+  .b-blocked { background: #fee2e2; color: #991b1b; }
+  .b-ok { background: #d1fae5; color: #065f46; }
+  .b-warning { background: #fef3c7; color: #92400e; }
+  .b-error { background: #fee2e2; color: #991b1b; }
   .msg { padding: 6px 10px; border-radius: 6px; margin: 6px 0; font-size: 13px; }
   .msg.ok { background: #dcfce7; color: #166534; }
   .msg.err { background: #fee2e2; color: #991b1b; }
   pre { white-space: pre-wrap; background: #111827; color: #e5e7eb; padding: 10px; border-radius: 6px; font-size: 12px; max-height: 300px; overflow: auto; }
   details { margin: 6px 0; }
   summary { cursor: pointer; font-weight: 600; }
+  a { color: #1d4ed8; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Knowledge OS Control Center</h1>
-  <span class="sub">Human-in-the-Loop 管理 · 本地 localhost</span>
+  <div class="row">
+    <h1>Knowledge OS Control Center</h1>
+    <span class="sub">Human-in-the-Loop 管理 · 本地 localhost</span>
+    <span style="flex:1"></span>
+    <button class="btn sync" onclick="syncNow()">🔄 同步知识库</button>
+    <button class="btn review" onclick="generateReview()">📝 生成本周复盘</button>
+  </div>
+  <div class="statusbar" id="statusbar">加载状态中…</div>
+  <div id="flash" style="margin-top:6px"></div>
 </header>
 <div class="layout">
   <nav>
@@ -54,14 +73,16 @@
     <button data-view="wikis">Wiki Review</button>
     <button data-view="gaps">知识缺口</button>
     <button data-view="sources">Source</button>
-    <button data-view="activity">操作记录</button>
+    <button data-view="activity">Activity</button>
+    <button data-view="weekly_review">每周复盘</button>
+    <button data-view="projects">项目状态</button>
     <button data-view="health">系统健康</button>
   </nav>
   <main id="main"></main>
 </div>
 <script>
 const $main = document.getElementById('main');
-const views = ['dashboard','todo','wikis','gaps','sources','activity','health'];
+const views = ['dashboard','todo','wikis','gaps','sources','activity','weekly_review','projects','health'];
 document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => {
   views.forEach(v => document.querySelector('nav button[data-view="'+v+'"]').classList.remove('active'));
   b.classList.add('active'); render(b.dataset.view);
@@ -70,30 +91,81 @@ async function api(path, opts) { const r = await fetch(path, opts); return r.jso
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function badge(s) { return '<span class="badge b-'+esc(s)+'">'+esc(s)+'</span>'; }
 function msg(ok, text) { return '<div class="msg '+(ok?'ok':'err')+'">'+esc(text)+'</div>'; }
+function flash(ok, text) { document.getElementById('flash').innerHTML = msg(ok, text); }
 async function postAction(actionId, decision) {
   const r = await api('/api/actions/'+encodeURIComponent(actionId)+'/'+decision, {
     method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({actor:'user'})
   });
-  if (window._flash) window._flash(r.ok, r.message || (r.ok ? '成功' : '失败'));
+  flash(r.ok, r.message || (r.ok ? '成功' : '失败'));
   return r;
 }
 function actionButtons(a) {
   const map = {approve:'批准', reject:'拒绝', resolve:'解决', ignore:'忽略', reprocess:'重新处理'};
   return a.available_actions.map(d => '<button class="btn '+d+'" onclick="postAction(\''+esc(a.id)+'\',\''+d+'\')">'+(map[d]||d)+'</button>').join('');
 }
+async function loadStatus() {
+  try {
+    const s = await api('/api/status');
+    const fmt = (v) => v ? esc(v) : 'N/A';
+    document.getElementById('statusbar').innerHTML =
+      '<span>Last Sync：<b>'+fmt(s.last_sync)+'</b></span>' +
+      '<span>Last Weekly Review：<b>'+fmt(s.last_review)+'</b></span>' +
+      '<span>Next Weekly Review：<b>'+fmt(s.next_review)+'</b></span>';
+  } catch (e) {
+    document.getElementById('statusbar').innerHTML = '<span>状态加载失败：'+esc(String(e))+'</span>';
+  }
+}
+async function syncNow() {
+  flash(true, '同步中…');
+  try {
+    const r = await api('/api/sync', {method:'POST'});
+    if (r.success) {
+      flash(true, '同步完成：新增 '+r.added+' / 修改 '+r.modified+' / 删除 '+r.deleted+' / 索引 '+r.indexed+'，最后同步 '+r.last_sync);
+    } else {
+      flash(false, '同步失败：' + (r.error || r.message || '未知错误'));
+    }
+    await loadStatus(); render('dashboard');
+  } catch (e) {
+    flash(false, '同步请求失败：'+esc(String(e)));
+  }
+}
+async function generateReview() {
+  flash(true, '正在生成本周复盘…');
+  try {
+    const r = await api('/api/weekly_review/generate', {method:'POST'});
+    if (r.success) {
+      flash(true, '已生成：' + (r.message || 'ok'));
+    } else {
+      flash(false, '生成失败：' + (r.error || r.message || '未知错误'));
+    }
+    await loadStatus(); render('dashboard');
+  } catch (e) {
+    flash(false, '生成请求失败：'+esc(String(e)));
+  }
+}
+function reportLink(rel) {
+  if (!rel) return '—';
+  const abs = '/D:/KnowledgeBase/Obsidian%20Vault/' + rel.split('/').map(encodeURIComponent).join('/');
+  const uri = 'obsidian://open?path=' + encodeURIComponent('D:/KnowledgeBase/Obsidian Vault/' + rel);
+  return '<a href="'+uri+'" target="_blank">打开 ' + esc(rel) + '</a>';
+}
 async function render(view) {
   if (view === 'dashboard') {
     const d = await api('/api/dashboard');
     const st = d.wiki_status || {};
-    $main.innerHTML = '<h2>仪表盘</h2><div class="cards">' +
-      '<div class="card"><div class="num">'+d.wiki_total+'</div><div class="label">Wiki 总数</div></div>' +
-      '<div class="card"><div class="num">'+(st.draft||0)+'</div><div class="label">draft（待审核）</div></div>' +
-      '<div class="card"><div class="num">'+(st.reviewed||0)+'</div><div class="label">reviewed</div></div>' +
-      '<div class="card"><div class="num">'+(st.stable||0)+'</div><div class="label">stable</div></div>' +
-      '<div class="card"><div class="num">'+d.gaps_pending+'</div><div class="label">Gap pending</div></div>' +
-      '<div class="card"><div class="num">'+d.actions_pending+'</div><div class="label">AI 待办</div></div>' +
-      '<div class="card"><div class="num">'+d.inbox_files+'</div><div class="label">Inbox 待处理文件</div></div>' +
-      '</div><h3>最近活动</h3>'+activityTable(d.recent_activity);
+    const cards = ['wiki_total:知识总量','wiki_draft:待审核 Wiki','wiki_reviewed:已审核','wiki_stable:稳定'];
+    let html = '<div class="cards">' + cards.map(([k,l]) => '<div class="card"><div class="num">'+esc(d[k] ?? st[k] ?? '—')+'</div><div class="label">'+l+'</div></div>').join('') +
+      '<div class="card"><div class="num">'+esc(d.gaps_pending)+'</div><div class="label">待处理知识缺口</div></div>' +
+      '<div class="card"><div class="num">'+esc(d.inbox_files)+'</div><div class="label">Inbox 待处理</div></div></div>';
+    const wr = await api('/api/weekly_review');
+    if (wr.latest) {
+      const L = wr.latest;
+      html += '<h3>最新每周复盘：'+esc(L.period)+'</h3><div class="card" style="margin-bottom:16px">' +
+        '<div>生成时间：'+esc(L.generated_at || '—')+'　健康：'+badge(L.health_status||'—')+'　缺口：'+esc(L.knowledge_gaps_pending ?? '—')+'　Stale：'+esc(L.stale_count ?? '—')+'</div>' +
+        '<div style="margin-top:6px">'+reportLink(L.report_path)+'</div></div>';
+    }
+    html += '<h3>最近活动</h3>' + activityTable(d.recent_activity);
+    $main.innerHTML = html;
   } else if (view === 'todo') {
     const actions = await api('/api/actions');
     const pending = actions.filter(a => a.status === 'pending');
@@ -126,7 +198,30 @@ async function render(view) {
       srcs.map(s => '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.type)+'</td><td>'+s.size_kb+'</td><td>'+esc((s.linked_wikis||[]).join('；')||'—')+'</td><td>'+esc(s.processed)+'</td></tr>').join('') + '</table>';
   } else if (view === 'activity') {
     const acts = await api('/api/activity');
-    $main.innerHTML = '<h2>操作记录（'+acts.length+'）</h2>' + activityTable(acts);
+    $main.innerHTML = '<h2>Activity Timeline（'+acts.length+'）</h2>' + activityTable(acts);
+  } else if (view === 'weekly_review') {
+    const wr = await api('/api/weekly_review');
+    let html = '<h2>每周复盘</h2>';
+    if (!wr.latest) { html += '<p>暂无周报。点击右上角「📝 生成本周复盘」生成。</p>'; }
+    else {
+      const L = wr.latest;
+      html += '<h3>最新：'+esc(L.period)+'</h3><div class="card" style="margin-bottom:16px">' +
+        '<div>生成时间：'+esc(L.generated_at||'—')+'　Wiki：'+esc(L.wiki_total??'—')+'（draft '+esc(L.wiki_draft??'—')+' / reviewed '+esc(L.wiki_reviewed??'—')+' / stable '+esc(L.wiki_stable??'—')+'）</div>' +
+        '<div>缺口：'+esc(L.knowledge_gaps_pending??'—')+'　Stale：'+esc(L.stale_count??'—')+'　健康：'+badge(L.health_status||'—')+'</div>' +
+        '<div style="margin-top:6px">'+reportLink(L.report_path)+'</div></div>';
+    }
+    html += '<h3>历史周报</h3><table><tr><th>周期</th><th>生成时间</th><th>Wiki</th><th>缺口</th><th>健康</th><th>报告</th></tr>' +
+      (wr.history||[]).map(h => '<tr><td>'+esc(h.period)+'</td><td>'+esc(h.generated_at||'—')+'</td><td>'+esc(h.wiki_total??'—')+'</td><td>'+esc(h.knowledge_gaps_pending??'—')+'</td><td>'+badge(h.health_status||'—')+'</td><td>'+reportLink(h.report_path)+'</td></tr>').join('') + '</table>';
+    $main.innerHTML = html;
+  } else if (view === 'projects') {
+    const ps = await api('/api/project_status');
+    $main.innerHTML = '<h2>项目状态（'+ps.length+'）</h2>' +
+      ps.map(p => '<div class="card" style="margin-bottom:12px"><h3 style="margin:0 0 6px">'+esc(p.name)+'</h3>' +
+        '<div>status：'+badge(p.status||'N/A')+'　phase：'+esc(p.phase||'N/A')+'　updated：'+esc(p.updated||'N/A')+'</div>' +
+        '<div>progress：<b>'+(p.progress==null ? 'N/A（未提供结构化数据，禁止猜测）' : esc(p.progress)+'%')+'</b></div>' +
+        '<div>next_step：'+esc(p.next_step||'N/A')+'</div>' +
+        '<div>blockers：'+esc((p.blockers||[]).join('；')||'无')+'</div>' +
+        '<div style="color:#6b7280;font-size:12px">来源：'+esc(p.index_path)+'</div></div>').join('') || '<p>暂无项目。</p>';
   } else if (view === 'health') {
     const h = await api('/api/health');
     const col = (ok) => ok ? '#15803d' : '#b91c1c';
@@ -139,8 +234,8 @@ async function render(view) {
 }
 function activityTable(acts) {
   if (!acts || !acts.length) return '<p>暂无记录。</p>';
-  return '<table><tr><th>时间</th><th>类型</th><th>目标</th><th>执行者</th><th>AI建议</th><th>用户决定</th><th>结果</th></tr>' +
-    acts.map(a => '<tr><td>'+esc(a.time)+'</td><td>'+esc(a.type)+'</td><td>'+esc(a.target)+'</td><td>'+esc(a.actor)+'</td><td>'+esc(a.ai_recommendation)+'</td><td>'+esc(a.user_decision)+'</td><td>'+esc(a.result)+'</td></tr>').join('') + '</table>';
+  return '<table><tr><th>时间</th><th>类型</th><th>来源</th><th>对象</th><th>摘要</th></tr>' +
+    acts.map(a => '<tr><td>'+esc(a.timestamp)+'</td><td>'+esc(a.type)+'</td><td>'+esc(a.source)+'</td><td>'+esc(a.object)+'</td><td>'+esc(a.summary)+'</td></tr>').join('') + '</table>';
 }
 async function viewAction(actionId) {
   const a = await api('/api/actions/'+encodeURIComponent(actionId));
@@ -153,7 +248,6 @@ async function viewAction(actionId) {
     '<details><summary>相关 Source</summary><pre>'+esc((a.evidence ? a.evidence.related_sources : []).join('\n'))+'</pre></details>' +
     '<div style="margin:8px 0">'+actionButtons(a)+'</div>';
   $main.innerHTML = html + '<div id="flash"></div>';
-  window._flash = (ok, text) => { document.getElementById('flash').innerHTML = msg(ok, text); };
 }
 function updSel() { document.getElementById('selcount').textContent = document.querySelectorAll('.wsel:checked').length; }
 async function batchApprove() {
@@ -161,9 +255,10 @@ async function batchApprove() {
   if (!ids.length) { alert('未选择任何 Wiki'); return; }
   if (!confirm('确认批准选中的 ' + ids.length + ' 项（draft -> reviewed）？')) return;
   const r = await api('/api/actions/batch/approve', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ids:ids, confirm:true, actor:'user'})});
-  alert(r.message || (r.ok ? '完成' : '失败'));
+  flash(r.ok, r.message || (r.ok ? '完成' : '失败'));
   render('wikis');
 }
+loadStatus();
 render('dashboard');
 </script>
 </body>

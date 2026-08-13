@@ -10,7 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-AGENT_DIR = Path(__file__).resolve().parents[1].parent / "agent"
+AGENT_DIR = Path(__file__).resolve().parents[1] / "interface"
 sys.path.insert(0, str(AGENT_DIR))
 
 import mcp_server

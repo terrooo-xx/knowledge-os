@@ -1,4 +1,7 @@
-"""CLI: ingest source files into raw, wiki or main vector store."""
+"""CLI: ingest source files into raw or wiki vector store (optional paths).
+
+main_vector_db is maintained by update_index.py (the standard entry).
+"""
 from __future__ import annotations
 
 import argparse
@@ -23,13 +26,7 @@ def _target_paths(cfg: dict, target: str):
         return [Path(paths["inbox"])], Path(paths["inbox"]), paths["raw_vector_db"]
     if target == "wiki":
         return [Path(paths["wiki"])], Path(paths["wiki"]), paths["wiki_vector_db"]
-    if target == "main":
-        return (
-            [Path(paths["wiki"]), Path(paths["projects"])],
-            Path(VAULT_ROOT),
-            paths["main_vector_db"],
-        )
-    raise ValueError(f"unsupported target: {target}")
+    raise ValueError(f"unsupported target: {target} (main is owned by update_index.py)")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -37,11 +34,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--config", default=str(RAG_DIR / "config.yaml"))
     parser.add_argument(
         "--target",
-        choices=["raw", "wiki", "main"],
-        default="main",
+        choices=["raw", "wiki"],
+        default="raw",
         help=(
-            "default main indexes 20_Wiki + 30_Projects into main_vector_db "
-            "(production index); raw/wiki are optional explicit targets"
+            "raw indexes 00_Inbox into raw_vector_db; wiki indexes 20_Wiki into "
+            "wiki_vector_db. main_vector_db is maintained by update_index.py."
         ),
     )
     parser.add_argument("--file", action="append", help="specific file; repeatable")

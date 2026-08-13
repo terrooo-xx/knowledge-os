@@ -1,6 +1,7 @@
 """CLI contract regression tests for the Phase 3 Scheme A architecture.
 
-Guards: ingest_rag default target = main; raw/wiki targets remain valid;
+Guards: ingest_rag default target = raw and main is NOT a valid target
+(main_vector_db is owned by update_index.py); raw/wiki targets remain valid;
 hybrid_query default store = main and --compile-wiki is gone; wiki_compile.py
 is the single formal Wiki compilation entry.
 """
@@ -30,9 +31,20 @@ def _option_strings(parser) -> set:
     return opts
 
 
-def test_ingest_rag_default_target_is_main():
+def test_ingest_rag_default_target_is_raw():
     mod = _load("ingest_rag.py")
-    assert mod.build_parser().parse_args([]).target == "main"
+    assert mod.build_parser().parse_args([]).target == "raw"
+
+
+def test_ingest_rag_main_target_removed():
+    mod = _load("ingest_rag.py")
+    assert "--target" in _option_strings(mod.build_parser())
+    # main_vector_db is owned by update_index.py; ingest_rag must not offer it.
+    try:
+        mod.build_parser().parse_args(["--target", "main"])
+    except SystemExit:
+        return
+    raise AssertionError("ingest_rag --target main should be rejected")
 
 
 def test_ingest_rag_raw_and_wiki_targets_still_valid():
@@ -64,7 +76,8 @@ def test_wiki_compile_is_formal_entry():
 
 if __name__ == "__main__":
     for t in (
-        test_ingest_rag_default_target_is_main,
+        test_ingest_rag_default_target_is_raw,
+        test_ingest_rag_main_target_removed,
         test_ingest_rag_raw_and_wiki_targets_still_valid,
         test_hybrid_query_default_store_is_main,
         test_hybrid_query_compile_wiki_removed,

@@ -19,7 +19,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 CTRL_DIR = Path(__file__).resolve().parent
@@ -33,6 +33,14 @@ from rag_engine.gaps import load_gaps, resolve_gap as _resolve_gap
 from rag_engine.wiki import _slug  # noqa: F401 (re-exported for UI use)
 from rag_engine.wiki_review import set_status
 from rag_engine.wiki import read_frontmatter
+
+REVIEW_DIR = RAG_DIR / "scripts" / "review"
+if str(REVIEW_DIR) not in sys.path:
+    sys.path.insert(0, str(REVIEW_DIR))
+import metrics as review_metrics  # noqa: E402
+
+REVIEW_ROOT = VAULT_ROOT / "40_Outputs" / "reviews" / "每周复盘"
+SYNC_STATE = RAG_DIR / "database" / "sync_state.json"
 
 ACTIVITY_LOG = CTRL_DIR / "activity_log.jsonl"
 
@@ -249,7 +257,7 @@ def execute_action(action_id: str, decision: str, actor: str = "user") -> dict:
 def _run_py(script_rel: str, extra: list[str] | None = None) -> tuple[int, str]:
     cmd = [sys.executable, str(RAG_DIR / script_rel)] + (extra or [])
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=180)
+        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=180)
         return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
     except Exception as exc:
         return -1, str(exc)
@@ -275,7 +283,7 @@ def health() -> dict:
     try:
         proc = subprocess.run(
             ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(ps1)],
-            capture_output=True, text=True, encoding="utf-8", timeout=120,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120,
         )
         summary = ""
         for line in (proc.stdout or "").splitlines():
@@ -306,5 +314,180 @@ def dashboard() -> dict:
             t: sum(1 for a in actions if a["type"] == t) for t in ("wiki_review", "knowledge_gap")
         },
         "inbox_files": len(inbox),
-        "recent_activity": _activity_records()[-10:][::-1],
+        "recent_activity": activity_timeline(limit=10),
     }
+
+
+# ---------------------------------------------------------------- weekly review
+
+def _iter_reviews():
+    if not REVIEW_ROOT.exists():
+        return
+    for year_dir in sorted(REVIEW_ROOT.iterdir()):
+        if not year_dir.is_dir() or not re.match(r"^\d{4}$", year_dir.name):
+            continue
+        for week_dir in sorted(year_dir.iterdir()):
+            if not week_dir.is_dir() or not re.match(r"^W\d{1,2}$", week_dir.name):
+                continue
+            snap = {}
+            snap_path = week_dir / "snapshot.json"
+            if snap_path.exists():
+                try:
+                    snap = json.loads(snap_path.read_text(encoding="utf-8"))
+                except Exception:
+                    snap = {}
+            md = week_dir / "weekly-review.md"
+            yield {
+                "period": snap.get("period") or f"{year_dir.name}-{week_dir.name}",
+                "year": year_dir.name,
+                "week": week_dir.name,
+                "report_path": md.relative_to(VAULT_ROOT).as_posix() if md.exists() else None,
+                "snapshot_path": snap_path.relative_to(VAULT_ROOT).as_posix() if snap_path.exists() else None,
+                "generated_at": snap.get("generated_at"),
+                "wiki_total": snap.get("wiki_total"),
+                "wiki_draft": snap.get("wiki_draft"),
+                "wiki_reviewed": snap.get("wiki_reviewed"),
+                "wiki_stable": snap.get("wiki_stable"),
+                "knowledge_gaps_pending": snap.get("knowledge_gaps_pending"),
+                "stale_count": len(snap.get("stale_items", [])),
+                "health_status": (snap.get("health") or {}).get("status"),
+            }
+
+
+def weekly_review_list() -> dict:
+    reviews = list(_iter_reviews())
+    reviews.sort(key=lambda r: (r["year"], int(re.findall(r"\d+", r["week"] or "")[0]) if re.findall(r"\d+", r["week"] or "") else 0), reverse=True)
+    return {"latest": reviews[0] if reviews else None, "history": reviews}
+
+
+def project_status() -> list:
+    return review_metrics.collect_project_status(VAULT_ROOT)
+
+
+def activity_timeline(limit: int = 50) -> list:
+    return review_metrics.collect_activity(VAULT_ROOT, limit=limit)
+
+
+def _next_review_time() -> str | None:
+    cfg = load_config(str(RAG_DIR / "config.yaml"))
+    wr = cfg.get("weekly_review") or {}
+    if not wr.get("enabled", True):
+        return None
+    weekday_map = {
+        "monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
+        "friday": 4, "saturday": 5, "sunday": 6,
+    }
+    wd = weekday_map.get(str(wr.get("weekday", "friday")).lower())
+    if wd is None:
+        return None
+    t = str(wr.get("time", "18:00"))
+    try:
+        hh, mm = t.split(":")
+        target = datetime.now().replace(hour=int(hh), minute=int(mm), second=0, microsecond=0)
+    except Exception:
+        return None
+    days_ahead = (wd - target.weekday()) % 7
+    if days_ahead == 0 and target <= datetime.now():
+        days_ahead = 7
+    target += timedelta(days=days_ahead)
+    return target.strftime("%Y-%m-%d %H:%M")
+
+
+def cc_status() -> dict:
+    state = _load_sync_state()
+    latest = weekly_review_list().get("latest")
+    last_review = None
+    if latest:
+        last_review = latest.get("generated_at") or latest.get("period")
+    return {
+        "last_sync": state.get("last_sync"),
+        "last_sync_result": state.get("last_result"),
+        "last_review": last_review,
+        "next_review": _next_review_time(),
+    }
+
+
+def _load_sync_state() -> dict:
+    if not SYNC_STATE.exists():
+        return {}
+    try:
+        return json.loads(SYNC_STATE.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _save_sync_state(state: dict) -> None:
+    SYNC_STATE.parent.mkdir(parents=True, exist_ok=True)
+    SYNC_STATE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def sync_kb() -> dict:
+    """Scan vault -> incrementally update index -> recompute metrics -> activity."""
+    started = _now()
+    cfg = load_config(str(RAG_DIR / "config.yaml"))
+    resolved = resolve_paths(cfg, VAULT_ROOT)
+    manifest_path = Path(resolved["paths"]["main_vector_db"]).parent / "index_manifest.json"
+    before_keys = set()
+    if manifest_path.exists():
+        try:
+            before_keys = set(json.loads(manifest_path.read_text(encoding="utf-8")).keys())
+        except Exception:
+            before_keys = set()
+
+    try:
+        code, out = _run_py("scripts/update_index.py", ["--changed", "--target", "main"])
+    except Exception as exc:
+        code, out = -1, str(exc)
+
+    result = {
+        "success": code == 0,
+        "last_sync": _now(),
+        "added": 0,
+        "modified": 0,
+        "deleted": 0,
+        "indexed": None,
+    }
+    if code != 0:
+        result["error"] = (out or "").strip()[-500:]
+        _save_sync_state({"last_sync": result["last_sync"], "last_result": result})
+        _append_log({"action_id": "sync", "type": "sync", "target": "knowledge base", "actor": "user",
+                     "ai_recommendation": "sync", "user_decision": "sync", "result": "error",
+                     "message": "同步失败"})
+        return result
+
+    after_keys = set()
+    if manifest_path.exists():
+        try:
+            after_keys = set(json.loads(manifest_path.read_text(encoding="utf-8")).keys())
+        except Exception:
+            after_keys = set()
+    added = len(after_keys - before_keys)
+    changed = 0
+    deleted = 0
+    mchg = re.search(r"changed=(\d+)", out)
+    if mchg:
+        changed = int(mchg.group(1))
+    mdel = re.search(r"deleted=(\d+)", out)
+    if mdel:
+        deleted = int(mdel.group(1))
+    modified = max(0, changed - added)
+    result.update({"added": added, "modified": modified, "deleted": deleted,
+                   "indexed": max(0, changed)})
+    _save_sync_state({"last_sync": result["last_sync"], "last_result": result})
+    _append_log({"action_id": "sync", "type": "sync", "target": "knowledge base", "actor": "user",
+                 "ai_recommendation": "sync", "user_decision": "sync", "result": "success",
+                 "message": f"同步完成（新增 {added} / 修改 {modified} / 删除 {deleted}）"})
+    return result
+
+
+def generate_weekly_review() -> dict:
+    code, out = _run_py("scripts/review/weekly_review.py", ["--force"])
+    ok = code == 0
+    result = {"success": ok, "message": (out or "").strip()[-500:] or ("ok" if ok else "failed")}
+    if not ok:
+        result["error"] = (out or "").strip()[-500:]
+    _append_log({"action_id": "weekly_review", "type": "weekly_review", "target": "weekly review",
+                 "actor": "user", "ai_recommendation": "generate", "user_decision": "generate",
+                 "result": "success" if ok else "error",
+                 "message": "生成本周复盘" if ok else "生成失败"})
+    return result

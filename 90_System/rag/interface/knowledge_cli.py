@@ -1,7 +1,7 @@
 """CLI entry for the Agent Knowledge Interface (READ-ONLY).
 
 Usage:
-    python 90_System/agent/knowledge_cli.py "问题" [--no-llm] [--top-k N]
+    python 90_System/rag/interface/knowledge_cli.py "问题" [--no-llm] [--top-k N]
 """
 from __future__ import annotations
 

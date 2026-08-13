@@ -34,7 +34,7 @@ llm:
   api:
     base_url: https://api.deepseek.com
   temperature: 0.2
-  template: "90_System/prompts/rag_answer.md"
+  template: "90_System/rag/prompts/rag_answer.md"
 
 wiki:
   default_domain: "01_计算机基础"

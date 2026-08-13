@@ -1,166 +1,387 @@
 # 知识库变更记录
 
+## 2026-08-13
+
+### 新增
+- 90_System/rag/scripts/review/（5 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/scripts/review/__init__.py</li>
+  <li>90_System/rag/scripts/review/metrics.py</li>
+  <li>90_System/rag/scripts/review/register_task.ps1</li>
+  <li>90_System/rag/scripts/review/run_weekly_review.ps1</li>
+  <li>90_System/rag/scripts/review/weekly_review.py</li>
+  </ul>
+  </details>
+- 90_System/任务记录/Phase 2/Phase 2-阶段总结.md
+
+## 2026-08-12
+
+### 新增
+- 40_Outputs/reviews/每周复盘/2026/
+- 90_System/rag/scripts/review/
+- 90_System/任务记录/阶段13_架构去重与结构治理报告.md
+
+### 修改
+- AGENTS.md
+- HOME.md
+- README.md
+- .agents/skills/weekly-review/SKILL.md
+- 30_Projects/无人机飞控/00_项目索引.md
+- 30_Projects/移动底盘控制器/00_项目索引.md
+- 40_Outputs/reviews/每周复盘/.gitkeep
+- 40_Outputs/reviews/知识缺口/.gitkeep
+- 40_Outputs/reviews/过期内容检查/.gitkeep
+- 90_System/KNOWLEDGE_OS.md
+- 90_System/archive/agents/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/archive/agents/ingest_agent.md</li>
+  <li>90_System/archive/agents/retrieval_agent.md</li>
+  <li>90_System/archive/agents/review_agent.md</li>
+  <li>90_System/archive/agents/wiki_compile_agent.md</li>
+  </ul>
+  </details>
+- 90_System/archive/stages/（11 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/archive/stages/阶段06_PDF与Source转写与Fallback评估.md</li>
+  <li>90_System/archive/stages/阶段07_Knowledge_OS_Control_Center.md</li>
+  <li>90_System/archive/stages/阶段08_Knowledge_OS_稳定化与闭环验证.md</li>
+  <li>90_System/archive/stages/阶段09_Evidence_Intelligence与知识回答安全增强.md</li>
+  <li>90_System/archive/stages/阶段10.5_Control_Center启动体验优化.md</li>
+  <li>90_System/archive/stages/阶段10_Knowledge_OS_v1.0基线与生产运行验证.md</li>
+  <li>90_System/archive/stages/阶段11A_Agent知识接口.md</li>
+  <li>90_System/archive/stages/阶段11B_Codex_MCP集成.md</li>
+  <li>90_System/archive/stages/阶段12A_Knowledge_OS查询性能基准与瓶颈分析.md</li>
+  <li>90_System/archive/stages/阶段12B_Knowledge_OS查询性能优化.md</li>
+  <li>90_System/archive/stages/阶段12C_跨项目Codex集成与实际使用验证.md</li>
+  </ul>
+  </details>
+- 90_System/control_center/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/control_center/activity_log.jsonl</li>
+  <li>90_System/control_center/server.py</li>
+  <li>90_System/control_center/service.py</li>
+  </ul>
+  </details>
+- 90_System/control_center/static/index.html
+- 90_System/prompts/每周知识库复盘.md
+- 90_System/rag/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/AGENTS.md</li>
+  <li>90_System/rag/README.md</li>
+  <li>90_System/rag/config.yaml</li>
+  </ul>
+  </details>
+- 90_System/rag/interface/（6 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/interface/README.md</li>
+  <li>90_System/rag/interface/__init__.py</li>
+  <li>90_System/rag/interface/benchmark_query.py</li>
+  <li>90_System/rag/interface/knowledge_cli.py</li>
+  <li>90_System/rag/interface/knowledge_service.py</li>
+  <li>90_System/rag/interface/mcp_server.py</li>
+  </ul>
+  </details>
+- 90_System/rag/llm/prompt.py
+- 90_System/rag/prompts/rag_answer.md
+- 90_System/rag/scripts/ingest_rag.py
+- 90_System/rag/tests/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/config.local.yaml</li>
+  <li>90_System/rag/tests/test_agent_knowledge_service.py</li>
+  <li>90_System/rag/tests/test_cli_contract.py</li>
+  <li>90_System/rag/tests/test_mcp_server.py</li>
+  </ul>
+  </details>
+
+### 删除
+- interfaces.md
+- 90_System/logs/.gitkeep
+- 90_System/schemas/.gitkeep
+
 ## 2026-08-11
 
 ### 新增
-- .agents/agents/ingest_agent.md
-- .agents/agents/retrieval_agent.md
-- .agents/agents/review_agent.md
-- .agents/agents/wiki_compile_agent.md
-- 30_Projects/移动底盘控制器/硬件选型/STM32主控选型.md
-- 30_Projects/移动底盘控制器/硬件选型/工控机选型.md
-- 30_Projects/移动底盘控制器/项目适配/适配电机选型.md
-- 30_Projects/移动底盘控制器/项目适配/项目适配场景.md
-- 90_System/control_center/activity_log.jsonl
-- 90_System/control_center/server.py
-- 90_System/control_center/service.py
+- .agents/agents/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>.agents/agents/ingest_agent.md</li>
+  <li>.agents/agents/retrieval_agent.md</li>
+  <li>.agents/agents/review_agent.md</li>
+  <li>.agents/agents/wiki_compile_agent.md</li>
+  </ul>
+  </details>
+- 30_Projects/移动底盘控制器/硬件选型/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>30_Projects/移动底盘控制器/硬件选型/STM32主控选型.md</li>
+  <li>30_Projects/移动底盘控制器/硬件选型/工控机选型.md</li>
+  </ul>
+  </details>
+- 30_Projects/移动底盘控制器/项目适配/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>30_Projects/移动底盘控制器/项目适配/适配电机选型.md</li>
+  <li>30_Projects/移动底盘控制器/项目适配/项目适配场景.md</li>
+  </ul>
+  </details>
+- 90_System/control_center/（8 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/control_center/activity_log.jsonl</li>
+  <li>90_System/control_center/server.py</li>
+  <li>90_System/control_center/service.py</li>
+  <li>90_System/control_center/create_desktop_shortcut.bat</li>
+  <li>90_System/control_center/start_control_center.bat</li>
+  <li>90_System/control_center/launch_test.cmd</li>
+  <li>90_System/control_center/launcher_test.log</li>
+  <li>90_System/control_center/test2.log</li>
+  </ul>
+  </details>
 - 90_System/control_center/static/index.html
-- 90_System/rag/AGENTS.md
-- 90_System/rag/README.md
-- 90_System/rag/config.yaml
-- 90_System/rag/llm/__init__.py
-- 90_System/rag/llm/base_adapter.py
-- 90_System/rag/llm/context.py
-- 90_System/rag/llm/deepseek_adapter.py
-- 90_System/rag/llm/mock_adapter.py
-- 90_System/rag/llm/ollama_adapter.py
-- 90_System/rag/llm/openai_adapter.py
-- 90_System/rag/llm/prompt.py
+- 90_System/rag/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/AGENTS.md</li>
+  <li>90_System/rag/README.md</li>
+  <li>90_System/rag/config.yaml</li>
+  <li>90_System/rag/requirements.txt</li>
+  </ul>
+  </details>
+- 90_System/rag/llm/（8 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/llm/__init__.py</li>
+  <li>90_System/rag/llm/base_adapter.py</li>
+  <li>90_System/rag/llm/context.py</li>
+  <li>90_System/rag/llm/deepseek_adapter.py</li>
+  <li>90_System/rag/llm/mock_adapter.py</li>
+  <li>90_System/rag/llm/ollama_adapter.py</li>
+  <li>90_System/rag/llm/openai_adapter.py</li>
+  <li>90_System/rag/llm/prompt.py</li>
+  </ul>
+  </details>
 - 90_System/rag/prompts/relevance_judge.md
-- 90_System/rag/rag_engine/__init__.py
-- 90_System/rag/rag_engine/atomic_io.py
-- 90_System/rag/rag_engine/bm25.py
-- 90_System/rag/rag_engine/config.py
-- 90_System/rag/rag_engine/embeddings.py
-- 90_System/rag/rag_engine/evidence.py
-- 90_System/rag/rag_engine/gaps.py
-- 90_System/rag/rag_engine/inbox_classifier.py
-- 90_System/rag/rag_engine/indexing.py
-- 90_System/rag/rag_engine/ingest.py
-- 90_System/rag/rag_engine/judge.py
-- 90_System/rag/rag_engine/llm.py
-- 90_System/rag/rag_engine/rerank.py
-- 90_System/rag/rag_engine/retrieval.py
-- 90_System/rag/rag_engine/vector_store.py
-- 90_System/rag/rag_engine/wiki.py
-- 90_System/rag/rag_engine/wiki_compiler.py
-- 90_System/rag/rag_engine/wiki_review.py
-- 90_System/rag/requirements.txt
-- 90_System/rag/scripts/hybrid_query.py
-- 90_System/rag/scripts/inbox_processor.py
-- 90_System/rag/scripts/ingest_rag.py
-- 90_System/rag/scripts/rag_health_check.py
-- 90_System/rag/scripts/reranker.py
-- 90_System/rag/scripts/update_index.py
-- 90_System/rag/scripts/wiki_compile.py
-- 90_System/rag/scripts/wiki_health_check.py
-- 90_System/rag/scripts/wiki_review.py
-- 90_System/rag/tests/config.local.yaml
+- 90_System/rag/rag_engine/（18 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/rag_engine/__init__.py</li>
+  <li>90_System/rag/rag_engine/atomic_io.py</li>
+  <li>90_System/rag/rag_engine/bm25.py</li>
+  <li>90_System/rag/rag_engine/config.py</li>
+  <li>90_System/rag/rag_engine/embeddings.py</li>
+  <li>90_System/rag/rag_engine/evidence.py</li>
+  <li>90_System/rag/rag_engine/gaps.py</li>
+  <li>90_System/rag/rag_engine/inbox_classifier.py</li>
+  <li>90_System/rag/rag_engine/indexing.py</li>
+  <li>90_System/rag/rag_engine/ingest.py</li>
+  <li>90_System/rag/rag_engine/judge.py</li>
+  <li>90_System/rag/rag_engine/llm.py</li>
+  <li>90_System/rag/rag_engine/rerank.py</li>
+  <li>90_System/rag/rag_engine/retrieval.py</li>
+  <li>90_System/rag/rag_engine/vector_store.py</li>
+  <li>90_System/rag/rag_engine/wiki.py</li>
+  <li>90_System/rag/rag_engine/wiki_compiler.py</li>
+  <li>90_System/rag/rag_engine/wiki_review.py</li>
+  </ul>
+  </details>
+- 90_System/rag/scripts/（9 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/scripts/hybrid_query.py</li>
+  <li>90_System/rag/scripts/inbox_processor.py</li>
+  <li>90_System/rag/scripts/ingest_rag.py</li>
+  <li>90_System/rag/scripts/rag_health_check.py</li>
+  <li>90_System/rag/scripts/reranker.py</li>
+  <li>90_System/rag/scripts/update_index.py</li>
+  <li>90_System/rag/scripts/wiki_compile.py</li>
+  <li>90_System/rag/scripts/wiki_health_check.py</li>
+  <li>90_System/rag/scripts/wiki_review.py</li>
+  </ul>
+  </details>
+- 90_System/rag/tests/（21 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/config.local.yaml</li>
+  <li>90_System/rag/tests/knowledge_gaps.yaml</li>
+  <li>90_System/rag/tests/test_atomic_write.py</li>
+  <li>90_System/rag/tests/test_cli_contract.py</li>
+  <li>90_System/rag/tests/test_control_center.py</li>
+  <li>90_System/rag/tests/test_evidence_gaps.py</li>
+  <li>90_System/rag/tests/test_full_chain.py</li>
+  <li>90_System/rag/tests/test_inbox_processor.py</li>
+  <li>90_System/rag/tests/test_incremental_rag.py</li>
+  <li>90_System/rag/tests/test_judge.py</li>
+  <li>90_System/rag/tests/test_llm.py</li>
+  <li>90_System/rag/tests/test_main_query.py</li>
+  <li>90_System/rag/tests/test_paths.py</li>
+  <li>90_System/rag/tests/test_rag_health.py</li>
+  <li>90_System/rag/tests/test_review.py</li>
+  <li>90_System/rag/tests/test_smoke.py</li>
+  <li>90_System/rag/tests/test_wiki_compiler.py</li>
+  <li>90_System/rag/tests/test_wiki_health.py</li>
+  <li>90_System/rag/tests/test_agent_knowledge_service.py</li>
+  <li>90_System/rag/tests/test_mcp_server.py</li>
+  <li>90_System/rag/tests/test_performance_optimizations.py</li>
+  </ul>
+  </details>
 - 90_System/rag/tests/fixtures/stm32_dma.md
-- 90_System/rag/tests/knowledge_gaps.yaml
-- 90_System/rag/tests/test_atomic_write.py
-- 90_System/rag/tests/test_cli_contract.py
-- 90_System/rag/tests/test_control_center.py
-- 90_System/rag/tests/test_evidence_gaps.py
-- 90_System/rag/tests/test_full_chain.py
-- 90_System/rag/tests/test_inbox_processor.py
-- 90_System/rag/tests/test_incremental_rag.py
-- 90_System/rag/tests/test_judge.py
-- 90_System/rag/tests/test_llm.py
-- 90_System/rag/tests/test_main_query.py
-- 90_System/rag/tests/test_paths.py
-- 90_System/rag/tests/test_rag_health.py
-- 90_System/rag/tests/test_review.py
-- 90_System/rag/tests/test_smoke.py
-- 90_System/rag/tests/test_wiki_compiler.py
-- 90_System/rag/tests/test_wiki_health.py
-- 90_System/任务记录/Wiki更新建议_20260810_003.md
-- 90_System/任务记录/inbox_processor_log.md
-- 90_System/任务记录/本次PDF知识导入分析.md
-- 90_System/阶段06_PDF与Source转写与Fallback评估.md
-- 90_System/阶段07_Knowledge_OS_Control_Center.md
-- 90_System/阶段08_Knowledge_OS_稳定化与闭环验证.md
-- 90_System/阶段09_Evidence_Intelligence与知识回答安全增强.md
-- 90_System/阶段10_Knowledge_OS_v1.0基线与生产运行验证.md
-- 90_System/control_center/create_desktop_shortcut.bat
-- 90_System/control_center/start_control_center.bat
-- 90_System/阶段10.5_Control_Center启动体验优化.md
-- 90_System/control_center/launch_test.cmd
-- 90_System/control_center/launcher_test.log
-- 90_System/control_center/test2.log
-- 90_System/agent/README.md
-- 90_System/agent/__init__.py
-- 90_System/agent/knowledge_cli.py
-- 90_System/agent/knowledge_service.py
-- 90_System/rag/tests/test_agent_knowledge_service.py
-- 90_System/阶段11A_Agent知识接口.md
-- 90_System/agent/mcp_server.py
-- 90_System/rag/tests/test_mcp_server.py
-- 90_System/阶段11B_Codex_MCP集成.md
-- 90_System/agent/benchmark_query.py
-- 90_System/rag/tests/test_performance_optimizations.py
-- 90_System/阶段12A_Knowledge_OS查询性能基准与瓶颈分析.md
-- 90_System/阶段12B_Knowledge_OS查询性能优化.md
-- 90_System/阶段12C_跨项目Codex集成与实际使用验证.md
+- 90_System/任务记录/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/Wiki更新建议_20260810_003.md</li>
+  <li>90_System/任务记录/inbox_processor_log.md</li>
+  <li>90_System/任务记录/本次PDF知识导入分析.md</li>
+  </ul>
+  </details>
+- 90_System/（11 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/阶段06_PDF与Source转写与Fallback评估.md</li>
+  <li>90_System/阶段07_Knowledge_OS_Control_Center.md</li>
+  <li>90_System/阶段08_Knowledge_OS_稳定化与闭环验证.md</li>
+  <li>90_System/阶段09_Evidence_Intelligence与知识回答安全增强.md</li>
+  <li>90_System/阶段10_Knowledge_OS_v1.0基线与生产运行验证.md</li>
+  <li>90_System/阶段10.5_Control_Center启动体验优化.md</li>
+  <li>90_System/阶段11A_Agent知识接口.md</li>
+  <li>90_System/阶段11B_Codex_MCP集成.md</li>
+  <li>90_System/阶段12A_Knowledge_OS查询性能基准与瓶颈分析.md</li>
+  <li>90_System/阶段12B_Knowledge_OS查询性能优化.md</li>
+  <li>90_System/阶段12C_跨项目Codex集成与实际使用验证.md</li>
+  </ul>
+  </details>
+- 90_System/agent/（6 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/agent/README.md</li>
+  <li>90_System/agent/__init__.py</li>
+  <li>90_System/agent/knowledge_cli.py</li>
+  <li>90_System/agent/knowledge_service.py</li>
+  <li>90_System/agent/mcp_server.py</li>
+  <li>90_System/agent/benchmark_query.py</li>
+  </ul>
+  </details>
 
 ### 修改
-- 90_System/KNOWLEDGE_OS.md
-- 90_System/agent/README.md
-- 90_System/agent/knowledge_service.py
-- 90_System/阶段11A_Agent知识接口.md
-- 90_System/agent/mcp_server.py
+- 90_System/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/KNOWLEDGE_OS.md</li>
+  <li>90_System/阶段11A_Agent知识接口.md</li>
+  <li>90_System/阶段12C_跨项目Codex集成与实际使用验证.md</li>
+  </ul>
+  </details>
+- 90_System/agent/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/agent/README.md</li>
+  <li>90_System/agent/knowledge_service.py</li>
+  <li>90_System/agent/mcp_server.py</li>
+  </ul>
+  </details>
 - 90_System/rag/config.yaml
-- 90_System/rag/llm/deepseek_adapter.py
-- 90_System/rag/llm/openai_adapter.py
-- 90_System/rag/rag_engine/config.py
-- 90_System/rag/rag_engine/embeddings.py
-- 90_System/rag/rag_engine/rerank.py
+- 90_System/rag/llm/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/llm/deepseek_adapter.py</li>
+  <li>90_System/rag/llm/openai_adapter.py</li>
+  </ul>
+  </details>
+- 90_System/rag/rag_engine/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/rag_engine/config.py</li>
+  <li>90_System/rag/rag_engine/embeddings.py</li>
+  <li>90_System/rag/rag_engine/rerank.py</li>
+  </ul>
+  </details>
 
 ### 提交
 - 提交 c121a31：Knowledge OS v1.0 baseline
 - 提交 38115dc：Knowledge OS: add Control Center desktop launcher
 - 提交 cd01a5a：Knowledge OS: add agent knowledge query interface
 - 提交 566ba94：Knowledge OS: integrate Codex via MCP
-
-## 2026-08-10 LLM-Wiki MVP
+- 提交 c521c79：Knowledge OS: validate cross-project Codex integration
 
 ## 2026-08-10
 
 ### 新增
+- 里程碑：LLM-Wiki MVP 完成。
 - 20_Wiki/01_计算机基础/CPU与寄存器.md
-- 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
-- 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
-- 20_Wiki/02_嵌入式基础/DC-DC与LDO选择.md
-- 20_Wiki/02_嵌入式基础/DC电源插座引脚.md
-- 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
-- 20_Wiki/02_嵌入式基础/LED限流电阻选型.md
-- 20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md
-- 20_Wiki/02_嵌入式基础/电容选型.md
-- 20_Wiki/02_嵌入式基础/电机驱动选型.md
-- 20_Wiki/02_嵌入式基础/锂电池参数计算.md
-- 20_Wiki/02_嵌入式基础/阻抗匹配.md
-- 20_Wiki/03_STM32/STM32 USART配置与使用.md
-- 20_Wiki/03_STM32/STM32CubeMX定时器配置.md
-- 20_Wiki/03_STM32/STM32时钟树.md
-- 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
-- 20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md
-- 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
-- 20_Wiki/05_通信协议/串口通信协议基础.md
+- 20_Wiki/02_嵌入式基础/（11 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/02_嵌入式基础/AS5600磁编码器.md</li>
+  <li>20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md</li>
+  <li>20_Wiki/02_嵌入式基础/DC-DC与LDO选择.md</li>
+  <li>20_Wiki/02_嵌入式基础/DC电源插座引脚.md</li>
+  <li>20_Wiki/02_嵌入式基础/DRV8845电机驱动.md</li>
+  <li>20_Wiki/02_嵌入式基础/LED限流电阻选型.md</li>
+  <li>20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md</li>
+  <li>20_Wiki/02_嵌入式基础/电容选型.md</li>
+  <li>20_Wiki/02_嵌入式基础/电机驱动选型.md</li>
+  <li>20_Wiki/02_嵌入式基础/锂电池参数计算.md</li>
+  <li>20_Wiki/02_嵌入式基础/阻抗匹配.md</li>
+  </ul>
+  </details>
+- 20_Wiki/03_STM32/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/03_STM32/STM32 USART配置与使用.md</li>
+  <li>20_Wiki/03_STM32/STM32CubeMX定时器配置.md</li>
+  <li>20_Wiki/03_STM32/STM32时钟树.md</li>
+  <li>20_Wiki/03_STM32/STM32-DMA-配置与使用.md</li>
+  </ul>
+  </details>
+- 20_Wiki/04_FreeRTOS/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md</li>
+  <li>20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md</li>
+  </ul>
+  </details>
+- 20_Wiki/05_通信协议/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md</li>
+  <li>20_Wiki/05_通信协议/串口通信协议基础.md</li>
+  </ul>
+  </details>
 - 30_Projects/无人机飞控/硬件选型.md
-- 30_Projects/移动底盘控制器/功能说明.md
-- 30_Projects/移动底盘控制器/硬件系统框架.md
+- 30_Projects/移动底盘控制器/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>30_Projects/移动底盘控制器/功能说明.md</li>
+  <li>30_Projects/移动底盘控制器/硬件系统框架.md</li>
+  </ul>
+  </details>
 - 30_Projects/移动底盘控制器/硬件选型/
 - 30_Projects/移动底盘控制器/项目适配/
-- 90_System/prompts/rag_answer.md
+- 90_System/prompts/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/prompts/rag_answer.md</li>
+  <li>90_System/prompts/wiki_compile.md</li>
+  </ul>
+  </details>
 - 90_System/任务记录/
 - 个人笔记/
-- 00_Inbox/待处理文件/FreeRTOS任务通知补充资料.md
-- 00_Inbox/待处理文件/STM32_DMA资料.md
+- 00_Inbox/待处理文件/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>00_Inbox/待处理文件/FreeRTOS任务通知补充资料.md</li>
+  <li>00_Inbox/待处理文件/STM32_DMA资料.md</li>
+  </ul>
+  </details>
 - 00_Inbox/待处理文件/个人笔记/
-- 20_Wiki/03_STM32/STM32-DMA-配置与使用.md
 - 90_System/KNOWLEDGE_OS.md
 - 90_System/archive/嵌入式课程设计/
-- 90_System/prompts/wiki_compile.md
 
 ### 修改
 - .agents/skills/knowledge-compiler/SKILL.md

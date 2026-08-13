@@ -9,14 +9,20 @@ update_changelog.ps1 - 自动更新 CHANGELOG.md
   - 自动：.git/hooks/pre-commit（每次 commit 前自动执行）
 
 参数：
-  -DryRun  只输出将要写入的条目，不修改任何文件
+  -DryRun   只输出将要写入的条目，不修改任何文件
+  -Rewrite  强制按当前逻辑重写整个 CHANGELOG.md（忽略是否有新条目），
+            用于格式迁移（如首次启用目录聚合）
+
+展示格式：
+  - 同一目录下的多个文件聚合为 "- 目录/（N 个文件）"，明细折叠在 <details> 中
+  - 单个文件、人工摘要、提交记录保持原样
 
 说明：
   - 状态记录在 90_System/scripts/.changelog_state.json
   - 首次运行只建立基线，不写 changelog
   - .obsidian/、.claudian/、90_System/scripts/ 下的变更不记录
 #>
-param([switch]$DryRun)
+param([switch]$DryRun, [switch]$Rewrite)
 $ErrorActionPreference = 'Stop'
 # git 输出为 UTF-8，强制控制台解码为 UTF-8（Windows PowerShell 5.1 默认按 GBK 解码会导致中文路径乱码）
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -125,30 +131,42 @@ try {
     }
     $newState | ConvertTo-Json -Depth 4 | Set-Content -Path $StatePath -Encoding UTF8
 
-    if (-not $hasNew) { exit 0 }
+    if (-not $hasNew -and -not $Rewrite) { exit 0 }
 
     # ---------- 合并进 CHANGELOG.md ----------
     $lines = @(Get-Content $Changelog -Encoding UTF8)
 
-    # 解析现有分节
+    # 解析现有分节（支持聚合条目 "- 目录/（N 个文件）" + <details> 明细块）
     $sections = New-Object System.Collections.Generic.List[object]
     $title = $null
     $types = $null
     $curType = $null
+    $inDetails = $false
     foreach ($line in $lines) {
-        $t = $line.TrimEnd()
+        $t = $line.Trim()
+        if ($t -match '^<details') { $inDetails = $true; continue }
+        if ($t -eq '</details>') { $inDetails = $false; continue }
+        if ($t -eq '<ul>' -or $t -eq '</ul>') { continue }
+        if ($t -match '^<li>(.*)</li>$') {
+            if ($title -and $curType -and $types.ContainsKey($curType)) { $types[$curType].Add("- $($Matches[1])") }
+            continue
+        }
         if ($t -match '^## (.+)$') {
             if ($title) { $sections.Add([PSCustomObject]@{ Title = $title; Types = $types }) }
             $title = $Matches[1].Trim()
             $types = @{}
             $curType = $null
+            $inDetails = $false
         }
         elseif ($t -match '^### (.+)$' -and $title) {
             $curType = $Matches[1].Trim()
             if (-not $types.ContainsKey($curType)) { $types[$curType] = New-Object System.Collections.Generic.List[string] }
+            $inDetails = $false
         }
         elseif ($t -match '^- (.+)$' -and $title -and $curType -and $types.ContainsKey($curType)) {
-            $types[$curType].Add($t)
+            $content = $Matches[1].Trim()
+            if ($content -match '（\d+ 个文件）$') { continue }  # 聚合标题行，明细已单独收录
+            $types[$curType].Add("- $content")
         }
     }
     if ($title) { $sections.Add([PSCustomObject]@{ Title = $title; Types = $types }) }
@@ -176,7 +194,18 @@ try {
         }
     }
 
-    # 序列化（按日期倒序）
+    # ---------- 序列化（目录聚合 + <details> 明细） ----------
+    function Get-GroupKey([string]$Content) {
+        $slash = $Content.LastIndexOf('/')
+        if ($slash -ge 0) { return $Content.Substring(0, $slash + 1) }
+        return $Content
+    }
+    function Test-PathEntry([string]$Content) {
+        $prefixes = @('00_Inbox/','10_Sources/','20_Wiki/','30_Projects/','40_Outputs/','50_Reviews/','90_System/','.agents/','个人笔记/','interfaces.md','.gitignore','AGENTS.md','README.md','HOME.md')
+        foreach ($p in $prefixes) { if ($Content -like "$p*") { return $true } }
+        return $false
+    }
+
     $sb = New-Object System.Text.StringBuilder
     [void]$sb.AppendLine('# 知识库变更记录')
     foreach ($s in ($sections | Sort-Object { $_.Title } -Descending)) {
@@ -186,7 +215,31 @@ try {
             if ($s.Types.ContainsKey($type) -and $s.Types[$type].Count -gt 0) {
                 [void]$sb.AppendLine('')
                 [void]$sb.AppendLine("### $type")
-                foreach ($item in $s.Types[$type]) { [void]$sb.AppendLine($item) }
+                $direct = New-Object System.Collections.Generic.List[string]
+                $groups = New-Object System.Collections.Specialized.OrderedDictionary
+                foreach ($item in $s.Types[$type]) {
+                    $content = $item.Substring(2).Trim()
+                    if ((Test-PathEntry $content) -and $content.Contains('/')) {
+                        $key = Get-GroupKey $content
+                        if (-not $groups.Contains($key)) { $groups[$key] = New-Object System.Collections.Generic.List[string] }
+                        $groups[$key].Add($content)
+                    }
+                    else { $direct.Add($item) }
+                }
+                foreach ($item in $direct) { [void]$sb.AppendLine($item) }
+                foreach ($key in $groups.Keys) {
+                    $items = $groups[$key]
+                    if ($items.Count -eq 1) { [void]$sb.AppendLine("- $($items[0])"); continue }
+                    [void]$sb.AppendLine("- $key（$($items.Count) 个文件）")
+                    [void]$sb.AppendLine('  <details><summary>查看明细</summary>')
+                    [void]$sb.AppendLine('  <ul>')
+                    foreach ($it in $items) {
+                        $esc = $it -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;'
+                        [void]$sb.AppendLine("  <li>$esc</li>")
+                    }
+                    [void]$sb.AppendLine('  </ul>')
+                    [void]$sb.AppendLine('  </details>')
+                }
             }
         }
     }

@@ -20,11 +20,11 @@
 
 ## 执行流程
 
-1. ingest_agent：扫描 `00_Inbox`，解析并写入 `raw_vector_db`。
-2. update_index：扫描 `20_Wiki`，重建 `wiki_vector_db`。
-3. retrieval_agent：wiki 优先，置信度不足再查 `raw_vector_db`，混合检索 + reranker。
-4. wiki_compile_agent：根据 RAG chunks 生成 `draft`。
-5. review_agent：检查 AI 生成内容，标记可能错误，人工审核后改状态。
+1. 工作流规范以 `.agents/skills/` 为准（knowledge-compiler / project-doc-maintainer / weekly-review）；早期 `.agents/agents/` 已归档至 `90_System/archive/agents/`，仅历史追溯。
+2. Inbox 处理：`inbox_processor.py` 分析分类（不修改原文）；`wiki_compile.py` 生成 draft / 更新建议。
+3. 索引：`update_index.py`（默认 `--target main`）把 `20_Wiki + 30_Projects` 写入 `main_vector_db`；`ingest_rag.py`（`--target raw/wiki`）仅用于可选 raw/wiki 索引。
+4. 检索：`hybrid_query.py`（默认 `--store main`）查 `main_vector_db`，混合检索 + reranker。
+5. 审核：Wiki 状态流转 `draft -> reviewed -> stable` 由 `wiki_review.py` 人工确认。
 
 ## Inbox Processor 与 Knowledge Gap
 

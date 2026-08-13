@@ -13,17 +13,17 @@
 
 ```powershell
 # CLI 查询（结构化 JSON）
-python 90_System/agent/knowledge_cli.py "FreeRTOS任务优先级和抢占式调度怎么工作？"
+python 90_System/rag/interface/knowledge_cli.py "FreeRTOS任务优先级和抢占式调度怎么工作？"
 
 # 离线模式（不调用 LLM，无回答/Judge）
-python 90_System/agent/knowledge_cli.py "问题" --no-llm
+python 90_System/rag/interface/knowledge_cli.py "问题" --no-llm
 ```
 
 代码调用：
 
 ```python
 import sys
-sys.path.insert(0, r"D:\KnowledgeBase\Obsidian Vault\90_Systemgent")
+sys.path.insert(0, r"D:\KnowledgeBase\Obsidian Vault\90_System\rag\interface")
 from knowledge_service import knowledge_search
 
 r = knowledge_search("STM32 DMA 怎么配置？")
@@ -55,7 +55,7 @@ print(r["status"], r["answer"], r["judge"])
 
 ## MCP（Codex 正式接入，阶段⑪-B）
 
-本地 stdio MCP Server：`90_System/agent/mcp_server.py`（Python 标准库，零外部依赖，只暴露一个只读 Tool `knowledge_search`）。
+本地 stdio MCP Server：`90_System/rag/interface/mcp_server.py`（Python 标准库，零外部依赖，只暴露一个只读 Tool `knowledge_search`）。
 
 - Vault 根目录由环境变量 `KNOWLEDGE_OS_VAULT` 指定（缺省按本文件位置反推），**不依赖当前工作目录**。
 - Codex 配置（`~/.codex/config.toml`）：`[mcp_servers.knowledge-os]` command=python, args=[mcp_server.py], env 含 `KNOWLEDGE_OS_VAULT`。

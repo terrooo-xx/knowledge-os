@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 
 AGENT_DIR = Path(__file__).resolve().parent
-RAG_DIR = AGENT_DIR.parent / "rag"
+RAG_DIR = AGENT_DIR.parent
 for d in (str(AGENT_DIR), str(RAG_DIR)):
     if d not in sys.path:
         sys.path.insert(0, d)
@@ -28,7 +28,7 @@ from rag_engine.vector_store import create_store
 from rag_engine.llm import answer as llm_answer  # noqa: F401 (patched below)
 
 VAULT_ROOT = Path(
-    __import__("os").environ.get("KNOWLEDGE_OS_VAULT", str(AGENT_DIR.parent.parent))
+    __import__("os").environ.get("KNOWLEDGE_OS_VAULT", str(AGENT_DIR.parent.parent.parent))
 ).resolve()
 
 # ---------- timing wrappers ----------

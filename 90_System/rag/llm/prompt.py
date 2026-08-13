@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-DEFAULT_TEMPLATE = Path(__file__).resolve().parents[2] / "prompts" / "rag_answer.md"
+DEFAULT_TEMPLATE = Path(__file__).resolve().parents[1] / "prompts" / "rag_answer.md"
 VAULT_ROOT = Path(__file__).resolve().parents[3]
 SYSTEM_USER_MARKER = "---USER---"
 

@@ -9,6 +9,13 @@ stdout is the MCP transport: never print to stdout outside MCP frames.
 """
 from __future__ import annotations
 
+import os
+
+# 模型已本地缓存：强制离线加载，避免 sentence-transformers 启动时联网检查 HF hub
+# 而卡住（无网络环境下 WinError 10013 + 重试）。setdefault 允许外部显式覆盖。
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 import json
 import sys
 from pathlib import Path
@@ -154,7 +161,7 @@ def _warmup() -> None:
         from rag_engine.config import load_config, resolve_paths
         from rag_engine.embeddings import create_embedder
         from rag_engine.rerank import _get_reranker
-        cfg = resolve_paths(load_config(str(Path(__file__).resolve().parent.parent / "rag" / "config.yaml")), Path(__file__).resolve().parent.parent.parent)
+        cfg = resolve_paths(load_config(str(Path(__file__).resolve().parent.parent / "config.yaml")), Path(__file__).resolve().parent.parent.parent.parent)
         create_embedder(cfg).embed(["Knowledge OS warmup"])
         rcfg = cfg.get("reranker", {})
         if rcfg.get("enabled") and rcfg.get("provider") in ("bge", "jina"):

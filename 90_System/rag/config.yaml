@@ -53,8 +53,17 @@ llm:
   api:
     base_url: https://api.deepseek.com
   temperature: 0.2
-  template: "90_System/prompts/rag_answer.md"
+  template: "90_System/rag/prompts/rag_answer.md"
 
 wiki:
   default_domain: "01_计算机基础"
   status: draft
+# 周期性复盘（Weekly Review）
+# weekday: monday..sunday（ISO 周中英文）；time 为本地 24 小时制
+# stale_threshold_days：超过该天数未更新的 Wiki 标记为“复查风险”，非“已过期”
+weekly_review:
+  enabled: true
+  weekday: friday
+  time: "18:00"
+  stale_threshold_days: 90
+

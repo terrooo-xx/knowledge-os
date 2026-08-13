@@ -46,7 +46,7 @@ BGE embedding 与 BGE/Jina reranker 都由 sentence-transformers 加载，不依
 python 90_System/rag/scripts/inbox_processor.py
 ```
 
-裸运行 `ingest_rag.py`（无 `--target`）默认写入 `main_vector_db`（生产索引）；`--target raw` 可建立 `00_Inbox -> raw_vector_db` 的可选原始库索引，`--target wiki` 可建立仅 Wiki 索引：
+`main_vector_db` 由 `update_index.py` 统一维护（标准索引入口）；`ingest_rag.py` 用于可选 raw/wiki 索引，必须显式指定 `--target`：`--target raw` 建立 `00_Inbox -> raw_vector_db`，`--target wiki` 建立 `20_Wiki -> wiki_vector_db`：
 
 ```powershell
 python 90_System/rag/scripts/ingest_rag.py --target raw
@@ -79,7 +79,7 @@ $env:DEEPSEEK_API_KEY="你的密钥"
 - `ollama_adapter.py`：Ollama 本地服务
 - `mock_adapter.py`：离线测试用
 
-RAG 核心只调用 `llm.answer()`，不感知具体 provider。Prompt 模板位于 `90_System/prompts/rag_answer.md`，包含 System 角色、`{{context}}` 和 `{{question}}` 占位符。
+RAG 核心只调用 `llm.answer()`，不感知具体 provider。Prompt 模板位于 `90_System/rag/prompts/rag_answer.md`，包含 System 角色、`{{context}}` 和 `{{question}}` 占位符。
 
 ## 如何运行 RAG
 
