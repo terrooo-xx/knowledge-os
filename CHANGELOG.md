@@ -147,6 +147,7 @@
 - 提交 ccfcf50：[Phase 3] chore: 历史记录体系迁移
 - 提交 543c469：[Phase 3] docs: 阶段14~22D 治理与 RAG Evaluation 记录入库
 - 提交 e7ff10d：[Project] feat: 企业微信远程 Codex 项目总结验收 + rc-codex-wecom-20260820 基线
+- 提交 242f619：[Project] docs: rc-codex-wecom-20260820 Baseline metadata 补全（git 关联 + post-baseline drift 说明）
 
 ## 2026-08-14
 

@@ -62,7 +62,7 @@
   },
   "status": "STABLE",
   "git": {
-    "commit": "e7ff10d728238ef82763f93b030b92865f9521fb",
+    "commit": "242f61935908d67f05547316f1e11a98eead2958",
     "tag": "baseline/rc-codex-wecom-20260820"
   },
   "external_state": "machine-local",
