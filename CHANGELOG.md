@@ -101,6 +101,13 @@
   <li>90_System/任务记录/历史阶段/阶段22D_Control_Center_固定布局_App_Shell.md</li>
   </ul>
   </details>
+- 90_System/任务记录/Phase 3/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/Phase 3/阶段14_历史记录体系治理报告.md</li>
+  <li>90_System/任务记录/Phase 3/阶段总结.md</li>
+  </ul>
+  </details>
 
 ### 修改
 - 20_Wiki/01_计算机基础/CPU与寄存器.md
@@ -115,6 +122,9 @@
 
 ### 删除
 - 90_System/control_center/activity_log.jsonl
+
+### 提交
+- 提交 ccfcf50：[Phase 3] chore: 历史记录体系迁移
 
 ## 2026-08-14
 
