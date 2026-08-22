@@ -1,4 +1,4 @@
-"""Knowledge OS Control Center - local HTTP server (stdlib only).
+﻿"""Knowledge OS Control Center - local HTTP server (stdlib only).
 
 Serves a single-page UI and a JSON API that calls the service layer.
 Run:  python 90_System/control_center/server.py   (default port 8765)
@@ -65,6 +65,61 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/weekly_review/generate":
                 self._send(200, service.generate_weekly_review())
                 return
+            if path == "/api/review/preflight":
+                self._send(200, service.preflight_review_candidates(trigger="manual"))
+                return
+            if path == "/api/query/trace":
+                length = int(self.headers.get("Content-Length", 0) or 0)
+                body = self.rfile.read(length).decode("utf-8") if length else "{}"
+                try:
+                    payload = json.loads(body)
+                except Exception:
+                    payload = {}
+                self._send(200, service.query_trace(payload.get("query", "")))
+                return
+            if path == "/api/weekly_review/insight":
+                self._send(200, service.generate_weekly_insight())
+                return
+            if path == "/api/rag/evaluation/run":
+                length = int(self.headers.get("Content-Length", 0) or 0)
+                body = self.rfile.read(length).decode("utf-8") if length else "{}"
+                try:
+                    payload = json.loads(body)
+                except Exception:
+                    payload = {}
+                result = service.run_evaluation(
+                    limit=payload.get("limit"), mode=payload.get("mode", "fast"))
+                self._send(200 if result.get("ok") else 500, result)
+                return
+            if path == "/api/rag/evaluation/diff":
+                length = int(self.headers.get("Content-Length", 0) or 0)
+                body = self.rfile.read(length).decode("utf-8") if length else "{}"
+                try:
+                    payload = json.loads(body)
+                except Exception:
+                    payload = {}
+                result = service.run_evaluation_diff(
+                    before=payload.get("before", ""), after=payload.get("after", ""))
+                self._send(200 if result.get("ok") else 500, result)
+                return
+            if path == "/api/gaps/diagnose":
+                self._send(200, service.run_gap_diagnosis())
+                return
+            if path == "/api/rag/evaluation/verify":
+                self._send(200, service.run_baseline_verification())
+                return
+            m = re.match(r"^/api/source_acquisition/(.+)/verify$", path)
+            if m:
+                length = int(self.headers.get("Content-Length", 0) or 0)
+                body = self.rfile.read(length).decode("utf-8") if length else "{}"
+                try:
+                    payload = json.loads(body)
+                except Exception:
+                    payload = {}
+                result = service.mark_source_verified(
+                    m.group(1), actor=payload.get("actor", "user"))
+                self._send(200 if result.get("ok") else 400, result)
+                return
             if path.startswith("/api/actions/"):
                 self._route_action(path)
                 return
@@ -83,6 +138,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, service.list_gaps())
         elif path == "/api/sources":
             self._send(200, service.list_sources())
+        elif path == "/api/weekly_review/dashboard":
+            self._send(200, service.weekly_review_dashboard())
         elif path == "/api/weekly_review":
             self._send(200, service.weekly_review_list())
         elif path == "/api/project_status":
@@ -93,8 +150,43 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, service.activity_timeline())
         elif path == "/api/health":
             self._send(200, service.health())
+        elif path == "/api/rag/evaluation":
+            self._send(200, service.evaluation_latest())
+        elif path == "/api/rag/evaluation/diff":
+            self._send(200, service.evaluation_diff())
+        elif path == "/api/gaps/evaluation":
+            self._send(200, service.evaluation_gaps())
+        elif path == "/api/source_acquisition":
+            self._send(200, service.source_acquisition())
+        elif path.startswith("/api/source_acquisition/"):
+            source_id = path[len("/api/source_acquisition/"):]
+            result = service.source_acquisition_detail(source_id)
+            self._send(200 if result.get("ok") else 404, result)
+        elif path == "/api/golden_set":
+            self._send(200, service.golden_set())
+        elif path == "/api/judge_variance":
+            self._send(200, service.judge_variance())
+        elif path == "/api/rag/evaluation/baseline":
+            self._send(200, service.evaluation_baseline())
+        elif path == "/api/rag/evaluation/governance":
+            self._send(200, service.governance_state())
+        elif path.startswith("/api/gaps/evaluation/"):
+            gap_id = path[len("/api/gaps/evaluation/"):]
+            result = service.evaluation_gap_detail(gap_id)
+            self._send(200 if result.get("ok") else 404, result)
+        elif path.startswith("/api/rag/evaluation/"):
+            run_id = path[len("/api/rag/evaluation/"):]
+            result = service.evaluation_report(run_id)
+            self._send(200 if result.get("ok") else 404, result)
         elif path.startswith("/api/actions/"):
             action_id = path[len("/api/actions/"):]
+            if action_id.endswith("/context"):
+                ctx = service.review_context(action_id[: -len("/context")])
+                if ctx.get("ok"):
+                    self._send(200, ctx)
+                else:
+                    self._json_err(404, ctx.get("message", "action not found"))
+                return
             for a in service.build_actions():
                 if a["id"] == action_id:
                     self._send(200, a)
@@ -116,6 +208,11 @@ class Handler(BaseHTTPRequestHandler):
                 actor=payload.get("actor", "user"),
                 confirm=bool(payload.get("confirm", False)),
             )
+            self._send(200 if result.get("ok") else 400, result)
+            return
+        m = re.match(r"^/api/actions/(.+)/judge$", path)
+        if m:
+            result = service.run_review_judge(m.group(1))
             self._send(200 if result.get("ok") else 400, result)
             return
         m = re.match(r"^/api/actions/(.+)/(approve|reject|resolve|ignore|reprocess)$", path)

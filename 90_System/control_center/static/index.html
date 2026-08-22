@@ -5,8 +5,10 @@
 <title>Knowledge OS Control Center</title>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Microsoft YaHei", system-ui, sans-serif; background: #f4f6f8; color: #222; }
-  header { background: #1f2937; color: #fff; padding: 12px 20px; }
+  html, body { height: 100%; }
+  body { margin: 0; font-family: "Microsoft YaHei", system-ui, sans-serif; background: #f4f6f8; color: #222;
+    display: flex; flex-direction: column; overflow: hidden; }
+  header { flex: 0 0 auto; background: #1f2937; color: #fff; padding: 12px 20px; }
   header .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   header h1 { font-size: 18px; margin: 0; }
   header .sub { color: #9ca3af; font-size: 12px; }
@@ -20,12 +22,13 @@
   .btn.reject { border-color: #dc2626; color: #b91c1c; }
   .btn.resolve { border-color: #2563eb; color: #1d4ed8; }
   .btn.ignore { border-color: #6b7280; color: #4b5563; }
-  .layout { display: flex; min-height: calc(100vh - 110px); }
-  nav { width: 170px; background: #fff; border-right: 1px solid #e5e7eb; padding: 12px 0; }
+  .layout { flex: 1 1 auto; min-height: 0; display: flex; }
+  nav { flex: 0 0 170px; width: 170px; background: #fff; border-right: 1px solid #e5e7eb; padding: 12px 0; overflow-y: auto; }
   nav button { display: block; width: 100%; border: none; background: none; text-align: left; padding: 10px 18px; font-size: 14px; cursor: pointer; color: #374151; }
   nav button:hover { background: #f3f4f6; }
   nav button.active { background: #e0e7ff; color: #1d4ed8; font-weight: 600; }
-  main { flex: 1; padding: 20px; overflow: auto; }
+  main { flex: 1 1 auto; min-width: 0; min-height: 0; padding: 20px; overflow-y: auto; overflow-x: auto; }
+  main::after { content: ''; display: block; height: 28px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
   .card .num { font-size: 28px; font-weight: 700; }
@@ -52,6 +55,70 @@
   details { margin: 6px 0; }
   summary { cursor: pointer; font-weight: 600; }
   a { color: #1d4ed8; }
+  .ctx-pre { background: #f3f4f6; color: #374151; max-height: 220px; overflow: auto; white-space: pre-wrap; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; font-size: 12px; }
+  .ctx-scroll { background: #f9fafb; color: #222; max-height: 360px; overflow: auto; white-space: pre-wrap; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; font-size: 13px; }
+  .card-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+  .hbar-row { display: flex; align-items: center; gap: 8px; margin: 7px 0; }
+  .hbar-label { width: 108px; font-size: 12px; color: #374151; text-align: right; flex: none; }
+  .hbar-track { flex: 1; background: #f3f4f6; border-radius: 4px; height: 16px; overflow: hidden; display: flex; }
+  .hbar-seg { height: 100%; }
+  .hbar-val { width: 48px; font-size: 12px; color: #374151; text-align: right; flex: none; }
+  .attention-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; flex-wrap: wrap; }
+  /* ---- Guide（使用指南）---- */
+  .g-layout { display: flex; gap: 16px; align-items: flex-start; }
+  .g-toc { width: 250px; flex-shrink: 0; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; position: sticky; top: 12px; max-height: calc(100vh - 150px); overflow: auto; }
+  .g-toc input { width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; font-size: 13px; box-sizing: border-box; }
+  .g-toc a { display: block; padding: 4px 8px; border-radius: 6px; color: #374151; text-decoration: none; font-size: 13px; cursor: pointer; }
+  .g-toc a:hover { background: #eef2ff; }
+  .g-toc a.active { background: #e0e7ff; color: #1d4ed8; font-weight: 600; }
+  .g-body { flex: 1; min-width: 0; }
+  .g-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .g-stat { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; }
+  .g-stat .n { font-size: 20px; font-weight: 700; }
+  .g-stat .l { font-size: 11px; color: #6b7280; }
+  .g-reco { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 14px; }
+  .g-section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 14px; scroll-margin-top: 12px; }
+  .g-section h3 { margin-top: 0; }
+  .g-entry { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .g-entry button { text-align: left; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; cursor: pointer; font-size: 14px; }
+  .g-entry button:hover { background: #eef2ff; border-color: #bfdbfe; }
+  .g-flow { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 8px 0; }
+  .g-flow-row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+  .g-box { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; border-radius: 8px; padding: 8px 14px; font-size: 13px; text-align: center; }
+  .g-box.gray { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
+  .g-box.blue { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+  .g-box.amber { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+  .g-box.red { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+  .g-arrow { color: #9ca3af; font-size: 16px; line-height: 1; }
+  .g-prevnext { display: flex; justify-content: space-between; gap: 10px; margin-top: 4px; }
+  .g-prevnext button { flex: 1; }
+  .g-step { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+  .g-step .idx { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #1d4ed8; color: #fff; text-align: center; line-height: 22px; font-size: 12px; }
+  .g-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 6px; }
+  .g-tag.auto { background: #dcfce7; color: #166534; }
+  .g-tag.human { background: #fef3c7; color: #92400e; }
+  .g-tag.read { background: #e0e7ff; color: #3730a3; }
+  .g-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .g-toc-toggle { display: none; }
+  .g-search-wrap { position: relative; flex: 1; max-width: 340px; }
+  .g-search-wrap input { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; box-sizing: border-box; }
+  #g_results { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.08); z-index: 60; max-height: 300px; overflow: auto; }
+  .g-result { padding: 8px 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
+  .g-result:hover { background: #eef2ff; }
+  .g-toc-head { font-size: 14px; padding: 4px 8px 8px; color: #111827; font-weight: 700; }
+  .g-toc a.g-parent { font-weight: 600; }
+  .g-toc a.g-child { padding-left: 26px; font-size: 12px; }
+  .g-crumb { color: #6b7280; font-size: 12px; margin: 2px 0 10px; }
+  .g-crumb b { color: #111827; }
+  @media (max-width: 900px) {
+    .g-toc-toggle { display: inline-block; }
+    .g-layout { flex-direction: column; }
+    .g-toc { display: none; position: fixed; left: 0; top: 0; bottom: 0; width: 260px; max-height: none; z-index: 80; border-radius: 0; box-shadow: 0 0 16px rgba(0,0,0,.18); overflow: auto; }
+    .g-toc.open { display: block; }
+    .g-search-wrap { max-width: none; }
+  }
 </style>
 </head>
 <body>
@@ -69,23 +136,28 @@
 <div class="layout">
   <nav>
     <button data-view="dashboard" class="active">仪表盘</button>
+    <button data-view="guide">📖 使用指南</button>
     <button data-view="todo">AI 待办</button>
     <button data-view="wikis">Wiki Review</button>
     <button data-view="gaps">知识缺口</button>
-    <button data-view="sources">Source</button>
-    <button data-view="activity">Activity</button>
+    <button data-view="sources">来源</button>
+    <button data-view="activity">活动</button>
     <button data-view="weekly_review">每周复盘</button>
     <button data-view="projects">项目状态</button>
     <button data-view="health">系统健康</button>
+    <button data-view="query_trace">检索 Trace</button>
+    <button data-view="rag_evaluation">RAG Evaluation</button>
   </nav>
   <main id="main"></main>
 </div>
 <script>
 const $main = document.getElementById('main');
-const views = ['dashboard','todo','wikis','gaps','sources','activity','weekly_review','projects','health'];
+const views = ['dashboard','guide','todo','wikis','gaps','sources','activity','weekly_review','projects','health','query_trace','rag_evaluation'];
 document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => {
   views.forEach(v => document.querySelector('nav button[data-view="'+v+'"]').classList.remove('active'));
-  b.classList.add('active'); render(b.dataset.view);
+  b.classList.add('active');
+  try { history.replaceState(null, '', '#'+b.dataset.view); } catch (e) {}
+  render(b.dataset.view);
 }));
 async function api(path, opts) { const r = await fetch(path, opts); return r.json(); }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -106,11 +178,14 @@ function actionButtons(a) {
 async function loadStatus() {
   try {
     const s = await api('/api/status');
-    const fmt = (v) => v ? esc(v) : 'N/A';
+    const fmt = (v) => v ? esc(v) : '—';
+    const gv = s.governance || {};
+    const gvColor = gv.required ? '#d97706' : (gv.status==='regressed'||gv.status==='failed' ? '#b91c1c' : '#16a34a');
     document.getElementById('statusbar').innerHTML =
-      '<span>Last Sync：<b>'+fmt(s.last_sync)+'</b></span>' +
-      '<span>Last Weekly Review：<b>'+fmt(s.last_review)+'</b></span>' +
-      '<span>Next Weekly Review：<b>'+fmt(s.next_review)+'</b></span>';
+      '<span>最近同步：<b>'+fmt(s.last_sync)+'</b></span>' +
+      '<span>最近每周复盘：<b>'+fmt(s.last_review)+'</b></span>' +
+      '<span>下次每周复盘：<b>'+fmt(s.next_review)+'</b></span>' +
+      '<span>治理：<b style="color:'+gvColor+'">'+esc(gv.status||'idle')+'</b>'+(gv.required?' ⚠ 待验证':'')+'</span>';
   } catch (e) {
     document.getElementById('statusbar').innerHTML = '<span>状态加载失败：'+esc(String(e))+'</span>';
   }
@@ -149,12 +224,711 @@ function reportLink(rel) {
   const uri = 'obsidian://open?path=' + encodeURIComponent('D:/KnowledgeBase/Obsidian Vault/' + rel);
   return '<a href="'+uri+'" target="_blank">打开 ' + esc(rel) + '</a>';
 }
+let lastView = 'dashboard';
+function traceRow(k, v) { return '<tr><th style="width:180px;background:#f9fafb">'+esc(k)+'</th><td>'+v+'</td></tr>'; }
+async function runQueryTrace() {
+  const q = (document.getElementById('qt_query') || {}).value || '';
+  const el = document.getElementById('qt_result');
+  if (!q.trim()) { el.innerHTML = msg(false, '请输入查询'); return; }
+  el.innerHTML = msg(true, '正在执行真实检索链（含模型加载，可能较慢）…');
+  try {
+    const r = await api('/api/query/trace', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({query:q})});
+    if (!r.ok) { el.innerHTML = msg(false, r.message || '查询失败'); return; }
+    el.innerHTML = renderTrace(r.result || {});
+  } catch (e) { el.innerHTML = msg(false, '请求失败：'+esc(String(e))); }
+}
+function renderTrace(res) {
+  const t = res.retrieval_trace || {};
+  const tr = t.retrieval || {}, cand = t.candidates || {}, rank = t.ranking || {};
+  const ev = t.evidence || {}, j = t.judge || {}, ans = t.answer || {};
+  const windows = res.evidence_windows || [];
+  let html = '';
+  if (t.summary) html += '<div class="card" style="margin-bottom:12px"><div style="font-size:14px"><b>决策链摘要：</b>'+esc(t.summary)+'</div></div>';
+  html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">检索决策 Retrieval Trace</h3><table style="font-size:13px">' +
+    traceRow('路径 Path', esc(tr.path || '—')) +
+    traceRow('初始路径', esc(tr.initial_path || '—')) +
+    traceRow('Wiki 置信度', tr.wiki_confidence != null ? esc(tr.wiki_confidence) : '—') +
+    traceRow('阈值 Threshold', tr.wiki_threshold != null ? esc(tr.wiki_threshold) : '—') +
+    traceRow('Wiki 门槛', tr.gate_passed ? '✓ 通过' : '✗ 未通过') +
+    traceRow('回退 Fallback', tr.fallback_used ? '✓ 已回退' : '否') +
+    traceRow('回退原因', esc(tr.fallback_reason || '—')) +
+    traceRow('候选数', 'Wiki '+esc(cand.wiki_count ?? 0)+' · RAW '+esc(cand.raw_count ?? 0)) +
+    traceRow('Reranker', rank.reranker_used ? ('✓ 已使用 '+esc(rank.reranker||'')) : ('未使用（'+esc(rank.reranker_reason||'')+'）')) +
+    traceRow('Evidence 窗口', esc(ev.window_count != null ? ev.window_count : '—')) +
+    traceRow('Evidence 充分', ev.sufficient ? '是' : '否') +
+    traceRow('Judge', j.executed ? (j.result==='passed' ? '✓ 通过' : '✗ '+esc(j.result)) : '未执行') +
+    traceRow('最终状态', esc(ans.status || '—')) +
+    '</table></div>';
+  if (windows.length) {
+    html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">Evidence Windows（'+windows.length+'）</h3>' +
+      windows.map((w,i) => '<details style="margin:4px 0"><summary>Window '+(i+1)+' · '+esc(w.source||'')+' · 命中 Chunk '+esc((w.hit_chunk_ids||[]).join(','))+'（上下文 '+esc(w.context_start_chunk)+'→'+esc(w.context_end_chunk)+'）</summary>' +
+        '<div style="font-size:12px;color:#6b7280">Retrieval '+esc(w.retrieval_score)+' · Rerank '+esc(w.rerank_score==null?'—（未重排）':w.rerank_score)+'</div>' +
+        '<pre class="ctx-pre">'+esc(w.text||'')+'</pre></details>').join('') + '</div>';
+  }
+  html += '<div style="color:#6b7280;font-size:12px;margin-top:6px">Trace 数据来自本次真实查询执行（不重复检索 / 重排 / Judge）；仅展示结构化状态，不暴露模型推理过程。</div>';
+  return html;
+}
+
+function pct(v) { return v == null ? 'N/A' : esc(v)+'%'; }
+const VIEW_LABELS = {dashboard:'仪表盘', guide:'使用指南', todo:'AI 待办', wikis:'Wiki Review', gaps:'知识缺口', sources:'来源', activity:'活动', weekly_review:'每周复盘', projects:'项目状态', health:'系统健康', query_trace:'检索 Trace', rag_evaluation:'RAG Evaluation'};
+function viewLabel(v) { return VIEW_LABELS[v] || v; }
+
+// ================= 使用指南（Guide / 操作说明）=================
+// Docs-style：左侧固定目录 + 右侧只渲染当前章节；#guide = 首页，#guide/<slug> = 章节。
+// 只读：仅渲染 + 跳转真实功能；系统状态全部来自 API，不硬编码。
+const GUIDE_META = { version: '1.1', updated: '2026-08-18' };
+const GUIDE_SECTIONS = [
+  {id:'getting-started', title:'1. 开始使用', slug:'getting-started', html: `
+    <h3>什么是 Control Center？</h3>
+    <p>Knowledge OS Control Center 是知识库的运营控制台：导入资料、审核 Wiki、核验 Source、处理知识缺口、查看 RAG 质量、验证 Governance / Baseline、查看每周复盘都在这里完成。</p>
+    <h3>如何使用本指南</h3>
+    <div class="g-step"><div class="idx">1</div><div>左侧目录：点击章节，右侧只显示该章节内容（当前项高亮）</div></div>
+    <div class="g-step"><div class="idx">2</div><div>顶部搜索：搜索章节标题与内容，点击结果直接进入对应章节</div></div>
+    <div class="g-step"><div class="idx">3</div><div>面包屑：显示当前位置（使用指南 / 父章节 / 子章节）</div></div>
+    <div class="g-step"><div class="idx">4</div><div>底部「上一章 / 下一章」：按文档顺序切换章节</div></div>
+    <div class="g-step"><div class="idx">5</div><div>URL 形如 #guide/wiki-review：可刷新保持、可深链、浏览器后退/前进正常</div></div>
+    <div style="color:#6b7280;font-size:12px">指南版本：${esc(GUIDE_META.version)} · 更新：${esc(GUIDE_META.updated)}</div>`},
+  {id:'workflow', title:'2. 整体流程', slug:'workflow', html: `
+    <h3>Knowledge OS 整体流程（Source → Wiki → Governance）</h3>
+    <div class="g-flow">
+      <div class="g-box gray">📥 00_Inbox（放入原始资料）</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">🤖 AI / Ingestion 处理<span class="g-tag auto">自动</span></div><div class="g-arrow">↓</div>
+      <div class="g-flow-row">
+        <div class="g-box amber">📄 Source 获取<span class="g-tag auto">自动获取</span><br><span style="font-size:11px">人工：核验（Mark Verified）</span></div>
+        <div class="g-box amber">📝 Wiki Draft 生成<span class="g-tag auto">自动生成</span><br><span style="font-size:11px">人工：审核 / 批准</span></div>
+      </div>
+      <div class="g-arrow">↓</div>
+      <div class="g-box gray">🔎 查看 AI 待办 / Wiki Review / RAG Evaluation</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">🗂️ Index 更新（Reindex）<span class="g-tag auto">自动/手动</span></div><div class="g-arrow">↓</div>
+      <div class="g-box blue">⚙️ Governance Required<span class="g-tag auto">指纹检测</span></div><div class="g-arrow">↓</div>
+      <div class="g-box blue">📊 Benchmark（28 Query）<span class="g-tag auto">Scheduler / 手动</span></div><div class="g-arrow">↓</div>
+      <div class="g-flow-row">
+        <div class="g-box">✅ Baseline Check STABLE / IMPROVED</div>
+        <div class="g-box red">⚠ REGRESSED → 调查</div>
+      </div>
+      <div class="g-arrow">↓</div>
+      <div class="g-box gray">📅 Weekly Review（长期趋势）</div>
+    </div>
+    <p><b>自动</b>：Inbox 分类 / Ingestion / 索引指纹检测 / Governance 触发 / Benchmark（Scheduler）。<b>人工</b>：审核并批准 Wiki、核验 Source（Mark Verified）、处理无法自动判断的 Knowledge Gap。</p>
+    <h3>RAG 查询路径</h3>
+    <div class="g-flow">
+      <div class="g-box gray">💬 用户 Query</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">1. Wiki First（优先治理后的 Wiki）</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">2. Quality Gate（置信度阈值）</div><div class="g-arrow">↓</div>
+      <div class="g-flow-row">
+        <div class="g-box">✅ Wiki 足够</div>
+        <div class="g-box amber">⚠ Wiki 不足 → RAW Fallback</div>
+      </div>
+      <div class="g-arrow">↓</div>
+      <div class="g-box blue">3. Reranker（RAW 路径重排）</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">4. Evidence（证据窗口，补充上下文）</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">5. Judge（LLM 判断证据是否足够）</div><div class="g-arrow">↓</div>
+      <div class="g-flow-row">
+        <div class="g-box">✅ Answer（回答）</div>
+        <div class="g-box red">⚠ Knowledge Missing（证据不足，Fail-Closed 不硬答）</div>
+      </div>
+    </div>
+    <p>想了解某次查询为什么这样检索：<button class="btn" onclick="gotoView('query_trace')">去 检索 Trace</button></p>`},
+  {id:'pages', title:'3. 页面说明', slug:'pages', html: `
+    <h3>Control Center 页面与职责总览</h3>
+    <table><tr><th>页面</th><th>作用</th><th>主要操作</th><th>是否修改知识</th></tr>
+      <tr><td><a onclick="gotoGuideSection('dashboard')" style="cursor:pointer">仪表盘</a></td><td>系统总览</td><td>查看</td><td>否</td></tr>
+      <tr><td><a onclick="gotoGuideSection('todo')" style="cursor:pointer">AI 待办</a></td><td>待处理任务</td><td>查看 / 处理</td><td>视任务而定</td></tr>
+      <tr><td><a onclick="gotoGuideSection('wiki-review')" style="cursor:pointer">Wiki Review</a></td><td>审核 draft Wiki</td><td>查看 / 批准</td><td>是（改 Wiki 状态）</td></tr>
+      <tr><td><a onclick="gotoGuideSection('gaps')" style="cursor:pointer">知识缺口</a></td><td>处理知识缺口</td><td>查看 / 诊断 / 详情</td><td>可能</td></tr>
+      <tr><td><a onclick="gotoGuideSection('sources')" style="cursor:pointer">来源</a></td><td>Inbox 来源文件清单</td><td>查看</td><td>否</td></tr>
+      <tr><td><a onclick="gotoGuideSection('rag-evaluation')" style="cursor:pointer">RAG Evaluation</a></td><td>质量评估 + Governance + Source 治理</td><td>Run / Verify / Mark Verified</td><td>写 Evaluation / 治理状态</td></tr>
+      <tr><td><a onclick="gotoGuideSection('activity')" style="cursor:pointer">活动</a></td><td>操作审计</td><td>查看</td><td>否</td></tr>
+      <tr><td><a onclick="gotoGuideSection('weekly-review')" style="cursor:pointer">每周复盘</a></td><td>周期报告 / 长期趋势</td><td>查看</td><td>否</td></tr>
+      <tr><td><a onclick="gotoGuideSection('health')" style="cursor:pointer">系统健康</a></td><td>健康检查</td><td>查看</td><td>否</td></tr>
+      <tr><td><a onclick="gotoGuideSection('retrieval-trace')" style="cursor:pointer">检索 Trace</a></td><td>解释检索决策链</td><td>查询查看</td><td>否</td></tr>
+    </table>
+    <p>左侧目录选择具体页面，查看详细说明。</p>`},
+  {id:'ops', title:'4. 常用操作', slug:'operations', html: `
+    <h3>常用操作</h3>
+    <p>按场景选择具体操作步骤（左侧目录或下方链接进入）：</p>
+    <ul>
+      <li><a onclick="gotoGuideSection('import')" style="cursor:pointer">导入资料</a></li>
+      <li><a onclick="gotoGuideSection('review-wiki')" style="cursor:pointer">审核 Wiki</a></li>
+      <li><a onclick="gotoGuideSection('approve-wiki')" style="cursor:pointer">批准 Wiki</a></li>
+      <li><a onclick="gotoGuideSection('source-verification')" style="cursor:pointer">核验 Source（Mark Verified）</a></li>
+      <li><a onclick="gotoGuideSection('knowledge-gap')" style="cursor:pointer">处理 Knowledge Gap</a></li>
+      <li><a onclick="gotoGuideSection('run-evaluation')" style="cursor:pointer">运行 Evaluation</a></li>
+    </ul>`},
+  {id:'governance', title:'5. Governance', slug:'governance', html: `
+    <h3>Governance = Baseline 回归质量门禁</h3>
+    <div class="g-flow">
+      <div class="g-box gray">Wiki / Source / Index 知识变化</div><div class="g-arrow">↓</div>
+      <div class="g-box amber">⚙️ Evaluation Required（指纹检测）</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">Scheduler / 手动 Verify → Benchmark</div><div class="g-arrow">↓</div>
+      <div class="g-box blue">Baseline Check</div>
+    </div>
+    <p><b>会触发</b>：Wiki Approved、Index 内容实际变化、手动请求 Evaluation。<b>不会触发</b>：查看页面、mtime-only 触碰、非 Index 文件变化、无知识内容变化（例如仅 Mark Source Verified）。</p>
+    <p><b>⚠ Evaluation Required 不是系统出错</b>，而是「知识库变了，需要重新验证 Baseline 是否仍可靠」。<b>Evaluation Required = NO</b> 代表当前知识指纹无变化，不需要浪费模型 / Reranker / Judge 资源。</p>
+    <p>操作：到 <b>RAG Evaluation</b> 点「验证知识变更」<button class="btn" onclick="gotoView('rag_evaluation')">去 RAG Evaluation</button>，或等 Scheduler 自动验证。</p>`},
+  {id:'baseline', title:'6. Baseline', slug:'baseline', html: `
+    <h3>Baseline = 当前经过验证的系统质量基线</h3>
+    <p>当前正式值在 <b>RAG Evaluation → Evaluation Baseline</b> 卡片动态显示（本指南不写死数字）。含义：</p>
+    <table><tr><th>状态</th><th>含义</th></tr>
+      <tr><td>STABLE</td><td>与基线一致，无回归</td></tr>
+      <tr><td>IMPROVED</td><td>有真实恢复的 Query，质量提升</td></tr>
+      <tr><td>REGRESSED</td><td>存在真实回归（需要调查）</td></tr>
+      <tr><td>UNVERIFIED</td><td>批准 / 索引 / Benchmark 状态不完整</td></tr>
+      <tr><td>FAILED</td><td>Evaluation 执行失败（可重试）</td></tr>
+    </table>
+    <p><b>重要</b>：JUDGE_VARIANCE（同证据跨 run 判定波动）<b>不等于</b> REGRESSED；回归保护只在真实回归时触发，且回归运行不会覆盖旧基线。</p>`},
+  {id:'faq', title:'7. 常见问题', slug:'faq', html: `
+    <ul>
+      <li><b>「Evaluation Required」是什么意思？</b> 知识库发生了变化，需要重新验证 Baseline；不是出错。到 RAG Evaluation 点「验证知识变更」。</li>
+      <li><b>「为什么有时候不跑 Benchmark？」</b> 因为知识指纹没有变化，避免浪费模型/Judge 资源。</li>
+      <li><b>「Source Verified 和 Wiki Approved 有什么区别？」</b> 独立的两件事：Source 核验确认来源真实；Wiki 批准确认知识内容可用。一个 Source 可先 verified、Wiki 仍是 draft。</li>
+      <li><b>「knowledge_missing 是不是代表知识库没有？」</b> 不一定。先看缺口类型（Knowledge/Evidence/Retrieval/Judge/System）与证据。</li>
+      <li><b>「我想改 Wiki 正文怎么办？」</b> 当前 Control Center 只做审核与状态操作；正文通过 Markdown 文件编辑。</li>
+      <li><b>「当前我该做什么？」</b> 看 Guide 首页「当前系统状态」与「当前建议」。</li>
+    </ul>`},
+  {id:'trouble', title:'8. 故障排查', slug:'troubleshooting', html: `
+    <ul>
+      <li><b>页面空白 / API 404</b>：可能旧 Server 进程占用 8765。检查 launcher.log；重启 Control Center（start_control_center.bat）。</li>
+      <li><b>Benchmark 全部 0%</b>：通常是 Judge/LLM 不可用（如无 DEEPSEEK_API_KEY 或网络受限）导致 Fail-Closed；Governance 会保护基线不覆盖，检查环境后重跑。</li>
+      <li><b>Scheduler 反复触发 Benchmark</b>：知识指纹与 Index Manifest 不一致（如 Wiki 批准后未 Reindex）。执行 Reindex 使指纹干净。</li>
+      <li><b>LLM 调用失败（Connection error）</b>：多为网络 / API Key 环境问题；系统 Fail-Closed，不会硬编答案。</li>
+      <li><b>API 失败时页面显示</b>：页面会显示「⚠ 数据加载失败 + 原因 + [重试]」，不会空白。</li>
+    </ul>`},
+];
+// 子章节（页面说明 / 常用操作 的子级，独立 slug 可深链）
+const GUIDE_CHILDREN = {
+  pages: [
+    {id:'page-dashboard', title:'Dashboard', slug:'dashboard', html:`
+      <h3>仪表盘（Dashboard）</h3>
+      <p><b>作用</b>：系统总览——知识总量、待人工处理、AI 已验证、Judge 失败、待处理缺口、Inbox 待处理、最近一次 Review Preflight、最近活动。</p>
+      <p><b>在哪里</b>：左侧导航「仪表盘」。</p>
+      <p><b>主要操作</b>：查看。</p><p><b>是否修改知识</b>：否。</p>`},
+    {id:'page-todo', title:'AI 待办', slug:'todo', html:`
+      <h3>AI 待办</h3>
+      <p><b>作用</b>：待人工处理的任务（Wiki 审核 / 知识缺口），可按「待人工处理 / AI 已验证 / Judge 失败 / 全部」过滤。</p>
+      <p><b>在哪里</b>：左侧导航「AI 待办」。</p>
+      <p><b>主要操作</b>：查看上下文、批准 / 拒绝 / 解决 / 忽略。</p><p><b>是否修改知识</b>：视任务而定。</p>`},
+    {id:'page-wiki-review', title:'Wiki Review', slug:'wiki-review', html:`
+      <h3>Wiki Review</h3>
+      <p><b>作用</b>：审核 draft Wiki，人工批准后升级为 reviewed。</p>
+      <p><b>在哪里</b>：Control Center → Wiki Review。</p>
+      <p><b>操作步骤</b>：① 找到 status=draft 的 Wiki → ② 点「详情」查看内容与来源 → ③ 对照 Source 核对关键事实、判断是否覆盖目标 Query → ④ 没问题 → 勾选并「确认批准选中项」（draft→reviewed）→ ⑤ 有问题 → 保持 Draft / 修订正文（不要先点 Reject）。</p>
+      <p><b>完成后系统行为</b>：状态变为 reviewed → Index 指纹变化 → Governance Required → Benchmark → Baseline Check。</p>
+      <p><b>注意</b>：当前版本 Control Center 负责审核与状态操作；Wiki 正文编辑通过 Markdown 文件 / 当前编辑方式完成（无在线编辑器）。</p>`},
+    {id:'page-gaps', title:'Knowledge Gaps', slug:'gaps', html:`
+      <h3>知识缺口（Knowledge Gaps）</h3>
+      <p><b>作用</b>：Inbox 驱动的缺口 + RAG Evaluation 缺口（失败 Query 诊断）。</p>
+      <p><b>缺口类型</b>：<b>Knowledge Gap</b>=可靠资料不足；<b>Evidence Gap</b>=有资料但证据不足；<b>Retrieval Gap</b>=知识存在但没被找到；<b>Judge Gap</b>=判定不稳定/拒绝；<b>System Error</b>=执行失败。</p>
+      <p><b>在哪里</b>：左侧导航「知识缺口」→ RAG Evaluation 知识缺口表 → 详情 / Source。</p>
+      <p><b>注意</b>：不要看到 knowledge_missing 就断定「知识库没有这条知识」。</p>`},
+    {id:'page-sources', title:'Sources', slug:'sources', html:`
+      <h3>来源（Sources）</h3>
+      <p><b>作用</b>：00_Inbox 原始来源文件清单（只读）。</p>
+      <p><b>在哪里</b>：左侧导航「来源」。</p>
+      <p><b>注意</b>：Source 治理（核验）在 <b>RAG Evaluation → Source Acquisition 卡片</b>，不在此页。</p>`},
+    {id:'page-rag', title:'RAG Evaluation', slug:'rag-evaluation', html:`
+      <h3>RAG Evaluation</h3>
+      <p><b>作用</b>：质量评估 + Governance + Baseline + Source 治理 + Diff 的入口。</p>
+      <p><b>在哪里</b>：左侧导航「RAG Evaluation」。</p>
+      <p><b>包含</b>：Coverage / Knowledge Missing / Wiki Hit / Fallback / Diff / Golden Set / Judge Variance / Evaluation Governance / Evaluation Baseline / Source Acquisition（Mark Verified）/ Wiki Compilation / Before-After Diff。</p>
+      <p><b>主要操作</b>：「运行 Benchmark」（真实检索链，数分钟）、「验证知识变更」（有知识变化时跑 Benchmark + Baseline Check）、Source 行「Mark Verified」。</p>`},
+    {id:'page-activity', title:'Activity', slug:'activity', html:`
+      <h3>活动（Activity）</h3>
+      <p><b>作用</b>：操作审计日志（Wiki 批准、SOURCE_VERIFIED、Governance verify、Preflight 等）。</p>
+      <p><b>在哪里</b>：左侧导航「活动」。</p><p><b>是否修改知识</b>：否。</p>`},
+    {id:'page-weekly', title:'Weekly Review', slug:'weekly-review', html:`
+      <h3>每周复盘（Weekly Review）</h3>
+      <p><b>作用</b>：周期报告——知识质量、RAG 质量、知识缺口、审核健康度、时效性、项目、Baseline、Governance 的长期变化。</p>
+      <p><b>在哪里</b>：左侧导航「每周复盘」。</p>
+      <p><b>注意</b>：Weekly Review 是「看系统长期变化」的地方，不是逐条审核 Wiki 的地方。</p>`},
+    {id:'page-health', title:'System Health', slug:'health', html:`
+      <h3>系统健康（System Health）</h3>
+      <p><b>作用</b>：RAG / Wiki / 架构健康检查。</p>
+      <p><b>在哪里</b>：左侧导航「系统健康」。</p><p><b>是否修改知识</b>：否。</p>`},
+    {id:'page-trace', title:'Retrieval Trace', slug:'retrieval-trace', html:`
+      <h3>检索 Trace</h3>
+      <p><b>作用</b>：回答「AI 为什么这样检索」——展示 Wiki-first → Gate → RAW fallback → Reranker → Evidence → Judge 的决策链。</p>
+      <p><b>在哪里</b>：左侧导航「检索 Trace」，输入查询并运行。</p><p><b>是否修改知识</b>：否。</p>`},
+  ],
+  ops: [
+    {id:'ops-import', title:'导入资料', slug:'import', html:`
+      <h3>📥 导入资料</h3>
+      <div class="g-step"><div class="idx">1</div><div>把资料放入 <b>00_Inbox</b>（系统会自动分类）<span class="g-tag auto">自动</span></div></div>
+      <div class="g-step"><div class="idx">2</div><div>AI / Ingestion 处理：分析 → 建议 → 生成 Wiki Draft<span class="g-tag auto">自动</span></div></div>
+      <div class="g-step"><div class="idx">3</div><div>到 <b>AI 待办</b> 查看任务<button class="btn" onclick="gotoView('todo')">去 AI 待办</button></div></div>
+      <div class="g-step"><div class="idx">4</div><div>如生成 Wiki Draft → 到 <b>Wiki Review</b> 审核<button class="btn" onclick="gotoView('wikis')">去 Wiki Review</button></div></div>
+      <div class="g-step"><div class="idx">5</div><div>批准后 → Index → Governance Required → Benchmark → Baseline Check<span class="g-tag auto">自动</span></div></div>`},
+    {id:'ops-review-wiki', title:'审核 Wiki', slug:'review-wiki', html:`
+      <h3>📝 审核 Wiki</h3>
+      <div class="g-step"><div class="idx">1</div><div>Control Center → <b>Wiki Review</b>，找到 status=draft 的 Wiki<button class="btn" onclick="gotoView('wikis')">去 Wiki Review</button></div></div>
+      <div class="g-step"><div class="idx">2</div><div>点「详情」查看内容与来源</div></div>
+      <div class="g-step"><div class="idx">3</div><div>对照来源核对关键事实、判断是否覆盖目标 Query</div></div>
+      <div class="g-step"><div class="idx">4</div><div>有问题 → 保持 Draft / 修订正文（不要先点 Reject）</div></div>`},
+    {id:'ops-approve-wiki', title:'批准 Wiki', slug:'approve-wiki', html:`
+      <h3>✅ 批准 Wiki</h3>
+      <div class="g-step"><div class="idx">1</div><div>在 <b>Wiki Review</b> 勾选审核通过的 draft Wiki<button class="btn" onclick="gotoView('wikis')">去 Wiki Review</button></div></div>
+      <div class="g-step"><div class="idx">2</div><div>点「确认批准选中项」（draft→reviewed）</div></div>
+      <div class="g-step"><div class="idx">3</div><div>完成后系统行为：Index 指纹变化 → Governance Required → Benchmark → Baseline Check</div></div>`},
+    {id:'ops-source', title:'核验 Source', slug:'source-verification', html:`
+      <h3>🔍 核验 Source（Mark Verified）</h3>
+      <div class="g-step"><div class="idx">1</div><div>Control Center → <b>RAG Evaluation → Source Acquisition 卡片</b><button class="btn" onclick="gotoView('rag_evaluation')">去 RAG Evaluation</button></div></div>
+      <div class="g-step"><div class="idx">2</div><div>找到状态 <b>acquired</b>、核验列 <b>⚠ 待人工核验</b> 的 Source（例如 <code>src_git_config</code> / Obsidian-Git Getting Started）</div></div>
+      <div class="g-step"><div class="idx">3</div><div>对照 URL / 本地文件 / 权威来源，确认内容真实</div></div>
+      <div class="g-step"><div class="idx">4</div><div>点击该行 <b>[Mark Verified]</b> → 确认弹窗 → <b>✓ 已核验</b></div></div>
+      <p><b>重要</b>：Source Verified 与 Wiki Approved 是两件独立的事。例如 Source=acquired/verified、Wiki=draft 完全合理。</p>
+      <p><b>完成后系统行为</b>：只改治理元数据（verified=true + verified_at/by），<b>不触发 Benchmark</b>（除非 Index 实际变化）。</p>`},
+    {id:'ops-gap', title:'处理 Knowledge Gap', slug:'knowledge-gap', html:`
+      <h3>🧩 处理 Knowledge Gap</h3>
+      <div class="g-step"><div class="idx">1</div><div>Control Center → <b>知识缺口</b>，看 RAG Evaluation 知识缺口表<button class="btn" onclick="gotoView('gaps')">去 知识缺口</button></div></div>
+      <div class="g-step"><div class="idx">2</div><div>理解缺口类型（Knowledge/Evidence/Retrieval/Judge/System）</div></div>
+      <div class="g-step"><div class="idx">3</div><div>点「详情」看失败 Query 与证据；点「Source」看已登记来源</div></div>
+      <div class="g-step"><div class="idx">4</div><div>缺资料 → 获取来源；有来源 → 生成/扩充 Wiki Draft → 走审核流程</div></div>`},
+    {id:'ops-eval', title:'运行 Evaluation', slug:'run-evaluation', html:`
+      <h3>📊 运行 / 查看 RAG Evaluation</h3>
+      <div class="g-step"><div class="idx">1</div><div>Control Center → <b>RAG Evaluation</b><button class="btn" onclick="gotoView('rag_evaluation')">去 RAG Evaluation</button></div></div>
+      <div class="g-step"><div class="idx">2</div><div>查看 Coverage / Knowledge Missing / Wiki Hit / Fallback / Diff / Golden Set / Judge Variance</div></div>
+      <div class="g-step"><div class="idx">3</div><div>需要时点「运行 Benchmark」（真实检索链，数分钟）</div></div>
+      <div class="g-step"><div class="idx">4</div><div>有知识变化时点「验证知识变更」触发 Governance → Benchmark → Baseline Check</div></div>`},
+  ],
+};
+function guideFlatten() {
+  const out = [];
+  GUIDE_SECTIONS.forEach(s => {
+    out.push({id:s.id, title:s.title, slug:s.slug, parentId:null, html:s.html});
+    (GUIDE_CHILDREN[s.id] || []).forEach(ch => out.push({id:ch.id, title:ch.title, slug:ch.slug, parentId:s.id, html:ch.html}));
+  });
+  return out;
+}
+const GUIDE_FLAT = guideFlatten();
+function guideFind(slug) {
+  return GUIDE_FLAT.find(x => x.slug === slug) || null;
+}
+function guideParent(sec) { return sec.parentId ? GUIDE_SECTIONS.find(s => s.id === sec.parentId) : null; }
+function guideText(html) { const d = document.createElement('div'); d.innerHTML = html; return (d.textContent || '').toLowerCase(); }
+function resolveGuideRoute() {
+  const h = location.hash.replace('#', '');
+  if (h === 'guide' || h === '') return {isHome:true, section:null};
+  const slug = h.replace(/^guide\//, '').split('#')[0];
+  const sec = guideFind(slug);
+  if (sec) return {isHome:false, section:sec};
+  return {isHome:true, section:null}; // 未知 slug -> 首页
+}
+function gotoGuideSection(slug) {
+  const sec = guideFind(slug);
+  if (!sec) { location.hash = '#guide'; return; }
+  location.hash = '#guide/' + slug;   // push history -> 后退/前进正常
+}
+function guideBreadcrumb(sec) {
+  const p = guideParent(sec);
+  return '<div class="g-crumb">📖 使用指南' + (p ? ' / ' + esc(p.title.replace(/^\d+\.\s*/,'')) : '') + ' / <b>' + esc(sec.title.replace(/^\d+\.\s*/,'')) + '</b></div>';
+}
+function guideSidebarHtml(currentSlug) {
+  let html = '<div class="g-toc-head"><b>使用指南</b></div><a data-guide-slug="guide" class="' + (currentSlug==='guide'?'active':'') + '" onclick="gotoGuideSection(\'guide\')">🏠 首页</a>';
+  GUIDE_SECTIONS.forEach(s => {
+    const children = GUIDE_CHILDREN[s.id] || [];
+    const parentActive = currentSlug === s.slug || children.some(ch => ch.slug === currentSlug);
+    html += '<a data-guide-slug="'+esc(s.slug)+'" class="g-parent ' + (currentSlug===s.slug?'active':'') + '" onclick="gotoGuideSection(\''+esc(s.slug)+'\')">'+esc(s.title)+'</a>';
+    children.forEach(ch => {
+      html += '<a data-guide-slug="'+esc(ch.slug)+'" class="g-child ' + (currentSlug===ch.slug?'active':'') + '" onclick="gotoGuideSection(\''+esc(ch.slug)+'\')">'+esc(ch.title)+'</a>';
+    });
+  });
+  return html;
+}
+function guideSearchResults(q) {
+  q = (q || '').trim().toLowerCase();
+  if (!q) return [];
+  // 排序：标题命中优先，其次内容命中次数（高频更相关）
+  return GUIDE_FLAT.map(x => {
+    const title = (x.title + ' ' + (guideParent(x) ? guideParent(x).title : '')).toLowerCase();
+    const text = guideText(x.html);
+    const titleHit = title.includes(q);
+    const idx = text.indexOf(q);
+    const headHit = idx >= 0 && idx < 80;      // 查询词出现在章节开头（核心主题）
+    const count = text.split(q).length - 1;
+    return { x: x, titleHit: titleHit, headHit: headHit, count: count };
+  }).filter(r => r.titleHit || r.count > 0)
+    // 标题命中 -> 章节开头命中 -> 命中次数 -> 子章节（具体页面）优先
+    .sort((a, b) => (b.titleHit - a.titleHit) || (b.headHit - a.headHit)
+          || (b.count - a.count) || ((b.x.parentId ? 1 : 0) - (a.x.parentId ? 1 : 0)))
+    .slice(0, 12)
+    .map(r => r.x);
+}
+function guideSearch() {
+  const box = document.getElementById('g_search');
+  const q = box ? box.value : '';
+  const res = document.getElementById('g_results');
+  if (!res) return;
+  if (!q.trim()) { res.innerHTML = ''; return; }
+  const hits = guideSearchResults(q);
+  if (!hits.length) { res.innerHTML = '<div style="padding:8px;color:#9ca3af;font-size:12px">无匹配章节</div>'; return; }
+  res.innerHTML = hits.map(x => {
+    const p = guideParent(x);
+    return '<div class="g-result" onclick="gotoGuideSection(\''+esc(x.slug)+'\'); document.getElementById(\'g_search\').value=\'\'; guideSearch();">' +
+      '<div>' + esc(x.title) + (p ? ' <span style="color:#9ca3af;font-size:11px">· '+esc(p.title.replace(/^\d+\.\s*/,''))+'</span>' : '') + '</div></div>';
+  }).join('');
+}
+function guidePrevNext(sec) {
+  const idx = GUIDE_FLAT.findIndex(x => x.slug === sec.slug);
+  const prev = idx > 0 ? GUIDE_FLAT[idx-1] : null;
+  const next = idx < GUIDE_FLAT.length-1 ? GUIDE_FLAT[idx+1] : null;
+  let html = '<div class="g-prevnext">';
+  html += prev ? '<button class="btn" onclick="gotoGuideSection(\''+esc(prev.slug)+'\')">← 上一章：'+esc(prev.title)+'</button>' : '<span></span>';
+  html += next ? '<button class="btn" onclick="gotoGuideSection(\''+esc(next.slug)+'\')">下一章：'+esc(next.title)+' →</button>' : '<span></span>';
+  html += '</div>';
+  return html;
+}
+async function safeApi(path, opts) { try { return await api(path, opts); } catch (e) { return null; } }
+async function guideLoadStatus() {
+  const [bl, gov, wk, sa, gapsEval] = await Promise.all([
+    safeApi('/api/rag/evaluation/baseline'), safeApi('/api/rag/evaluation/governance'),
+    safeApi('/api/wikis'), safeApi('/api/source_acquisition'), safeApi('/api/gaps/evaluation'),
+  ]);
+  const blBase = (bl && bl.baseline) || {};
+  const govSt = (gov && gov.state) || {};
+  const govRequired = gov ? (gov.required || govSt.status === 'required' || govSt.status === 'failed') : null;
+  const draftWiki = (wk || []).filter ? (wk || []).filter(w => w.status === 'draft').length : null;
+  const saSrcs = (sa && sa.registry && sa.registry.sources) || [];
+  const pendingSource = sa ? saSrcs.filter(s => s.source_status === 'acquired' && !((s.verification || {}).verified)).length : null;
+  const gapGaps = (gapsEval && gapsEval.gaps) || [];
+  const openP01 = gapsEval ? gapGaps.filter(g => g.status === 'open' && (g.priority === 'P0' || g.priority === 'P1')).length : null;
+  let reco, recoColor;
+  if (govRequired) { reco = '⚠ 有知识变更待验证 → 去 RAG Evaluation 点击「验证知识变更」'; recoColor = '#b45309'; }
+  else if (draftWiki > 0) { reco = '📝 有 ' + draftWiki + ' 个 Wiki 待审核 → 去 Wiki Review'; recoColor = '#1d4ed8'; }
+  else if (pendingSource > 0) { reco = '🔍 有 ' + pendingSource + ' 个 Source 待核验 → 去 RAG Evaluation → Source Acquisition 点击 Mark Verified'; recoColor = '#1d4ed8'; }
+  else if (openP01 > 0) { reco = '🧩 有 ' + openP01 + ' 个 P0/P1 知识缺口 → 去 知识缺口'; recoColor = '#b45309'; }
+  else if (govRequired === null && draftWiki === null && pendingSource === null && openP01 === null) { reco = '⚠ 无法获取系统状态（API 不可用）'; recoColor = '#b91c1c'; }
+  else { reco = '✅ 当前无需人工处理'; recoColor = '#15803d'; }
+  return { blBase, govSt, govRequired, draftWiki, pendingSource, openP01, reco, recoColor };
+}
+function guideCompactStatus(st) {
+  const na = '—';
+  return '<div class="g-reco" style="border-left:4px solid '+(st.govRequired?'#b45309':'#15803d')+'"><b>当前系统状态：</b>' +
+    'Governance <b>'+esc(st.govSt.status || na)+'</b> · Baseline <b>'+esc(st.blBase.coverage != null ? st.blBase.coverage+'%' : na)+'</b> ('+esc(st.blBase.status || na)+') · ' +
+    'Evaluation Required <b>'+esc(st.govRequired == null ? na : (st.govRequired ? 'YES' : 'NO'))+'</b> · ' +
+    '待核验 Source <b>'+esc(st.pendingSource == null ? na : st.pendingSource)+'</b> · ' +
+    '<a onclick="gotoGuideSection(\'guide\')" style="cursor:pointer;color:#1d4ed8">查看完整状态与建议 →</a></div>';
+}
+async function renderGuide() {
+  const route = resolveGuideRoute();
+  const st = await guideLoadStatus();
+  const currentSlug = route.isHome ? 'guide' : route.section.slug;
+  const layoutHead =
+    '<div class="g-header">' +
+      '<button class="btn g-toc-toggle" onclick="document.querySelector(\'.g-toc\').classList.toggle(\'open\')">📑 目录</button>' +
+      '<div class="g-search-wrap"><input id="g_search" placeholder="搜索指南…" oninput="guideSearch()"><div id="g_results"></div></div>' +
+    '</div>';
+  const sidebar = '<div class="g-toc">' + guideSidebarHtml(currentSlug) + '</div>';
+  if (route.isHome) {
+    $main.innerHTML = layoutHead + '<div class="g-layout">' + sidebar + '<div class="g-body">' + renderGuideHome(st) + '</div></div>';
+  } else {
+    $main.innerHTML = layoutHead + '<div class="g-layout">' + sidebar + '<div class="g-body">' + renderGuideSection(route.section, st) + '</div></div>';
+  }
+  // 滚动回顶部
+  if (document.getElementById('main')) document.getElementById('main').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+function renderGuideHome(st) {
+  const na = '—';
+  const stat = (n, l) => '<div class="g-stat"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>';
+  return '<h2>📖 使用指南</h2>' +
+    '<p style="color:#374151">Knowledge OS Control Center 操作手册：每个页面做什么、每一步在哪里操作、操作后系统会发生什么、什么时候需要人工介入。</p>' +
+    '<div class="g-reco" style="border-left:4px solid '+st.recoColor+'"><b>当前建议：</b>'+esc(st.reco)+'</div>' +
+    '<div class="g-status">' +
+      stat(st.blBase.coverage != null ? st.blBase.coverage + '%' : na, 'Baseline（RAG Evaluation）') +
+      stat(st.blBase.status || na, 'Baseline Status') +
+      stat(st.govSt.status || na, 'Governance') +
+      stat(st.govRequired == null ? na : (st.govRequired ? 'YES' : 'NO'), 'Evaluation Required') +
+      stat(st.draftWiki == null ? na : st.draftWiki, '待审核 Wiki') +
+      stat(st.pendingSource == null ? na : st.pendingSource, '待核验 Source') +
+      stat(st.openP01 == null ? na : st.openP01, 'Open P0/P1') +
+    '</div>' +
+    '<h3>你现在想做什么？</h3>' +
+    '<div class="g-entry">' +
+      '<button onclick="gotoGuideSection(\'import\')">📥 我刚导入了一份资料</button>' +
+      '<button onclick="gotoGuideSection(\'review-wiki\')">📝 我要审核一个 Wiki</button>' +
+      '<button onclick="gotoGuideSection(\'approve-wiki\')">✅ 我要批准 Wiki</button>' +
+      '<button onclick="gotoGuideSection(\'source-verification\')">🔍 我要核验 Source</button>' +
+      '<button onclick="gotoGuideSection(\'knowledge-gap\')">🧩 我要处理 Knowledge Gap</button>' +
+      '<button onclick="gotoGuideSection(\'run-evaluation\')">📊 我要查看 RAG 质量</button>' +
+      '<button onclick="gotoGuideSection(\'governance\')">⚙️ 我要检查 Governance</button>' +
+      '<button onclick="gotoGuideSection(\'weekly-review\')">📅 我要看 Weekly Review</button>' +
+      '<button onclick="gotoGuideSection(\'faq\')">❓ 我不知道现在该做什么</button>' +
+    '</div>' +
+    '<h3>全部章节</h3><div style="color:#6b7280;font-size:12px">点击左侧目录或下方条目进入对应章节：</div>' +
+    '<ul>' + GUIDE_FLAT.map(x => '<li><a onclick="gotoGuideSection(\''+esc(x.slug)+'\')" style="cursor:pointer;color:#1d4ed8">'+esc(x.title)+'</a></li>').join('') + '</ul>' +
+    '<div style="color:#6b7280;font-size:12px">指南版本：'+esc(GUIDE_META.version)+' · 更新：'+esc(GUIDE_META.updated)+'</div>';
+}
+function renderGuideSection(sec, st) {
+  const p = guideParent(sec);
+  let html = '<h2 style="margin-bottom:2px">'+esc(sec.title)+'</h2>' + guideBreadcrumb(sec) + guideCompactStatus(st);
+  html += '<div class="g-section" style="margin-top:10px">' + sec.html + '</div>';
+  html += guidePrevNext(sec);
+  return html;
+}
+async function runEvaluation() {
+  const el = document.getElementById('eval_result');
+  if (el) el.innerHTML = msg(true, '正在运行 Benchmark（真实检索链 + 模型加载，可能数分钟）…');
+  try {
+    const r = await api('/api/rag/evaluation/run', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    if (r.ok) {
+      if (el) el.innerHTML = msg(true, 'Benchmark 完成：run_id=' + esc(((r.latest||{}).run_id) || '?'));
+    } else {
+      if (el) el.innerHTML = msg(false, r.message || '运行失败');
+    }
+    await render('rag_evaluation');
+  } catch (e) {
+    if (el) el.innerHTML = msg(false, '请求失败：'+esc(String(e)));
+  }
+}
+function actionLabel(a) {
+  const m = {expand_wiki:'扩充现有 Wiki', create_wiki:'新建 Wiki Draft', acquire_source:'获取来源', none:'暂不处理'};
+  return m[a] || a || '—';
+}
+async function runGovernanceVerify() {
+  const el = document.getElementById('gov_result');
+  if (el) el.innerHTML = msg(true, '正在验证（真实 Benchmark + Baseline Check，可能数分钟）…');
+  try {
+    const r = await api('/api/rag/evaluation/verify', {method:'POST'});
+    if (el) el.innerHTML = msg(r.ok, r.message || (r.ok ? '验证完成' : '验证失败'));
+    await render('rag_evaluation');
+  } catch (e) { if (el) el.innerHTML = msg(false, '请求失败：'+esc(String(e))); }
+}
+async function runGapDiagnosis() {
+  try {
+    const r = await api('/api/gaps/diagnose', {method:'POST'});
+    flash(r.ok, r.ok ? 'Gap 诊断完成：' + (r.gaps ? ('开放 '+r.gaps.open+' / 已解决 '+r.gaps.resolved) : 'ok') : (r.message || '诊断失败'));
+    render('gaps');
+  } catch (e) { flash(false, '诊断请求失败：'+esc(String(e))); }
+}
+async function viewEvalGap(gapId) {
+  const r = await api('/api/gaps/evaluation/'+encodeURIComponent(gapId));
+  if (!r || !r.ok) { $main.innerHTML = '<h2>Gap 详情</h2>'+msg(false, (r&&r.message)||'加载失败')+backBtn(); return; }
+  const g = r.gap || {}, sig = g.signals || {}, ev = g.evidence || {}, wt = g.wiki_target || {};
+  const traces = ev.retrieval_traces || {};
+  let html = '<h2>Knowledge Gap 详情 <span style="font-size:12px;color:#6b7280;font-weight:400">'+esc(g.id)+' · '+esc(g.priority||'')+' · '+esc(g.status||'')+'</span></h2>' + backBtn();
+  html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">'+esc(g.title||g.id)+'</h3>' +
+    '<div>领域：'+esc(g.domain||'—')+'　出现次数：<b>'+esc(sig.query_count??0)+'</b>　知识缺失 '+esc(sig.knowledge_missing_count??0)+'　证据不足 '+esc(sig.evidence_insufficient_count??0)+'　Judge 拒绝 '+esc(sig.judge_rejected_count??0)+'</div>' +
+    '<div>已有 Source：<b>'+(g.source_available?'YES':'NO')+'</b>　已有 Wiki：<b>'+(g.wiki_exists?'YES':'NO')+'</b>　建议：'+esc(actionLabel(g.recommended_action||''))+'</div>' +
+    (g.wiki_target ? '<div>Wiki 目标：'+esc(wt.path||(wt.existing?'（已有）':'（新建）'))+'</div>' : '') +
+    (g.sources && g.sources.length ? '<div style="font-size:12px;color:#6b7280">Sources：'+esc(g.sources.join('；'))+'</div>' : '') +
+    ((g.problem||[]).length ? '<div style="margin-top:6px">问题：</div><ul>' + g.problem.map(x=>'<li>'+esc(x)+'</li>').join('') + '</ul>' : '') +
+    (g.notes ? '<div style="font-size:12px;color:#6b7280;margin-top:4px">'+esc(g.notes)+'</div>' : '') + '</div>';
+  html += '<div class="card"><h3 style="margin-top:0">Gap Evidence</h3><table><tr><th>Query</th><th>Path</th><th>Fallback Reason</th><th>Wiki 置信度</th><th>Failure</th><th>Kind</th></tr>' +
+    Object.keys(traces).map(qid => { const t = traces[qid]||{}; return '<tr><td>'+esc(qid)+'</td><td>'+esc(t.path||'—')+'</td><td>'+esc(t.fallback_reason||'—')+'</td><td>'+esc(t.wiki_confidence!=null?t.wiki_confidence:'—')+'</td><td>'+esc(t.failure||'—')+'</td><td>'+esc(t.failure_kind||'—')+'</td></tr>'; }).join('') + '</table>' +
+    (ev.existing_wikis && ev.existing_wikis.length ? '<div style="font-size:12px;color:#6b7280;margin-top:6px">相关 Wiki：'+esc(ev.existing_wikis.join('；'))+'</div>' : '') + '</div>';
+  $main.innerHTML = html;
+}
+async function viewSources(gapId) {
+  const r = await api('/api/source_acquisition');
+  const all = (r && r.registry && r.registry.sources) || [];
+  const list = all.filter(s => s.gap_id === gapId);
+  let html = '<h2>Source Acquisition <span style="font-size:12px;color:#6b7280;font-weight:400">'+esc(gapId)+'</span></h2>' + backBtn();
+  if (!list.length) html += '<div class="msg">该 Gap 暂无 Source Task。</div>';
+  list.forEach(s => {
+    const src = s.source || {}, vf = s.verification || {}, sf = s.sufficiency || {};
+    const color = s.source_status==='verified' ? '#16a34a' : s.source_status==='acquired' ? '#2563eb' : s.source_status==='candidate' ? '#d97706' : '#b91c1c';
+    html += '<div class="card" style="margin-bottom:10px"><h3 style="margin-top:0">'+esc(s.id)+' <span style="color:'+color+'">'+esc(s.source_status)+'</span> <span style="font-size:11px;color:#6b7280">'+esc(s.priority||'')+'</span></h3>' +
+      '<div>'+esc(s.title||'')+'</div>' +
+      '<div style="font-size:12px;color:#6b7280;margin-top:4px">' +
+      '来源类型：'+esc(s.source_type||'—')+'　权威：'+esc(src.authority||'—')+'</div>' +
+      (src.url ? '<div style="font-size:12px"><a href="'+esc(src.url)+'" target="_blank">'+esc(src.url)+'</a></div>' : '') +
+      (src.local_path ? '<div style="font-size:12px">本地：'+esc(src.local_path)+'</div>' : '') +
+      '<div style="font-size:12px;margin-top:4px">充分性：相关 '+esc(sf.source_relevance||'unknown')+' · 权威 '+esc(sf.source_authority||'unknown')+' · 完整 '+esc(sf.source_completeness||'unknown')+' · 可提取 '+esc(sf.source_extractability||'unknown')+'</div>' +
+      '<div style="font-size:12px;color:#6b7280;margin-top:4px">核验：'+sourceVerifiedBadge(s)+(vf.verified&&vf.verified_at ? '　Verified At: '+esc(vf.verified_at) : '')+'　'+(vf.reviewer||'')+'</div>' +
+      '<div style="font-size:12px;margin-top:4px">原因：'+esc(s.reason||'')+'</div>' +
+      (s.source_status==='acquired' && !(vf.verified) ? '<div style="margin-top:6px"><button class="btn" onclick="markSourceVerified(\''+esc(s.id)+'\',\''+esc(gapId)+'\')">Mark Verified</button></div>' : '') + '</div>';
+  });
+  $main.innerHTML = html;
+}
+function sourceVerifiedBadge(s) {
+  const vf = s.verification || {};
+  if (vf.verified) return '<span style="color:#16a34a;font-weight:600">✓ 已核验</span>';
+  return '<span style="color:#d97706;font-weight:600">⚠ 待人工核验</span>';
+}
+async function markSourceVerified(sourceId, gapId) {
+  if (!confirm('确认已人工核验此 Source 的标题、来源、内容与登记信息？')) return;
+  const r = await api('/api/source_acquisition/'+encodeURIComponent(sourceId)+'/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({actor:'user'})});
+  flash(r.ok, r.message || (r.ok ? '已核验' : '核验失败'));
+  if (r.ok) { if (gapId) viewSources(gapId); else render('rag_evaluation'); }
+}
+function gotoView(v) {
+  const b = document.querySelector('nav button[data-view="'+v+'"]');
+  if (b) { b.click(); } else { const db = document.querySelector('nav button[data-view="dashboard"]'); if (db) db.click(); }
+}
+const UI_LABELS = {
+  healthStatus: {excellent:'优秀', good:'良好', attention:'需关注', warning:'警告', critical:'严重', not_calculated:'尚未计算', not_available:'暂无数据'},
+  projectStatus: {planning:'规划中', active:'进行中', blocked:'阻塞', paused:'已暂停', completed:'已完成', archived:'已归档'},
+  reviewStatus: {judge_passed:'AI 已验证', needs_review:'待人工审核', judge_failed:'Judge 失败', judging:'审核中', not_judged:'未判断', blocked:'无法审核', failed:'Judge 失败'},
+  insightStatus: {available:'可用', unavailable:'不可用', cached:'已缓存', generating:'生成中', failed:'生成失败'},
+  automationStatus: {success:'成功', success_with_warnings:'有警告', failed:'失败', not_run:'未运行', unknown:'未知', running:'运行中', healthy:'正常'},
+  impact: {high:'高', medium:'中等', low:'低'},
+  dim: {knowledge_quality:'知识质量', review_health:'审核健康度', knowledge_gaps:'知识缺口', freshness:'知识时效性', project_activity:'项目活跃度', system_reliability:'系统可靠性'},
+  wikiStatus: {stable:'稳定', reviewed:'已审核', draft:'草稿', unknown:'未知'},
+  consistency: {consistent:'一致', partial:'部分一致', conflict:'冲突', unknown:'未知'},
+  sufficiency: {sufficient:'充分', insufficient:'不足', partial:'部分', unknown:'未知'},
+  confidence: {high:'高', medium:'中', low:'低', unknown:'未知'},
+  recommendation: {approve:'批准', reject:'拒绝', resolve:'解决', review:'复核'},
+};
+function uiEnum(map, v) { return (map[v] || v || '—'); }
+function uiHealthStatus(s) { return uiEnum(UI_LABELS.healthStatus, s); }
+function uiProjectStatus(s) { return uiEnum(UI_LABELS.projectStatus, s); }
+function uiInsightStatus(s) { return uiEnum(UI_LABELS.insightStatus, s); }
+function uiAutomationStatus(s) { return uiEnum(UI_LABELS.automationStatus, s); }
+function uiImpact(s) { return uiEnum(UI_LABELS.impact, s); }
+function uiDim(k) { return UI_LABELS.dim[k] || k || ''; }
+function uiWikiStatus(s) { return uiEnum(UI_LABELS.wikiStatus, s); }
+const UI_FACTOR_METRIC = {
+  review_pending:'待人工审核', judge_failed:'Judge 失败', gaps_pending:'待处理知识缺口',
+  stale:'过期风险', projects_blocked:'阻塞项目', system_errors:'系统错误', system_warnings:'系统警告',
+  gaps_resolved:'已解决知识缺口', system_health:'系统健康', health_score:'健康评分',
+};
+function uiFactorMetric(m) { return UI_FACTOR_METRIC[m] || m || ''; }
+const UI_EFFECT = {positive:'正向', negative:'负向', neutral:'中性'};
+function uiEffect(s) { return UI_EFFECT[s] || s || '—'; }
+function healthColor(h) {
+  if (h == null || h.score == null) return '#6b7280';
+  const s = h.status;
+  return (s === 'critical' || s === 'warning') ? '#b91c1c' : s === 'attention' ? '#d97706' : '#15803d';
+}
+function hbarStack(dist) {
+  const order = [['stable','#d1fae5'],['reviewed','#dbeafe'],['draft','#fef3c7'],['unknown','#e5e7eb']];
+  const total = order.reduce((s, [k]) => s + (dist[k] || 0), 0) || 1;
+  const row = '<div class="hbar-track">' + order.map(([k, c]) => dist[k] ? '<div class="hbar-seg" style="width:'+(dist[k]/total*100)+'%;background:'+c+'" title="'+esc(uiWikiStatus(k))+': '+dist[k]+'"></div>' : '').join('') + '</div>';
+  const legend = order.map(([k, c]) => '<span style="display:inline-block;margin-right:10px;font-size:12px;margin-top:4px"><span style="display:inline-block;width:10px;height:10px;background:'+c+';border-radius:2px;margin-right:4px"></span>'+esc(uiWikiStatus(k))+' '+esc(dist[k] ?? 0)+'</span>').join('');
+  return row + '<div>'+legend+'</div>';
+}
+function hbarList(rows) {
+  const max = Math.max.apply(null, rows.map(r => r[1] || 0).concat([1]));
+  return rows.map(([label, val, tone]) => {
+    const color = tone === 'ok' ? '#16a34a' : tone === 'err' ? '#dc2626' : tone === 'warn' ? '#d97706' : '#6b7280';
+    const bg = tone === 'ok' ? '#d1fae5' : tone === 'err' ? '#fee2e2' : tone === 'warn' ? '#fef3c7' : '#e5e7eb';
+    const w = val ? Math.max(2, (val / max) * 100) : 0;
+    return '<div class="hbar-row"><div class="hbar-label">'+esc(label)+'</div><div class="hbar-track">'+
+      (w ? '<div class="hbar-seg" style="width:'+w+'%;background:'+bg+';border-right:2px solid '+color+'"></div>' : '') +
+      '</div><div class="hbar-val">'+esc(val)+'</div></div>';
+  }).join('');
+}
+function wowLine(w) {
+  if (!w || !w.available) return '<span style="color:#9ca3af" title="无前一可比较周期">—</span>';
+  const arrow = w.direction === 'up' ? '↑' : w.direction === 'down' ? '↓' : '→';
+  const color = w.health_effect === 'positive' ? '#15803d' : w.health_effect === 'negative' ? '#b91c1c' : '#6b7280';
+  return '<span style="color:'+color+'" title="'+esc(w.current.period)+' vs '+esc(w.previous ? w.previous.period : '—')+'">'+arrow+' '+(w.delta>0?'+':'')+esc(w.delta)+(w.delta_percent != null ? ' ('+(w.delta_percent>0?'+':'')+esc(w.delta_percent)+'%)' : '')+'</span>';
+}
+function fwValues(fw) {
+  if (!fw || !fw.points) return [];
+  return fw.points.map(p => ({period: p.period, value: p.value, baseline: !!p.baseline}));
+}
+function trendChart(series) {
+  const periods = (series[0] && series[0].values || []).map(v => v.period);
+  if (!periods.length) return '<div style="color:#9ca3af;font-size:12px">无趋势数据。</div>';
+  const allVals = [];
+  series.forEach(s => s.values.forEach(v => { if (v.value != null) allVals.push(v.value); }));
+  const max = Math.max(1, Math.max.apply(null, allVals.concat([1])));
+  const W = 340, H = 120, padL = 26, padB = 16;
+  const groupW = (W - padL) / periods.length;
+  const barW = Math.max(4, Math.min(16, (groupW - 6) / series.length));
+  let svg = '<svg width="'+W+'" height="'+H+'" style="max-width:100%;height:auto">';
+  for (let i = 0; i <= 3; i++) {
+    const y = padB + (H - padB) * (1 - i / 3);
+    svg += '<line x1="'+padL+'" y1="'+y+'" x2="'+W+'" y2="'+y+'" stroke="#e5e7eb" stroke-width="1"></line>';
+    svg += '<text x="'+(padL-4)+'" y="'+(y+3)+'" text-anchor="end" font-size="9" fill="#9ca3af">'+Math.round(max*i/3)+'</text>';
+  }
+  periods.forEach((p, pi) => {
+    series.forEach((s, si) => {
+      const v = s.values[pi];
+      if (!v || v.value == null) return;
+      const h = Math.max(1, (v.value / max) * (H - padB - 8));
+      const x = padL + pi * groupW + 4 + si * barW;
+      const y = H - padB - h;
+      svg += '<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+h+'" fill="'+s.color+'" rx="1"><title>'+esc(p)+'\n'+esc(s.name)+': '+esc(v.value)+(v.baseline ? ' (baseline)' : '')+'</title></rect>';
+    });
+    svg += '<text x="'+(padL + pi*groupW + groupW/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="9" fill="#6b7280">'+esc(p.slice(-3))+'</text>';
+  });
+  svg += '</svg><div style="margin-top:4px">'+series.map(s => '<span style="font-size:11px;color:#374151;margin-right:10px"><span style="display:inline-block;width:10px;height:10px;background:'+s.color+';margin-right:4px;border-radius:2px"></span>'+esc(s.name)+'</span>').join('')+'</div>';
+  return svg;
+}
+function wowTable(wow) {
+  const rows = [['wiki_new','新增 Wiki'],['wiki_updated','更新 Wiki'],['review_pending','待人工审核'],['judge_passed','AI 已验证'],['judge_failed','Judge 失败'],['gaps_pending','知识缺口'],['gaps_resolved','已解决缺口'],['stale','过期风险'],['projects_blocked','阻塞项目']];
+  return '<table style="font-size:12px"><tr><th>指标</th><th>当前</th><th>Δ</th><th>Δ%</th><th>影响</th></tr>' +
+    rows.map(([key, label]) => {
+      const w = wow[key];
+      if (!w || !w.available) return '<tr><td>'+esc(label)+'</td><td colspan="4" style="color:#9ca3af">—</td></tr>';
+      const color = w.health_effect === 'positive' ? '#15803d' : w.health_effect === 'negative' ? '#b91c1c' : '#6b7280';
+      return '<tr><td>'+esc(label)+'</td><td>'+esc(w.current.value)+'</td><td style="color:'+color+'">'+(w.direction==='up'?'↑':w.direction==='down'?'↓':'→')+' '+(w.delta>0?'+':'')+esc(w.delta)+'</td><td>'+(w.delta_percent != null ? (w.delta_percent>0?'+':'')+esc(w.delta_percent)+'%' : '—')+'</td><td style="color:'+color+'">'+esc(uiEffect(w.health_effect))+'</td></tr>';
+    }).join('') + '</table>';
+}
+let todoFilter = 'human';
+async function genInsight() {
+  flash(true, '正在生成 AI 周度洞察（DeepSeek）…');
+  try {
+    const r = await api('/api/weekly_review/insight', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    flash(r.ok, r.ok ? ('AI Insight：' + (r.status === 'available' ? '已生成' : ('不可用 - ' + (r.reason || '未知')))) : (r.message || '失败'));
+    await render('weekly_review');
+  } catch (e) {
+    flash(false, 'AI Insight 请求失败：'+esc(String(e)));
+  }
+}
+async function manualPreflight() {
+  const el = document.getElementById('flash');
+  if (el) el.innerHTML = msg(true, '正在运行 Review Preflight…（可能耗时，请稍候）');
+  try {
+    const r = await api('/api/review/preflight', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const detail = r.skipped ? (r.message || '已在运行')
+      : ('judged='+r.judged+' reused='+r.reused+' blocked='+r.blocked+' failed='+r.failed+' pending='+r.pending_remaining+' llm_called='+r.llm_called+' duration='+r.duration_ms+'ms');
+    if (el) el.innerHTML = msg(r.ok, 'AI 预审核完成：' + detail);
+    await loadStatus();
+    render(lastView);
+  } catch (e) {
+    if (el) el.innerHTML = msg(false, 'AI 预审核请求失败：'+esc(String(e)));
+  }
+}
+function judgeBadge(a) {
+  const js = a.judge_status, cls = a.classification;
+  if (js === 'judging') return '<span class="badge b-warning">⏳ Judge 处理中</span>';
+  if (js === 'failed') return '<span class="badge b-error">⚠ Judge 失败</span>';
+  if (js === 'blocked') return '<span class="badge b-error">🚫 无法 Judge</span>';
+  if (cls === 'judge_passed') return '<span class="badge b-ok">✓ AI 已验证</span>';
+  if (cls === 'needs_review') return '<span class="badge b-pending">⚠ 需要人工审核</span>';
+  return '<span class="badge b-warning">○ 未判断</span>';
+}
+function todoCard(a) {
+  const isWiki = a.type === 'wiki_review';
+  const title = isWiki ? a.target.title : '“'+a.target.question+'”';
+  const detail = isWiki ? (' <span style="color:#6b7280">('+esc(a.target.domain)+')</span>') : '';
+  let html = '<div class="card" style="margin-bottom:10px"><div><b>'+(isWiki?'⚠ Wiki 需要审核':'⚠ Knowledge Gap')+'</b> &nbsp; '+judgeBadge(a)+
+    ' &nbsp; '+esc(title)+detail+'</div>';
+  html += '<div style="color:#6b7280;font-size:12px;margin:4px 0">'+esc(a.review_reason || a.reason || '')+'</div>';
+  if (a.judge_status && a.judge_status !== 'not_judged') {
+    html += '<div style="color:#6b7280;font-size:12px">Judge：'+
+      esc(uiEnum(UI_LABELS.consistency, a.judge_consistency))+' / '+esc(uiEnum(UI_LABELS.sufficiency, a.judge_evidence_sufficiency))+' / '+esc(uiEnum(UI_LABELS.confidence, a.judge_confidence))+' → <b>'+esc(uiEnum(UI_LABELS.recommendation, a.judge_recommendation))+'</b></div>';
+  }
+  html += '<div style="margin-top:6px">'+actionButtons(a)+'<button class="btn" onclick="viewAction(\''+esc(a.id)+'\')">查看上下文</button></div></div>';
+  return html;
+}
 async function render(view) {
+  lastView = view;
+  try {
+    await _renderBody(view);
+  } catch (e) {
+    $main.innerHTML = '<h2>'+esc(viewLabel(view))+'</h2>' +
+      '<div class="msg err">⚠ 数据加载失败<br>原因：'+esc(String((e && e.message) || e))+'</div>' +
+      '<div style="margin:8px 0"><button class="btn review" onclick="render(\''+esc(view)+'\')">重试</button></div>';
+  }
+  // App Shell：主内容区独立滚动，切换视图时回到顶部
+  try { const m = document.getElementById('main'); if (m) m.scrollTop = 0; } catch (e) {}
+}
+async function _renderBody(view) {
+  lastView = view;
   if (view === 'dashboard') {
     const d = await api('/api/dashboard');
     const st = d.wiki_status || {};
-    const cards = ['wiki_total:知识总量','wiki_draft:待审核 Wiki','wiki_reviewed:已审核','wiki_stable:稳定'];
-    let html = '<div class="cards">' + cards.map(([k,l]) => '<div class="card"><div class="num">'+esc(d[k] ?? st[k] ?? '—')+'</div><div class="label">'+l+'</div></div>').join('') +
+    const rc = d.review_counts || {};
+    let html = '<div class="cards">' +
+      '<div class="card"><div class="num">'+esc(d.wiki_total ?? st.wiki_total ?? '—')+'</div><div class="label">知识总量</div></div>' +
+      '<div class="card"><div class="num">'+esc(rc.human_review_total ?? '—')+'</div><div class="label">待人工处理</div></div>' +
+      '<div class="card"><div class="num">'+esc(rc.judge_passed ?? '—')+'</div><div class="label">AI 已验证</div></div>' +
+      '<div class="card"><div class="num">'+esc(rc.judge_failed ?? '—')+'</div><div class="label">Judge 失败</div></div>' +
+      '<div class="card"><div class="num">'+esc(rc.judging ?? '—')+'</div><div class="label">Judge 处理中</div></div>' +
       '<div class="card"><div class="num">'+esc(d.gaps_pending)+'</div><div class="label">待处理知识缺口</div></div>' +
       '<div class="card"><div class="num">'+esc(d.inbox_files)+'</div><div class="label">Inbox 待处理</div></div></div>';
     const wr = await api('/api/weekly_review');
@@ -164,20 +938,37 @@ async function render(view) {
         '<div>生成时间：'+esc(L.generated_at || '—')+'　健康：'+badge(L.health_status||'—')+'　缺口：'+esc(L.knowledge_gaps_pending ?? '—')+'　Stale：'+esc(L.stale_count ?? '—')+'</div>' +
         '<div style="margin-top:6px">'+reportLink(L.report_path)+'</div></div>';
     }
+    const lp = d.last_preflight;
+    html += '<h3>最近一次 AI 知识审核（Review Preflight）</h3><div class="card" style="margin-bottom:16px">';
+    if (lp) {
+      html += '<div>时间：'+esc(lp.time || '—')+'　处理：'+esc(lp.processed ?? '—')+
+        '　AI 新判断：'+esc(lp.judged ?? '—')+'　缓存复用：'+esc(lp.reused ?? '—')+
+        '　失败：'+esc(lp.failed ?? '—')+'　耗时：'+esc(lp.duration_ms ?? '—')+'ms</div>';
+    } else {
+      html += '<div>尚未运行过 Review Preflight（可在下方手动运行，或通过定时任务自动运行）。</div>';
+    }
+    if (d.preflight_stale) {
+      html += '<div class="msg err" style="margin:6px 0">⚠ Review Preflight 已超过 '+esc(d.preflight_staleness_hours)+' 小时未运行（仅提示，不自动触发 LLM）。</div>';
+    } else if (lp) {
+      html += '<div class="msg ok" style="margin:6px 0">✓ 数据新鲜（'+esc(d.preflight_staleness_hours)+' 小时阈值内）。</div>';
+    }
+    html += '<div style="margin:6px 0"><button class="btn review" onclick="manualPreflight()">🤖 运行一次 AI 审核</button></div></div>';
     html += '<h3>最近活动</h3>' + activityTable(d.recent_activity);
     $main.innerHTML = html;
   } else if (view === 'todo') {
     const actions = await api('/api/actions');
     const pending = actions.filter(a => a.status === 'pending');
-    $main.innerHTML = '<h2>AI 待办（'+pending.length+'）</h2>' + pending.map(a =>
-      '<div class="card" style="margin-bottom:10px">' +
-      '<div><b>'+(a.type==='wiki_review'?'⚠ Wiki 需要审核':'⚠ Knowledge Gap')+'</b>' +
-      (a.type==='wiki_review' ? ' &nbsp; '+esc(a.target.title)+' <span style="color:#6b7280">('+esc(a.target.domain)+')</span>'
-                              : ' &nbsp; “'+esc(a.target.question)+'”') + '</div>' +
-      '<div style="color:#6b7280;font-size:13px;margin:4px 0">AI 建议：<b>'+esc(a.ai_recommendation)+'</b></div>' +
-      '<div style="color:#6b7280;font-size:12px">'+esc(a.reason)+'</div>' +
-      '<div style="margin-top:6px">'+actionButtons(a)+'<button class="btn" onclick="viewAction(\''+esc(a.id)+'\')">查看上下文</button></div>' +
-      '</div>').join('') || '<p>暂无待办。</p>';
+    const filtered = pending.filter(a => {
+      const js = a.judge_status, cls = a.classification;
+      if (todoFilter === 'all') return true;
+      if (todoFilter === 'passed') return cls === 'judge_passed';
+      if (todoFilter === 'failed') return js === 'failed';
+      return cls !== 'judge_passed' && js !== 'judging'; // 默认：待人工处理
+    });
+    const tabs = [['human','待人工处理'],['passed','AI 已验证'],['failed','Judge 失败'],['all','全部']];
+    $main.innerHTML = '<h2>AI 待办（'+pending.length+'）</h2>' +
+      '<div style="margin:8px 0">' + tabs.map(([k,l]) => '<button class="btn'+(todoFilter===k?' approve':'')+'" onclick="todoFilter=\''+k+'\'; render(\'todo\')">'+l+'</button>').join('') + '</div>' +
+      (filtered.length ? filtered.map(todoCard).join('') : '<p>该分类暂无任务。</p>');
   } else if (view === 'wikis') {
     const wikis = await api('/api/wikis');
     $main.innerHTML = '<h2>Wiki 审核</h2>' +
@@ -189,39 +980,273 @@ async function render(view) {
         '<td>'+(w.status==='draft' ? '<button class="btn" onclick="viewAction(\'wiki_review:'+esc(w.path)+'\')">详情</button>' : '')+'</td></tr>').join('') + '</table>';
   } else if (view === 'gaps') {
     const gaps = await api('/api/gaps');
-    $main.innerHTML = '<h2>知识缺口（'+gaps.length+'）</h2><table><tr><th>问题</th><th>类型</th><th>状态</th><th>发现时间</th><th>AI 建议</th><th>操作</th></tr>' +
+    const eg = await api('/api/gaps/evaluation');
+    const egGaps = (eg && eg.gaps) || [];
+    let html = '<h2>知识缺口（'+gaps.length+'）</h2><table><tr><th>问题</th><th>类型</th><th>状态</th><th>发现时间</th><th>AI 建议</th><th>操作</th></tr>' +
       gaps.map(g => '<tr><td>'+esc(g.question)+'</td><td>'+esc(g.type)+'</td><td>'+badge(g.status)+'</td><td>'+esc(g.detected_at)+'</td><td>'+esc(g.suggested_action||'')+'</td>' +
         '<td>'+(g.status==='pending' ? '<button class="btn" onclick="viewAction(\'gap:'+esc(g.question)+'\')">详情</button>' : '')+'</td></tr>').join('') + '</table>';
+    html += '<h3 style="margin-top:16px">RAG Evaluation 知识缺口 <span style="font-size:12px;color:#6b7280;font-weight:400">来源：RAG Evaluation · 证据来自真实 Benchmark</span></h3>' +
+      '<div style="margin:6px 0"><button class="btn" onclick="runGapDiagnosis()">重新诊断</button> <span style="font-size:12px;color:#6b7280">开放 '+esc(eg.open??0)+' · 已解决 '+esc(eg.resolved??0)+'</span></div>' +
+      (egGaps.length ? '<table><tr><th>Gap</th><th>出现次数</th><th>失败类型</th><th>相关 Query</th><th>Source 状态</th><th>Wiki</th><th>优先级</th><th>建议</th><th>状态</th><th>操作</th></tr>' +
+        egGaps.map(g => {
+          const sig = g.signals || {}, kinds = (g.evidence||{}).failure_kinds || [];
+          const srcSt = g.source_status || 'missing', wikiYes = g.wiki_exists ? 'YES' : 'NO';
+          const srcColor = srcSt==='verified' ? '#16a34a' : srcSt==='acquired' ? '#2563eb' : srcSt==='candidate' ? '#d97706' : '#b91c1c';
+          return '<tr><td>'+esc(g.id)+'<div style="font-size:11px;color:#6b7280">'+esc(g.title||'')+'</div></td>' +
+            '<td>'+esc(sig.query_count??0)+'</td><td>'+esc(kinds.join('；')||'—')+'</td>' +
+            '<td style="font-size:11px">'+esc(((g.evidence||{}).query_ids||[]).join('；'))+'</td>' +
+            '<td style="color:'+srcColor+';font-weight:600">'+esc(srcSt)+'</td><td>'+wikiYes+'</td><td><b>'+esc(g.priority||'')+'</b></td>' +
+            '<td>'+esc(actionLabel(g.recommended_action||''))+'</td><td>'+badge(g.status||'open')+'</td>' +
+            '<td><button class="btn" onclick="viewEvalGap(\''+esc(g.id)+'\')">详情</button> <button class="btn" onclick="viewSources(\''+esc(g.id)+'\')">Source</button></td></tr>';
+        }).join('') + '</table>' : '<div class="msg">暂无 RAG Evaluation 知识缺口（先运行 Benchmark + 诊断）。</div>');
+    $main.innerHTML = html;
   } else if (view === 'sources') {
     const srcs = await api('/api/sources');
-    $main.innerHTML = '<h2>Source（'+srcs.length+'）</h2><table><tr><th>文件</th><th>类型</th><th>大小(KB)</th><th>关联 Wiki</th><th>处理状态</th></tr>' +
+    $main.innerHTML = '<h2>来源（'+srcs.length+'）</h2><table><tr><th>文件</th><th>类型</th><th>大小(KB)</th><th>关联 Wiki</th><th>处理状态</th></tr>' +
       srcs.map(s => '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.type)+'</td><td>'+s.size_kb+'</td><td>'+esc((s.linked_wikis||[]).join('；')||'—')+'</td><td>'+esc(s.processed)+'</td></tr>').join('') + '</table>';
   } else if (view === 'activity') {
     const acts = await api('/api/activity');
     $main.innerHTML = '<h2>Activity Timeline（'+acts.length+'）</h2>' + activityTable(acts);
   } else if (view === 'weekly_review') {
-    const wr = await api('/api/weekly_review');
-    let html = '<h2>每周复盘</h2>';
-    if (!wr.latest) { html += '<p>暂无周报。点击右上角「📝 生成本周复盘」生成。</p>'; }
-    else {
-      const L = wr.latest;
-      html += '<h3>最新：'+esc(L.period)+'</h3><div class="card" style="margin-bottom:16px">' +
-        '<div>生成时间：'+esc(L.generated_at||'—')+'　Wiki：'+esc(L.wiki_total??'—')+'（draft '+esc(L.wiki_draft??'—')+' / reviewed '+esc(L.wiki_reviewed??'—')+' / stable '+esc(L.wiki_stable??'—')+'）</div>' +
-        '<div>缺口：'+esc(L.knowledge_gaps_pending??'—')+'　Stale：'+esc(L.stale_count??'—')+'　健康：'+badge(L.health_status||'—')+'</div>' +
-        '<div style="margin-top:6px">'+reportLink(L.report_path)+'</div></div>';
+    const d = await api('/api/weekly_review/dashboard');
+    if (!d || !d.ok) {
+      $main.innerHTML = '<h2>每周复盘</h2>' + msg(false, (d && d.message) || '数据获取失败');
+      return;
     }
-    html += '<h3>历史周报</h3><table><tr><th>周期</th><th>生成时间</th><th>Wiki</th><th>缺口</th><th>健康</th><th>报告</th></tr>' +
-      (wr.history||[]).map(h => '<tr><td>'+esc(h.period)+'</td><td>'+esc(h.generated_at||'—')+'</td><td>'+esc(h.wiki_total??'—')+'</td><td>'+esc(h.knowledge_gaps_pending??'—')+'</td><td>'+badge(h.health_status||'—')+'</td><td>'+reportLink(h.report_path)+'</td></tr>').join('') + '</table>';
+    const k = d.knowledge || {}, rv = d.review || {}, g = d.gaps || {}, pr = d.projects || {counts:{}, items:[]};
+    const base = d.baseline || {}, at = d.attention || [], tw = d.trend || {};
+    const wow = tw.wow || {}, fw = tw.four_week || {};
+    const hh = d.health || {};
+    const au = d.automation || {};
+    const runs = d.runs || [];
+    const ins = d.insight || {};
+    let html = '<h2>每周复盘<span style="font-size:13px;color:#6b7280;font-weight:400">　Weekly Review · '+esc(d.period)+'</span></h2>';
+    if (d.generated_at) html += '<div style="color:#6b7280;font-size:12px;margin-bottom:8px">生成时间：'+esc(d.generated_at)+'</div>';
+    html += '<div class="cards">' +
+      '<div class="card"><div class="num">'+esc(k.total ?? '—')+'</div><div class="label">知识总量 Knowledge Wiki</div><div class="card-sub">新增 '+esc(k.new ?? 0)+(base.is_baseline_period?'*':'')+' · 更新 '+esc(k.updated ?? 0)+'　较上周：'+wowLine(wow.wiki_new)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc(rv.pending_human ?? '—')+'</div><div class="label">待人工审核 Review</div><div class="card-sub">AI 已验证 '+esc(rv.judge_passed ?? 0)+' · Judge 失败 '+esc(rv.judge_failed ?? 0)+'　较上周：'+wowLine(wow.review_pending)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc(g.pending ?? '—')+'</div><div class="label">待处理知识缺口 Knowledge Gaps</div><div class="card-sub">累计 '+esc(g.total ?? 0)+' · 已解决 '+esc(g.resolved ?? 0)+'　较上周：'+wowLine(wow.gaps_pending)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc((pr.counts.planning||0)+(pr.counts.active||0))+'</div><div class="label">项目 Projects</div><div class="card-sub">规划中 '+esc(pr.counts.planning ?? 0)+' · 进行中 '+esc(pr.counts.active ?? 0)+'　阻塞 '+esc(pr.counts.blocked ?? 0)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc(d.risk && d.risk.stale != null ? d.risk.stale : '—')+'</div><div class="label">知识过期风险 Stale Risk</div><div class="card-sub">较上周：'+wowLine(wow.stale)+'</div></div>' +
+      '<div class="card"><div class="num" style="color:'+healthColor(hh)+'">'+(hh.score==null?'—':esc(hh.score))+'</div><div class="label">健康评分 Health Score</div><div class="card-sub">'+uiHealthStatus(hh.status)+' Attention　较上周：'+wowLine((tw.wow||{}).health_score)+'</div></div>' +
+      '</div>';
+    if (base.is_baseline_period) {
+      html += '<div class="msg" style="margin-bottom:12px">⚠ 初始化基线 Baseline：'+esc(base.note || '当前为知识库初始化周期，暂不作为正常周增长趋势使用')+'（暂无历史对比）</div>';
+    }
+    // Health 区域
+    html += '<div class="two-col"><div class="card" style="grid-column:1/-1"><h3 style="margin-top:0">知识健康度 <span style="font-size:12px;color:#6b7280;font-weight:400">Knowledge Health</span></h3>' +
+      '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
+      '<div><div style="font-size:42px;font-weight:700;color:'+healthColor(hh)+'">'+(hh.score==null?'—':esc(hh.score))+'</div><div style="font-size:12px;color:#6b7280">'+uiHealthStatus(hh.status)+' Attention</div></div>' +
+      '<div style="flex:1;min-width:260px">'+(hh.dimensions ? Object.keys(hh.dimensions).map(dk => { const dm = hh.dimensions[dk]; const dc = dm.status==='excellent'||dm.status==='good' ? '#16a34a' : dm.status==='attention' ? '#d97706' : (dm.status==='warning'||dm.status==='critical') ? '#dc2626' : '#e5e7eb'; return '<div class="hbar-row"><div class="hbar-label" style="width:150px">'+esc(uiDim(dk))+'</div><div class="hbar-track"><div class="hbar-seg" style="width:'+((dm.score||0)/100*100)+'%;background:'+dc+'"></div></div><div class="hbar-val">'+(dm.score==null?'暂无数据':esc(dm.score)+' '+esc(uiHealthStatus(dm.status)))+'</div></div>'; }).join('') : '<div style="color:#6b7280;font-size:12px">暂无健康维度数据</div>') + '</div>' +
+      '</div>';
+    if (hh.factors && hh.factors.length) {
+      html += '<div style="margin-top:8px"><b>为什么是这个分数？<span style="font-size:12px;color:#6b7280;font-weight:400">Why this score?</span></b><div>' +
+        hh.factors.map(f => '<div style="font-size:12px;margin:2px 0;color:'+(f.type==='negative'?'#b91c1c':'#15803d')+'">'+(f.type==='negative'?'−':'+')+' '+esc(uiFactorMetric(f.metric))+' '+esc(f.value)+'（影响：'+esc(uiImpact(f.impact))+'）</div>').join('') +
+        '</div></div>';
+    }
+    html += '</div></div>';
+    html += '<div class="two-col">' +
+      '<div class="card"><h3 style="margin-top:0">知识状态 <span style="font-size:12px;color:#6b7280;font-weight:400">Knowledge Status</span></h3>'+hbarStack(k.status_distribution || {})+'</div>' +
+      '<div class="card"><h3 style="margin-top:0">审核状态 <span style="font-size:12px;color:#6b7280;font-weight:400">Review Status</span></h3>'+hbarList([['AI 已验证', rv.judge_passed, 'ok'], ['待人工审核', rv.needs_review, 'warn'], ['Judge 失败', rv.judge_failed, 'err'], ['审核中', rv.judging, 'neutral']])+'</div>' +
+      '</div>';
+    html += '<div class="two-col">' +
+      '<div class="card"><h3 style="margin-top:0">知识变化 <span style="font-size:12px;color:#6b7280;font-weight:400">Knowledge Growth</span></h3>' +
+      '<div class="hbar-row"><div class="hbar-label">新增</div><div class="hbar-track"><div class="hbar-seg" style="width:100%;background:#dbeafe"></div></div><div class="hbar-val">'+esc(k.new ?? 0)+'</div></div>' +
+      '<div class="hbar-row"><div class="hbar-label">更新</div><div class="hbar-track"><div class="hbar-seg" style="width:'+Math.min(100, ((k.updated||0)/Math.max((k.new||1),1))*100)+'%;background:#e5e7eb"></div></div><div class="hbar-val">'+esc(k.updated ?? 0)+'</div></div>' +
+      '<div style="margin-top:6px;font-size:12px;color:#6b7280">'+(base.is_baseline_period ? '初始化基线：当前为知识库初始化周期，暂不作为正常周增长趋势使用' : '当前周期数据')+'</div></div>' +
+      '<div class="card"><h3 style="margin-top:0">需要关注 <span style="font-size:12px;color:#6b7280;font-weight:400">Attention Needed</span></h3>' +
+      (at.length ? at.map(a => '<div class="attention-item"><span>'+(a.level==='critical'?'🔴':'⚠')+'</span><b>'+esc(a.count)+'</b><span>'+esc(a.label)+'</span><button class="btn" onclick="gotoView(\''+esc(a.action)+'\')">打开</button></div>').join('')
+                : '<div class="msg ok">本周无需要人工处理的高风险项</div>') + '</div>' +
+      '</div>';
+    // 趋势
+    if (d.has_trend) {
+      html += '<h3>趋势（较上周 / 4 周）<span style="font-size:12px;color:#6b7280;font-weight:400">Trends · WoW / 4-Week</span></h3><div class="two-col">' +
+        '<div class="card"><h4 style="margin-top:0">知识变化趋势</h4>'+trendChart([{name:'新增', color:'#3b82f6', values: fwValues(fw.wiki_new)},{name:'更新', color:'#9ca3af', values: fwValues(fw.wiki_updated)}])+'</div>' +
+        '<div class="card"><h4 style="margin-top:0">审核趋势</h4>'+trendChart([{name:'待审核', color:'#f59e0b', values: fwValues(fw.review_pending)},{name:'AI 已验证', color:'#16a34a', values: fwValues(fw.judge_passed)},{name:'Judge 失败', color:'#dc2626', values: fwValues(fw.judge_failed)}])+'</div>' +
+        '</div><div class="two-col">' +
+        '<div class="card"><h4 style="margin-top:0">知识风险趋势</h4>'+trendChart([{name:'知识缺口', color:'#d97706', values: fwValues(fw.gaps_pending)},{name:'过期风险', color:'#6b7280', values: fwValues(fw.stale)}])+'</div>' +
+        '<div class="card"><h4 style="margin-top:0">较上周对比 <span style="font-size:12px;color:#6b7280;font-weight:400">WoW</span></h4>'+wowTable(wow)+'</div>' +
+        '</div>';
+    } else {
+      html += '<div class="msg" style="margin-bottom:12px">暂无历史对比记录：当前仅 1 个周期快照（初始化基线），较上周 / 4 周趋势将在有 ≥2 个可比较快照后自动显示（不伪造历史）。</div>';
+    }
+    // AI 周度洞察
+    if (ins.status === 'available' && ins.insight) {
+      const it = ins.insight;
+      html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">AI 周度洞察 <span style="font-size:12px;color:#6b7280;font-weight:400">AI Weekly Insight</span></h3>' +
+        '<div style="margin:6px 0">'+esc(it.summary||'')+'</div>' +
+        (it.changes && it.changes.length ? '<details><summary>关键变化 Key Changes（'+it.changes.length+'）</summary>'+it.changes.map(c => '<div style="margin:4px 0"><b>'+esc(c.title)+'</b><div style="font-size:12px;color:#374151">'+esc(c.detail)+'</div></div>').join('')+'</details>' : '') +
+        (it.actions && it.actions.length ? '<div style="margin-top:6px"><b>建议行动 Recommended Actions（≤3）</b></div>'+it.actions.slice(0,3).map(a => '<div style="font-size:13px;margin:2px 0">['+esc(a.priority)+'] '+esc(a.action)+' — '+esc(a.reason)+'</div>').join('') : '') +
+        '<div style="color:#6b7280;font-size:12px;margin-top:6px">模型：'+esc((it.model||'').replace('deepseek:',''))+' · Prompt：'+esc(it.prompt_version||'—')+'</div></div>';
+    } else {
+      html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">AI 周度洞察 <span style="font-size:12px;color:#6b7280;font-weight:400">AI Weekly Insight</span></h3>' +
+        '<div class="msg" style="margin:4px 0">AI 洞察暂不可用（'+esc(ins.reason||'未生成')+'）。确定性周报仍然可用。</div>' +
+        '<div style="margin:6px 0"><button class="btn review" onclick="genInsight()">✨ 生成 AI 洞察</button></div></div>';
+    }
+    // 复盘自动化
+    html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">复盘自动化 <span style="font-size:12px;color:#6b7280;font-weight:400">Weekly Review Automation</span></h3>' +
+      '<div style="display:flex;gap:20px;flex-wrap:wrap;margin:6px 0">' +
+      '<div><div style="font-size:12px;color:#6b7280">状态 Status</div><div>'+(au.status==='success' ? '🟢' : au.status==='failed' ? '🔴' : '🟡')+' '+esc(uiAutomationStatus(au.status))+'</div></div>' +
+      '<div><div style="font-size:12px;color:#6b7280">最近运行 Last Run</div><div>'+esc(au.last_run||'—')+'</div></div>' +
+      '<div><div style="font-size:12px;color:#6b7280">最近成功 Last Success</div><div>'+esc(au.last_success||'—')+'</div></div>' +
+      '<div><div style="font-size:12px;color:#6b7280">下次运行 Next Run</div><div>'+esc(au.next_run||'—')+'</div></div>' +
+      '<div><div style="font-size:12px;color:#6b7280">最近结果 Last Result</div><div>'+esc(au.last_result==null?'—':au.last_result)+'</div></div>' +
+      '<div><div style="font-size:12px;color:#6b7280">AI 洞察 AI Insight</div><div>'+(ins.status==='available' ? '🟢 '+esc(uiInsightStatus(ins.status)) : '🟡 '+esc(uiInsightStatus(ins.status)))+'</div></div>' +
+      '</div>' +
+      (runs.length ? '<div style="font-size:12px;margin-top:6px"><b>最近 5 次运行 Last 5 Runs</b></div><table style="font-size:12px"><tr><th>周期</th><th>状态</th><th>动作</th><th>耗时</th><th>警告</th></tr>' +
+        runs.map(r => '<tr><td>'+esc(r.period)+'</td><td>'+esc(uiAutomationStatus(r.status))+'</td><td>'+esc(r.action||'')+'</td><td>'+(r.duration_ms!=null?Math.round(r.duration_ms/1000)+'s':'—')+'</td><td>'+esc((r.warnings||[]).length)+'</td></tr>').join('') + '</table>' : '<div style="color:#6b7280;font-size:12px;margin-top:6px">暂无运行历史</div>') +
+      '</div>';
+    // 项目状态
+    html += '<div class="card" style="margin-bottom:12px"><h3 style="margin-top:0">项目状态 <span style="font-size:12px;color:#6b7280;font-weight:400">Projects</span></h3>' +
+      (pr.items.length ? pr.items.map(p => '<div style="margin:6px 0"><b>'+esc(p.name)+'</b> '+badge(uiProjectStatus(p.status)||'N/A')+'　阶段 Phase：'+esc(p.phase||'N/A')+'　更新时间 Updated：'+esc(p.updated||'N/A')+
+        (p.blockers && p.blockers.length ? '　<span class="badge b-error">阻塞 blocker: '+esc(p.blockers.join('；'))+'</span>' : '') + '</div>').join('')
+                : '<div>暂无项目状态数据</div>') + '</div>';
+    if (d.report_path) {
+      html += '<div style="margin-bottom:12px"><button class="btn review" onclick="window.open(\''+obsUri(d.report_path)+'\',\'_blank\')">打开完整周报 View Full Weekly Review</button></div>';
+    }
+    const wbp = (tw.wow_by_period && tw.wow_by_period.review_pending) || {};
+    html += '<h3>历史复盘 <span style="font-size:12px;color:#6b7280;font-weight:400">Historical Reports</span></h3><table><tr><th>周期 Period</th><th>时间 Generated</th><th>Wiki</th><th>待人工 Review</th><th>知识缺口 Gaps</th><th>健康度 Health</th><th>报告 Report</th></tr>' +
+      (d.historical||[]).map(h => '<tr><td>'+esc(h.period)+'</td><td>'+esc(h.generated_at||'—')+'</td><td>'+esc(h.wiki_total??'—')+'</td><td>'+esc(h.review_pending ?? '—')+'</td><td>'+
+        (wbp[h.period] && wbp[h.period].available ? (wbp[h.period].delta>0?'+':'')+esc(wbp[h.period].delta) : '—')+'</td><td>'+esc(h.knowledge_gaps_pending??'—')+'</td><td>'+badge(h.health_status||'—')+'</td><td>'+reportLink(h.report_path)+'</td></tr>').join('') + '</table>' +
+      '<div style="color:#6b7280;font-size:12px;margin-top:6px">完整周报与周期快照通过「打开完整周报」/ 报告链接打开。</div>';
+    $main.innerHTML = html;
+  } else if (view === 'query_trace') {
+    let html = '<h2>检索 Trace <span style="font-size:12px;color:#6b7280;font-weight:400">Retrieval Trace · 决策链可解释</span></h2>' +
+      '<div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap"><input id="qt_query" type="text" style="flex:1;min-width:220px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px" placeholder="输入查询，例如：FreeRTOS 栈溢出检查如何配置？">' +
+      '<button class="btn review" onclick="runQueryTrace()">运行查询</button></div>' +
+      '<div id="qt_result"></div>';
+    $main.innerHTML = html;
+  } else if (view === 'rag_evaluation') {
+    const d = await api('/api/rag/evaluation');
+    const latest = d.latest;
+    const runs = d.runs || [];
+    let html = '<h2>RAG Evaluation <span style="font-size:12px;color:#6b7280;font-weight:400">· 真实查询基准 · 指标来自真实执行</span></h2>' +
+      '<div style="margin:8px 0"><button class="btn review" onclick="runEvaluation()">运行 Benchmark</button>' +
+      '<span style="font-size:12px;color:#6b7280;margin-left:8px">运行真实检索链（含模型加载，可能需要数分钟）</span></div>' +
+      '<div id="eval_result"></div>';
+    if (!latest) {
+      html += '<div class="msg">尚未运行过 Benchmark。点击「运行 Benchmark」首次执行（只测量，不改任何 RAG 参数）。</div>';
+      $main.innerHTML = html;
+      return;
+    }
+    const m = latest.metrics || {};
+    const ov = m.overall || {}, wk = m.wiki || {}, rw = m.raw || {}, fc = m.fail_closed || {};
+    const ev = m.evidence || {}, lt = m.latency || {};
+    const tot = lt.total_ms || {}, p50 = tot.p50, p95 = tot.p95;
+    const gs = m.gap_signals || {};
+    html += '<div class="card" style="margin:8px 0"><div style="font-size:12px;color:#6b7280">最近运行 run_id：'+esc(latest.run_id||'')+'　'+esc(latest.generated_at||'')+'　查询数 '+esc(latest.query_count??'—')+'　mode='+esc(latest.mode||'')+(m.sample_too_small?'　⚠ 样本<20':'')+'</div></div>';
+    html += '<div class="cards">' +
+      '<div class="card"><div class="num">'+pct(ov.answer_coverage)+'</div><div class="label">Answer Coverage</div><div class="card-sub">'+esc(ov.answered??0)+' / '+esc(m.query_count??0)+' 条已回答</div></div>' +
+      '<div class="card"><div class="num">'+pct(ov.knowledge_missing_rate)+'</div><div class="label">Knowledge Missing</div><div class="card-sub">'+esc(ov.knowledge_missing??0)+' 条知识缺失</div></div>' +
+      '<div class="card"><div class="num">'+pct(wk.wiki_hit_rate)+'</div><div class="label">Wiki Hit Rate</div><div class="card-sub">门槛通过 '+esc(wk.wiki_hit_count??0)+'</div></div>' +
+      '<div class="card"><div class="num">'+pct(wk.wiki_fallback_rate)+'</div><div class="label">Wiki Fallback Rate</div><div class="card-sub">'+esc(wk.wiki_fallback_count??0)+' 次回退</div></div>' +
+      '<div class="card"><div class="num">'+pct(wk.wiki_fallback_recovery_rate)+'</div><div class="label">Fallback Recovery</div><div class="card-sub">救回 '+esc(wk.wiki_fallback_recovered??0)+' / '+esc(wk.wiki_fallback_count??0)+'</div></div>' +
+      '<div class="card"><div class="num">'+pct(rw.raw_answer_rate)+'</div><div class="label">RAW Answer Rate</div><div class="card-sub">RAW 路径回答 '+esc(rw.raw_answer_count??0)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc(ev.avg_window_count??'—')+'</div><div class="label">Evidence 平均窗口</div><div class="card-sub">单窗口率 '+pct(ev.single_window_rate)+'</div></div>' +
+      '<div class="card"><div class="num">'+esc(p50??'—')+'ms</div><div class="label">P50 Latency</div><div class="card-sub">P95 '+esc(p95??'—')+'ms</div></div>' +
+      '</div>';
+    const tf = fc.top_failures || [];
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Top Failure Reasons</h3>' +
+      (tf.length ? '<table><tr><th>类型</th><th>次数</th><th>占比</th><th>示例</th></tr>' +
+        tf.map(f => '<tr><td>'+esc(f.type)+'</td><td>'+esc(f.count)+'</td><td>'+pct(f.rate)+'</td><td>'+esc((f.examples||[]).join('；'))+'</td></tr>').join('') + '</table>'
+        : '<div>无失败</div>') + '</div>';
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Knowledge Gap Signals</h3>' +
+      '<div>Likely Knowledge Gap：<b>'+esc(gs.likely_knowledge_gap??0)+'</b>　Evidence Gap：<b>'+esc(gs.evidence_gap??0)+'</b>　Retrieval Gap：<b>'+esc(gs.retrieval_gap??0)+'</b></div>' +
+      (gs.retrieval_gap_needs_manual_confirmation && gs.retrieval_gap_needs_manual_confirmation.length ?
+        '<div style="font-size:12px;color:#6b7280;margin-top:4px">Retrieval Gap 待人工确认：'+esc(gs.retrieval_gap_needs_manual_confirmation.join('；'))+'</div>' : '') + '</div>';
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Recent Benchmark Runs</h3>' +
+      '<table><tr><th>Run</th><th>时间</th><th>查询数</th><th>Coverage</th><th>KM</th><th>报告</th></tr>' +
+      runs.map(r => {
+        const rm = (r.metrics||{}).overall || {};
+        return '<tr><td>'+esc(r.run_id)+'</td><td>'+esc(r.generated_at||'—')+'</td><td>'+esc(r.query_count??'—')+'</td><td>'+pct(rm.answer_coverage)+'</td><td>'+pct(rm.knowledge_missing_rate)+'</td><td>'+reportLink(r.report_path)+'</td></tr>';
+      }).join('') + '</table></div>';
+    html += '<div style="color:#6b7280;font-size:12px;margin-top:6px">指标来自真实生产检索链执行；不修改任何 RAG 参数；样本 &lt;20 时百分位仅作参考。</div>';
+    // Wiki Compilation（Source -> Wiki -> Benchmark 验证）
+    const diff = await api('/api/rag/evaluation/diff');
+    const gapsApi = await api('/api/gaps/evaluation');
+    const gapList = (gapsApi && gapsApi.gaps) || [];
+    const gapById = {}; gapList.forEach(g => gapById[g.id] = g);
+    const df2 = diff && diff.diff;
+    const recQ = (df2 && df2.recovered_queries) || [];
+    const openP0 = gapList.filter(g => g.status==='open' && g.priority==='P0').length;
+    const openP1 = gapList.filter(g => g.status==='open' && g.priority==='P1').length;
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Wiki Compilation <span style="font-size:12px;color:#6b7280;font-weight:400">· Source → Wiki → Benchmark 验证</span></h3>' +
+      '<div>Recovered Queries：<b style="color:#16a34a">'+esc(recQ.length)+'</b>　Regressed：<b style="color:'+(df2&&df2.counts&&df2.counts.regressed?'#b91c1c':'#111827')+'">'+esc((df2&&df2.counts&&df2.counts.regressed)||0)+'</b>　Resolved Gaps：'+esc(gapList.filter(g=>g.status==='resolved').length)+'　Open P0：'+esc(openP0)+'　Open P1：'+esc(openP1)+'</div>' +
+      (recQ.length ? '<div style="font-size:12px;color:#16a34a;margin-top:4px">Recovered：'+esc(recQ.join('；'))+'</div>' : '') +
+      (df2 && df2.regressed_queries && df2.regressed_queries.length ? '<div style="font-size:12px;color:#b91c1c;margin-top:2px">Regressed：'+esc(df2.regressed_queries.join('；'))+'</div>' : '') +
+      '<div style="font-size:12px;color:#6b7280;margin-top:4px">Source-backed Wiki Drafts（draft + review_required）：'+esc(gapList.length)+' 个 Gap 已关联 Source。</div></div>';
+    // Evaluation Governance（质量门禁：Pending / Running / Result）
+    const gov = await api('/api/rag/evaluation/governance');
+    const gstGov = (gov && gov.state) || {};
+    const govColor = {passed:'#16a34a', improved:'#16a34a', regressed:'#b91c1c', failed:'#b91c1c', required:'#d97706', running:'#2563eb'};
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Evaluation Governance <span style="font-size:12px;color:#6b7280;font-weight:400">· Baseline Regression 质量门禁</span></h3>' +
+      '<div>状态：<b style="color:'+(govColor[gstGov.status]||'#111827')+'">'+esc(gstGov.status||'idle')+'</b>　' +
+      '待验证：'+(gov && gov.required ? '<b style="color:#d97706">YES（'+esc((gstGov.reasons||[]).join('、')||'manual')+'）</b>' : 'NO') +
+      '　运行中：'+(gov && gov.running ? 'YES' : 'NO') +
+      '　上次 run：'+esc(gstGov.run_id||'—')+'　baseline：'+esc(gstGov.baseline_id||'—') + '</div>' +
+      (gstGov.check ? '<div style="font-size:12px;color:#6b7280;margin-top:4px">上次 Check：'+esc(gstGov.check.status||'')+'（delta '+esc(gstGov.check.delta_pp)+'pp，coverage '+esc(gstGov.check.current_coverage)+'%）</div>' : '') +
+      (gstGov.error ? '<div style="font-size:12px;color:#b91c1c;margin-top:4px">Error：'+esc(gstGov.error)+'</div>' : '') +
+      '<div style="margin-top:6px"><button class="btn review" onclick="runGovernanceVerify()">验证知识变更</button> <span style="font-size:12px;color:#6b7280">有知识变化时运行 Benchmark + Baseline Check</span></div>' +
+      '<div id="gov_result"></div></div>';
+    // Baseline（正式 Evaluation Baseline + Regression Check）
+    const bl = await api('/api/rag/evaluation/baseline');
+    const blBase = bl && bl.baseline, blCur = (bl && bl.current) || {}, blChk = (bl && bl.check);
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Evaluation Baseline <span style="font-size:12px;color:#6b7280;font-weight:400">· 正式基线 + 回归保护</span></h3>' +
+      (blBase ? '<div>Baseline：<b>'+esc(blBase.baseline_id)+'</b>　Coverage：<b>'+esc(blBase.coverage)+'%</b>　KM：'+esc(blBase.knowledge_missing_rate)+'%　Status：<b>'+esc(blBase.status)+'</b>　'+esc(blBase.established_at||'')+'</div>' +
+        '<div style="font-size:12px;color:#6b7280;margin-top:4px">Wiki Approval：'+esc((blBase.wiki_approval||{}).approved)+'/'+esc((blBase.wiki_approval||{}).total)+'　' +
+        ((blBase.wiki_approval||{}).pending_wikis && (blBase.wiki_approval||{}).pending_wikis.length ? '<span style="color:#d97706">待批准：'+esc((blBase.wiki_approval||{}).pending_wikis.join('；'))+'</span>' : '') + '</div>' +
+        (blChk ? '<div style="margin-top:4px">Current：<b>'+esc(blChk.current_run)+'</b>（'+esc(blChk.current_coverage)+'%）　vs Baseline　Delta：<b style="color:'+(blChk.delta_pp<0?'#b91c1c':'#16a34a')+'">'+esc(blChk.delta_pp)+'pp</b>　Status：<b>'+esc(blChk.status)+'</b></div>' : '') +
+        (blChk && blChk.warning ? '<div style="color:#b91c1c;font-size:12px;margin-top:4px">⚠ '+esc(blChk.warning)+'</div>' : '')
+        : '<div>尚无正式 Baseline（批准 Wiki + 重跑 Benchmark 后建立）。</div>') + '</div>';
+    // Golden Set + Judge Variance + Sources（Evaluation 稳定性）
+    const gs2 = await api('/api/golden_set');
+    const jv = await api('/api/judge_variance');
+    const sa = await api('/api/source_acquisition');
+    const gst = (gs2 && gs2.stats) || {};
+    const jvd = (jv && jv.judge_variance) || {};
+    const jst = jvd.stats || {};
+    const saSrcs = (sa && sa.registry && sa.registry.sources) || [];
+    const verifiedSrc = saSrcs.filter(s => s.source_status === 'verified').length;
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Golden Set <span style="font-size:12px;color:#6b7280;font-weight:400">· 人工 Ground Truth（非 Judge）</span></h3>' +
+      '<div>已人工标注：<b>'+esc(gst.reviewed??0)+'/'+esc(gst.total??0)+'</b>　Answer Correct：<b>'+esc(gst.answer_correct_count??0)+'</b>/'+esc(gst.total??0)+'（assessed '+esc(gst.answer_correct_assessed??0)+'）　Evidence Support：'+esc(gst.evidence_supported_count??0)+'/'+esc(gst.total??0)+'</div>' +
+      '<table style="margin-top:6px"><tr><th>Query</th><th>Ground Truth</th><th>可回答</th><th>答案正确</th><th>证据支持</th><th>引用正确</th><th>Reviewer</th></tr>' +
+      ((gs2 && gs2.entries) || []).map(e => {
+        const rv = e.review || {}, gt = e.ground_truth || {};
+        const b = (v) => v===true ? '✅' : v===false ? '❌' : '—';
+        return '<tr><td>'+esc(e.id)+'</td><td style="font-size:11px">'+esc((gt.acceptable_paths||[]).join('/')||'—')+'</td>' +
+          '<td>'+b(rv.answerable)+'</td><td>'+b(rv.answer_correct)+'</td><td>'+b(rv.evidence_supported)+'</td><td>'+b(rv.citation_correct)+'</td>' +
+          '<td style="font-size:11px">'+esc(rv.reviewer||'—')+'</td></tr>';
+      }).join('') + '</table>' +
+      (gst.sample_too_small ? '<div style="font-size:12px;color:#d97706;margin-top:4px">⚠ Golden 样本过小（<10），正确率仅作参考</div>' : '') + '</div>';
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Judge Variance <span style="font-size:12px;color:#6b7280;font-weight:400">· 固定检索/证据，重复 Judge</span></h3>' +
+      (jvd.run_id ? '<div>Stable Rate：<b>'+esc(jst.stable_rate)+'%</b>　Flip Rate：<b>'+esc(jst.flip_rate)+'%</b>　tested '+esc(jst.tested_queries)+'（'+esc(jvd.runs||0)+'×）' +
+        (jst.sample_too_small ? '<span style="color:#d97706">　⚠ 样本<3</span>' : '') + '</div>' +
+        '<table style="margin-top:6px"><tr><th>Query</th><th>Run 结果</th><th>分类</th></tr>' +
+        (jvd.entries||[]).map(en => '<tr><td>'+esc(en.query_id)+'</td><td>'+esc((en.results||[]).map(r=>r.relevance).join(' / '))+'</td><td>'+esc(en.classification)+'</td></tr>').join('') + '</table>'
+        : '<div>暂无 Judge Variance 实验。</div>') + '</div>';
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Source Acquisition <span style="font-size:12px;color:#6b7280;font-weight:400">· 已验证 '+esc(verifiedSrc)+' · 共 '+esc(saSrcs.length)+' 条</span></h3>' +
+      '<table><tr><th>Source</th><th>Gap</th><th>优先级</th><th>状态</th><th>类型</th><th>本地</th><th>核验</th><th>操作</th></tr>' +
+      saSrcs.map(s => '<tr><td>'+esc(s.id)+'</td><td>'+esc(s.gap_id||'')+'</td><td>'+esc(s.priority||'')+'</td><td>'+esc(s.source_status||'')+'</td><td>'+esc(s.source_type||'')+'</td><td>'+(s.source&&s.source.local_path?'YES':'—')+'</td>' +
+        '<td>'+sourceVerifiedBadge(s)+'</td>' +
+        '<td>'+(s.source_status==='acquired' && !((s.verification||{}).verified) ? '<button class="btn" onclick="markSourceVerified(\''+esc(s.id)+'\')">Mark Verified</button>' : '—')+'</td></tr>').join('') + '</table></div>';
+    // Before/After Diff（补 Wiki 后验证）
+    const df = diff && diff.diff;
+    html += '<div class="card" style="margin-top:12px"><h3 style="margin-top:0">Before / After Diff <span style="font-size:12px;color:#6b7280;font-weight:400">补 Wiki 后的回归验证</span></h3>' +
+      (df ? '<div>Recovered：<b style="color:#16a34a">'+esc(df.counts.recovered)+'</b>　Unchanged：'+esc((df.counts.unchanged_answered||0)+(df.counts.unchanged_failed||0))+'　Regressed：<b style="color:'+(df.counts.regressed?'#b91c1c':'#111827')+'">'+esc(df.counts.regressed)+'</b>　New failures：'+esc(df.counts.new_failure||0)+'</div>' +
+        '<div style="font-size:12px;color:#6b7280;margin-top:4px">'+esc(df.before_run||'')+' → '+esc(df.after_run||'')+(df.query_recovery_rate!=null ? '　Query Recovery：'+esc(df.query_recovery_rate)+'%' : '')+'</div>' +
+        (df.regressed_queries && df.regressed_queries.length ? '<div style="font-size:12px;color:#b91c1c;margin-top:4px">Regressed：'+esc(df.regressed_queries.join('；'))+'</div>' : '') +
+        (df.recovered_queries && df.recovered_queries.length ? '<div style="font-size:12px;color:#16a34a;margin-top:2px">Recovered：'+esc(df.recovered_queries.join('；'))+'</div>' : '')
+        : '<div>暂无 Diff（补 Wiki + 重跑 Benchmark 后，用「运行 Diff」对比最近两次运行）。</div>') + '</div>';
     $main.innerHTML = html;
   } else if (view === 'projects') {
     const ps = await api('/api/project_status');
     $main.innerHTML = '<h2>项目状态（'+ps.length+'）</h2>' +
       ps.map(p => '<div class="card" style="margin-bottom:12px"><h3 style="margin:0 0 6px">'+esc(p.name)+'</h3>' +
-        '<div>status：'+badge(p.status||'N/A')+'　phase：'+esc(p.phase||'N/A')+'　updated：'+esc(p.updated||'N/A')+'</div>' +
-        '<div>progress：<b>'+(p.progress==null ? 'N/A（未提供结构化数据，禁止猜测）' : esc(p.progress)+'%')+'</b></div>' +
-        '<div>next_step：'+esc(p.next_step||'N/A')+'</div>' +
-        '<div>blockers：'+esc((p.blockers||[]).join('；')||'无')+'</div>' +
-        '<div style="color:#6b7280;font-size:12px">来源：'+esc(p.index_path)+'</div></div>').join('') || '<p>暂无项目。</p>';
+        '<div>状态 status：'+badge(uiProjectStatus(p.status)||'N/A')+'　阶段 phase：'+esc(p.phase||'N/A')+'　更新时间 updated：'+esc(p.updated||'N/A')+'</div>' +
+        '<div>进度 progress：<b>'+(p.progress==null ? 'N/A（未提供结构化数据，禁止猜测）' : esc(p.progress)+'%')+'</b></div>' +
+        '<div>下一步 next_step：'+esc(p.next_step||'N/A')+'</div>' +
+        '<div>阻塞项 blockers：'+esc((p.blockers||[]).join('；')||'无')+'</div>' +
+        '<div style="color:#6b7280;font-size:12px">数据来源：'+esc(p.index_path)+'</div></div>').join('') || '<p>暂无项目。</p>';
   } else if (view === 'health') {
     const h = await api('/api/health');
     const col = (ok) => ok ? '#15803d' : '#b91c1c';
@@ -230,6 +1255,8 @@ async function render(view) {
       '<div class="card"><div class="num" style="color:'+col(h.wiki && h.wiki.error === 0)+'">'+(h.wiki ? ('E'+h.wiki.error) : '—')+'</div><div class="label">Wiki Health</div><div style="font-size:11px;color:#6b7280">WARNING='+(h.wiki ? h.wiki.warning : '—')+'</div></div>' +
       '<div class="card"><div class="num" style="color:'+col(h.architecture && h.architecture.ok)+'">'+(h.architecture ? (h.architecture.ok?'OK':'WARN') : '—')+'</div><div class="label">Knowledge OS Check</div><div style="font-size:11px;color:#6b7280">'+esc(h.architecture ? h.architecture.summary : '')+'</div></div>' +
       '</div>';
+  } else if (view === 'guide') {
+    await renderGuide();
   }
 }
 function activityTable(acts) {
@@ -238,16 +1265,165 @@ function activityTable(acts) {
     acts.map(a => '<tr><td>'+esc(a.timestamp)+'</td><td>'+esc(a.type)+'</td><td>'+esc(a.source)+'</td><td>'+esc(a.object)+'</td><td>'+esc(a.summary)+'</td></tr>').join('') + '</table>';
 }
 async function viewAction(actionId) {
-  const a = await api('/api/actions/'+encodeURIComponent(actionId));
-  const html = a.type === 'wiki_review' ?
-    '<h2>Wiki 详情：'+esc(a.target.title)+'</h2><p><b>路径：</b>'+esc(a.target.wiki)+'　<b>AI 建议：</b>'+esc(a.ai_recommendation)+'</p>' +
-    '<details open><summary>来源（Evidence）</summary><pre>'+esc((a.evidence ? a.evidence.source : []).join('\n'))+'</pre></details>' +
-    '<div style="margin:8px 0">'+actionButtons(a)+'</div>' :
-    '<h2>Gap 详情</h2><p><b>问题：</b>'+esc(a.target.question)+'</p><p><b>类型：</b>'+esc(a.target.type)+'　<b>AI 建议：</b>'+esc(a.ai_recommendation)+'</p>' +
-    '<details open><summary>AI 认为它是 Gap 的原因</summary><pre>'+esc(a.reason)+'</pre></details>' +
-    '<details><summary>相关 Source</summary><pre>'+esc((a.evidence ? a.evidence.related_sources : []).join('\n'))+'</pre></details>' +
-    '<div style="margin:8px 0">'+actionButtons(a)+'</div>';
-  $main.innerHTML = html + '<div id="flash"></div>';
+  const r = await api('/api/actions/'+encodeURIComponent(actionId)+'/context');
+  if (!r || !r.ok) {
+    $main.innerHTML = '<h2>审核上下文</h2>' + msg(false, (r && r.message) || '加载失败') + backBtn();
+    return;
+  }
+  renderCtx(r);
+}
+function renderCtx(ctx) {
+  const t = ctx.task || {}, j = ctx.ai_judgement || {}, ev = ctx.evidence || {sources:[], chunks:[]};
+  const tc = ctx.target_content, sug = ctx.ai_suggestion || {};
+  let html = '<h2>审核上下文</h2>' + backBtn() +
+    ctxTask(t) + ctxJudge(j, ctx.action_id) + ctxEvidence(ev) + ctxTarget(tc) + ctxSuggestion(sug, j) +
+    '<div style="margin:10px 0"><b>操作：</b>' + (ctx.actions || []).map(d => actionBtn(ctx.action_id, d)).join('') + '</div>' +
+    '<div id="ctxflash"></div>';
+  $main.innerHTML = html;
+}
+async function postActionCtx(actionId, decision) {
+  const r = await api('/api/actions/'+encodeURIComponent(actionId)+'/'+decision, {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({actor:'user'})
+  });
+  const el = document.getElementById('ctxflash');
+  if (el) el.innerHTML = msg(r.ok, r.message || (r.ok ? '成功' : '失败'));
+  if (r.ok) {
+    const ctx2 = await api('/api/actions/'+encodeURIComponent(actionId)+'/context');
+    if (ctx2 && ctx2.ok) renderCtx(ctx2);
+  }
+  return r;
+}
+function backBtn() { return '<div style="margin:6px 0"><button class="btn" onclick="render(\''+lastView+'\')">← 返回</button></div>'; }
+const ACTION_LABELS = {approve:'批准', reject:'拒绝', resolve:'解决', ignore:'忽略', reprocess:'重新处理'};
+function actionBtn(aid, d) { return '<button class="btn '+d+'" onclick="postActionCtx(\''+esc(aid)+'\',\''+d+'\')">'+(ACTION_LABELS[d]||d)+'</button>'; }
+function obsUri(rel) { return 'obsidian://open?path=' + encodeURIComponent('D:/KnowledgeBase/Obsidian Vault/' + rel); }
+function kv(k, v) { return '<div style="margin:2px 0"><b>'+esc(k)+'：</b>'+v+'</div>'; }
+function ctxTask(t) {
+  let html = '<h3>① 审核任务</h3><div class="card" style="margin-bottom:12px">';
+  html += kv('类型', esc(t.type || '—'));
+  if (t.title) html += kv('对象', esc(t.title));
+  const tg = t.target || {};
+  if (tg.wiki) html += kv('Wiki 路径', esc(tg.wiki));
+  if (tg.question) html += kv('问题', esc(tg.question));
+  if (tg.type) html += kv('Gap 类型', esc(tg.type));
+  if (tg.domain) html += kv('领域', esc(tg.domain));
+  html += kv('当前状态', badge(t.status || '—'));
+  html += kv('创建时间', esc(t.created_at || '—'));
+  return html + '</div>';
+}
+function ctxJudge(j, actionId) {
+  let html = '<h3>② AI 判断 <span style="font-size:12px;color:#6b7280;font-weight:400">AI Judge</span></h3><div class="card" style="margin-bottom:12px">';
+  if (j.source === 'llm_judge') {
+    html += '<div class="msg ok" style="margin:4px 0"><b>审核原因：</b>'+esc(j.review_reason || '—')+'</div>';
+    if (j.judge_status === 'failed') {
+      html += '<div class="msg err" style="margin:4px 0">AI Judge 未完成（'+esc(j.reasoning || '未知原因')+'），因此需要人工审核。</div>';
+      html += '<div style="margin:6px 0"><button class="btn review" onclick="runJudge(\''+esc(actionId)+'\')">重试 AI 审核</button></div>';
+    } else {
+      html += kv('一致性 Consistency', badge(j.consistency || '—'));
+      html += kv('证据充分性 Evidence Sufficiency', badge(j.evidence_sufficiency || '—'));
+      html += kv('置信度 Confidence', esc(j.confidence || '—'));
+      html += kv('建议 Recommendation', badge(j.recommendation || '—'));
+      if (j.reasoning) html += '<details open><summary>判断理由</summary><pre class="ctx-pre">'+esc(j.reasoning)+'</pre></details>';
+      html += listBlock('冲突 Conflicts', j.conflicts);
+      html += listBlock('Wiki 缺失信息 Missing Information', j.missing_information);
+      html += listBlock('来源无法支持的内容 Unsupported Claims', j.unsupported_claims);
+      html += listBlock('Warnings', j.warnings);
+      html += '<div style="color:#6b7280;font-size:12px;margin-top:6px">模型：'+esc(j.judge_model||'—')+' · 版本：'+esc(j.judge_version||'—')+' · 时间：'+esc(j.judged_at||'—')+'</div>';
+      if (j.rule_recommendation != null || j.rule_reasoning) {
+        html += '<details><summary>规则建议（辅助，非 AI Judge）</summary>' +
+          '<div style="font-size:13px;margin:2px 0">规则建议：'+esc(j.rule_recommendation || '—')+'</div>' +
+          '<pre class="ctx-pre">'+esc(j.rule_reasoning || '')+'</pre></details>';
+      }
+    }
+  } else {
+    html += '<div class="msg" style="margin:4px 0"><b>当前仅为规则建议，尚未完成 LLM Judge 语义比较。</b></div>';
+    html += kv('规则建议', badge(j.rule_recommendation || j.recommendation || '—'));
+    html += kv('Evidence Sufficiency（规则）', badge(j.evidence_sufficiency || '—'));
+    if (j.review_reason) html += '<div style="margin:4px 0"><b>审核原因：</b>'+esc(j.review_reason)+'</div>';
+    if (j.reasoning) html += '<details open><summary>规则依据</summary><pre class="ctx-pre">'+esc(j.reasoning)+'</pre></details>';
+    html += listBlock('Warnings', j.warnings);
+    html += '<div style="margin:8px 0"><button class="btn review" onclick="runJudge(\''+esc(actionId)+'\')">▶ 运行 AI 审核</button></div>';
+  }
+  return html + '</div>';
+}
+function listBlock(label, items) {
+  if (!items || !items.length) return '';
+  return '<details style="margin:4px 0"><summary>'+esc(label)+'（'+items.length+'）</summary>' +
+    items.map(i => '<div class="msg" style="margin:3px 0">'+esc(i)+'</div>').join('') + '</details>';
+}
+async function runJudge(actionId) {
+  const el = document.getElementById('ctxflash');
+  if (el) el.innerHTML = msg(true, 'AI 审核运行中（DeepSeek）…');
+  try {
+    const r = await api('/api/actions/'+encodeURIComponent(actionId)+'/judge', {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({actor:'user'})
+    });
+    if (el) el.innerHTML = msg(r.ok, r.ok ? 'AI 审核完成' : (r.message || '运行失败'));
+    const ctx2 = await api('/api/actions/'+encodeURIComponent(actionId)+'/context');
+    if (ctx2 && ctx2.ok) renderCtx(ctx2);
+    else if (el) el.innerHTML = msg(false, (ctx2 && ctx2.message) || '上下文刷新失败');
+  } catch (e) {
+    if (el) el.innerHTML = msg(false, 'AI 审核请求失败：'+esc(String(e)));
+  }
+}
+function ctxEvidence(ev) {
+  const srcs = ev.sources || [], chunks = ev.chunks || [];
+  if (!srcs.length) return '<h3>③ 依据 Evidence</h3><div class="card" style="margin-bottom:12px">无来源记录。</div>';
+  let html = '<h3>③ 依据 Evidence（来源 '+srcs.length+'）</h3>';
+  html += srcs.map(s => {
+    const sChunks = chunks.filter(c => c.source === s.path);
+    const roleTxt = s.role === 'related_wiki' ? '（相关 Wiki）' : s.role === 'related_source' ? '（相关来源）' : '';
+    let inner = '<div style="font-size:11px;color:#9ca3af;word-break:break-all" title="'+esc(s.path)+'">'+esc(s.path)+'</div>';
+    if (s.readable) inner += '<div style="margin:2px 0"><a href="'+obsUri(s.path)+'" target="_blank">打开来源</a></div>';
+    if (!s.readable) {
+      inner += '<div class="msg err" style="margin:4px 0">'+esc(s.error || '不可读')+'</div>';
+    } else if (!sChunks.length) {
+      inner += '<div class="msg" style="margin:4px 0">无可展示的 chunk。</div>';
+    } else {
+      inner += sChunks.map(c =>
+        '<details style="margin:4px 0"><summary>Chunk #'+(c.position+1)+(c.score != null ? ' · score '+Number(c.score).toFixed(3) : '')+'</summary>' +
+        '<pre class="ctx-pre">'+esc(c.content)+'</pre></details>').join('');
+      if (s.truncated) inner += '<div style="color:#6b7280;font-size:12px">仅展示前 '+sChunks.length+' 段（共 '+s.chunk_count+' 段），完整内容请打开来源。</div>';
+      if (s.window_text && s.chunk_count > 1) {
+        inner += '<details style="margin:4px 0"><summary>完整语义上下文（Chunk '+esc(s.window_start ?? 1)+' → '+esc(s.window_end ?? s.chunk_count)+'，去重叠拼接）</summary><pre class="ctx-pre">'+esc(s.window_text)+'</pre></details>';
+      }
+    }
+    return '<div class="card" style="margin-bottom:10px"><div><b>'+esc(s.name)+'</b>'+roleTxt+' <span style="color:#6b7280;font-size:12px">'+esc(s.type)+' · '+(s.readable ? (s.chunk_count+' 段') : '不可读')+'</span></div>' + inner + '</div>';
+  }).join('');
+  return html;
+}
+function ctxTarget(tc) {
+  if (!tc) return '';
+  let html = '<h3>④ 当前 Wiki / 目标内容</h3><div class="card" style="margin-bottom:12px">';
+  html += kv('标题', esc(tc.title || '—')) + kv('状态', badge(tc.status || '—')) + kv('路径', esc(tc.path || '—'));
+  if (tc.path) html += '<div style="margin:2px 0"><a href="'+obsUri(tc.path)+'" target="_blank">在 Obsidian 打开</a></div>';
+  html += (tc.content != null && tc.content !== '')
+    ? '<details open><summary>内容（'+(tc.length != null ? tc.length : (tc.content||'').length)+' 字符，可滚动）</summary><pre class="ctx-scroll">'+esc(tc.content)+'</pre></details>'
+    : '<div class="msg">无内容。</div>';
+  return html + '</div>';
+}
+function ctxSuggestion(sug, j) {
+  const judgeActive = j && j.source === 'llm_judge' && j.status === 'completed';
+  if (judgeActive) {
+    let html = '<h3>⑤ AI 建议（LLM Judge）</h3><div class="card" style="margin-bottom:12px">';
+    html += kv('建议操作', badge(j.recommendation || '—'));
+    if (j.review_reason) html += '<div style="margin:4px 0">'+esc(j.review_reason)+'</div>';
+    if (sug && sug.changes && sug.changes.length && j.recommendation === 'approve') {
+      html += '<div style="margin:6px 0"><b>如批准将执行：</b></div>' +
+        sug.changes.map(c => '<div style="font-size:13px;margin:2px 0">'+esc(c.target)+'：<span class="badge b-draft">'+esc(c.before)+'</span> → <span class="badge b-reviewed">'+esc(c.after)+'</span></div>').join('');
+    }
+    return html + '</div>';
+  }
+  if (!sug || (!sug.action && !sug.summary && !(sug.changes || []).length)) return '';
+  let html = '<h3>⑤ AI 建议（规则）</h3><div class="card" style="margin-bottom:12px">';
+  if (sug.action) html += kv('建议操作', badge(sug.action));
+  if (sug.summary) html += '<div style="margin:4px 0">'+esc(sug.summary)+'</div>';
+  if (sug.changes && sug.changes.length) {
+    html += '<div style="margin:6px 0"><b>变更预览（人工确认后才执行）：</b></div>' +
+      sug.changes.map(c => '<div style="font-size:13px;margin:2px 0">'+esc(c.target)+'：<span class="badge b-draft">'+esc(c.before)+'</span> → <span class="badge b-reviewed">'+esc(c.after)+'</span></div>').join('');
+  }
+  if (sug.conflict && sug.conflict.length) html += '<div style="margin:6px 0"><b>冲突：</b>'+sug.conflict.map(esc).join('；')+'</div>';
+  return html + '</div>';
 }
 function updSel() { document.getElementById('selcount').textContent = document.querySelectorAll('.wsel:checked').length; }
 async function batchApprove() {
@@ -258,8 +1434,20 @@ async function batchApprove() {
   flash(r.ok, r.message || (r.ok ? '完成' : '失败'));
   render('wikis');
 }
+function routeFromHash() {
+  const h = location.hash.replace('#','') || 'dashboard';
+  if (h === 'guide' || h.startsWith('guide/')) {
+    views.forEach(v => { const b = document.querySelector('nav button[data-view="'+v+'"]'); if (b) b.classList.remove('active'); });
+    const gb = document.querySelector('nav button[data-view="guide"]');
+    if (gb) gb.classList.add('active');
+    render('guide');
+    return;
+  }
+  gotoView(h);
+}
+window.addEventListener('hashchange', routeFromHash);
 loadStatus();
-render('dashboard');
+routeFromHash();
 </script>
 </body>
 </html>

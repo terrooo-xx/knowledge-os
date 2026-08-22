@@ -185,6 +185,7 @@
 - 提交 e7ff10d：[Project] feat: 企业微信远程 Codex 项目总结验收 + rc-codex-wecom-20260820 基线
 - 提交 242f619：[Project] docs: rc-codex-wecom-20260820 Baseline metadata 补全（git 关联 + post-baseline drift 说明）
 - 提交 f9a1130：[Project] docs: Baseline git.commit 指向 metadata commit（242f619）
+- 提交 2fc85ed：[Phase 3] feat: RAG Evaluation 与 Governance 引擎
 
 ## 2026-08-14
 
