@@ -186,6 +186,7 @@
 - 提交 242f619：[Project] docs: rc-codex-wecom-20260820 Baseline metadata 补全（git 关联 + post-baseline drift 说明）
 - 提交 f9a1130：[Project] docs: Baseline git.commit 指向 metadata commit（242f619）
 - 提交 2fc85ed：[Phase 3] feat: RAG Evaluation 与 Governance 引擎
+- 提交 8fc7ef0：[Phase 3] feat: Control Center RAG Evaluation UI 与 preflight
 
 ## 2026-08-14
 

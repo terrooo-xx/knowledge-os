@@ -1,11 +1,11 @@
 ---
 type: wiki
 domain: 03_STM32
-status: draft
+status: reviewed
 source:
   - 00_Inbox/待处理文件/个人笔记/STM32/STM32cubeMx使用笔记/STM32CubeMx定时器（Timers)配置选项.note.pdf
 created: 2026-08-10
-updated: 2026-08-11
+updated: 2026-08-14
 ---
 
 # STM32CubeMX 定时器配置

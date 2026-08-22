@@ -1,11 +1,11 @@
 ---
 type: wiki
 domain: 02_嵌入式基础
-status: draft
+status: reviewed
 source:
   - 00_Inbox/待处理文件/个人笔记/CLion开发/CLion使用指南.note.pdf
 created: 2026-08-10
-updated: 2026-08-11
+updated: 2026-08-14
 ---
 
 # CLion 嵌入式开发环境
