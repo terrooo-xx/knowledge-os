@@ -15,12 +15,13 @@
 
 ## Git 规则
 
-- 提交范围：`20_Wiki`、`30_Projects`、`.agents`、`90_System` 中的规则与脚本、`AGENTS.md`、模板。
-- 忽略范围：`database/`、`cache/`、`*.bin`、`*.index`、`__pycache__/`、`*.pyc`。
+- 提交范围：`20_Wiki`、`30_Projects`、`.agents`、`90_System` 中的规则与脚本、`AGENTS.md`、模板；`40_Outputs/RAG Evaluation/audit/`、`governance/`、`wiki_compilation/`（长期审计/治理文档）。
+- 忽略范围：`database/`、`cache/`、`*.bin`、`*.index`、`__pycache__/`、`*.pyc`；`40_Outputs/RAG Evaluation/runs/`、`baselines/`、`diff/`、`judge_variance/` 与顶层机器状态 JSON；运行时文件（`.obsidian/graph.json`、`90_System/control_center/activity_log.jsonl`、`90_System/scripts/.changelog_state.json`、`90_System/control_center/review_records.json`）。
+- 版本治理体系（Commit / Baseline / Tag / Phase / Project Summary）见 `90_System/KNOWLEDGE_OS.md` 第二十八章。
 
 ## 执行流程
 
-1. 工作流规范以 `.agents/skills/` 为准（knowledge-compiler / project-doc-maintainer / weekly-review）；早期 `.agents/agents/` 已归档至 `90_System/archive/agents/`，仅历史追溯。
+1. 工作流规范以 `.agents/skills/` 为准（knowledge-compiler / project-doc-maintainer / weekly-review）；早期 `.agents/agents/` 已归档至 `90_System/任务记录/archive/agents/`，仅历史追溯。
 2. Inbox 处理：`inbox_processor.py` 分析分类（不修改原文）；`wiki_compile.py` 生成 draft / 更新建议。
 3. 索引：`update_index.py`（默认 `--target main`）把 `20_Wiki + 30_Projects` 写入 `main_vector_db`；`ingest_rag.py`（`--target raw/wiki`）仅用于可选 raw/wiki 索引。
 4. 检索：`hybrid_query.py`（默认 `--store main`）查 `main_vector_db`，混合检索 + reranker。

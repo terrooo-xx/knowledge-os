@@ -110,7 +110,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `reviewed` | 人工审核通过 | `20_Wiki/<领域>/` |
 | `stable` | 长期有效、稳定知识 | `20_Wiki/<领域>/` |
 | `resolved` | 已解决的知识缺口 | `90_System/rag/tests/knowledge_gaps.yaml` |
-| `archived` | 归档保留 | `90_System/archive/` |
+| `archived` | 归档保留 | `90_System/任务记录/archive/` |
 
 现状说明（以代码为准）：
 
@@ -154,19 +154,22 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `40_Outputs/学习总结/ 技术方案/ 项目报告/ 对外材料/`                              | 四类对外输出                                                                |
 | `40_Outputs/reviews/每周复盘/ 知识缺口/ 过期内容检查/`                        | 复盘与检查报告（人工知识缺口，区别于 RAG 自动记录）                             |
 
-| `90_System/archive/`                                                              | 归档目录（替代删除）                                                            |
+
 
 | `90_System/prompts/`                                                              | 提示词模板                                                                 |
 
 | `90_System/scripts/`                                                              | PowerShell 自动化脚本                                                      |
 | `90_System/templates/`                                                            | 笔记模板                                                                  |
-| `90_System/任务记录/`                                                                 | AI 任务处理记录与更新建议                                                        |
+| `90_System/任务记录/`                                                                 | 阶段与任务工程记录（Phase X / 历史阶段 / archive）                                |
+| `90_System/任务记录/Phase X/`                                                    | 阶段工程记录（目标/过程/技术决策/验证/结论）                                    |
+| `90_System/任务记录/历史阶段/`                                                      | 早期阶段报告（阶段06~12C、阶段13），无法映射到 Phase 的正式阶段记录                 |
+| `90_System/任务记录/archive/`                                                       | 废弃资产归档（agents/ 等，仅历史追溯）                                       |
 | `90_System/rag/`                                                                  | RAG + LLM-Wiki 引擎（代码、配置、测试）                                           |
 | `90_System/rag/database/`                                                         | 向量库与索引清单（派生数据，gitignored）                                             |
 | `90_System/rag/cache/`                                                            | 模型缓存（派生数据，gitignored）                                                 |
 | `90_System/control_center/`                                                     | 人机协同管理界面（server.py / service.py / static / activity_log.jsonl，阶段⑦）；支持 Windows 桌面一键启动（start_control_center.bat / create_desktop_shortcut.bat，阶段⑩.5）     |
 | `90_System/rag/interface/`                                                  | RAG 查询接口（knowledge_service.py / knowledge_cli.py / mcp_server.py / README.md，只读，阶段⑪-A/B） |
-| `90_System/archive/agents/`                                                    | 早期 Agent 工作流文档（已归档，仅历史追溯）                              |
+| `90_System/任务记录/archive/agents/`                                           | 早期 Agent 工作流文档（废弃资产，仅历史追溯）                             |
 | `.agents/skills/`                                                                 | Codex Skills（knowledge-compiler/project-doc-maintainer/weekly-review） |
 
 ## 六、文件分类体系
@@ -202,7 +205,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `README.md` | KNOWLEDGE | 人类入口说明 | 用户 + AI | SAFE_WRITE（小幅更新） | 低 |
 | `HOME.md` | KNOWLEDGE | Obsidian 首页 | 用户 + AI | SAFE_WRITE | 低 |
 
-| `CHANGELOG.md` | DERIVED | 变更记录，由 `update_changelog.ps1` 自动维护 | 脚本 | NO_TOUCH（人工不手写，交给脚本） | 低 |
+| `CHANGELOG.md` | DERIVED | 系统变更时间线（位于 Vault 根目录，整个 Knowledge OS 的变更索引），由 `update_changelog.ps1` 自动维护 | 脚本 | NO_TOUCH（人工不手写，交给脚本） | 低 |
 | `.gitignore` | CONFIG | 忽略派生数据与本地配置 | 用户 | REVIEW_REQUIRED | 中 |
 
 ### 90_System/rag（RAG + LLM-Wiki 引擎）
@@ -246,13 +249,13 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 | `rag/interface/knowledge_service.py` | CODE | Agent 只读知识查询接口（封装 retrieval→evidence→judge） | CONTROLLED_WRITE（只读运行） |
 | `rag/interface/knowledge_cli.py` | CODE | Agent 接口 CLI（`python 90_System/rag/interface/knowledge_cli.py "问题"`） | CONTROLLED_WRITE |
 | `rag/interface/mcp_server.py` | CODE | 本地 stdio MCP Server（仅只读 `knowledge_search`，零外部依赖，阶段⑪-B） | CONTROLLED_WRITE（只读运行） |
-| `archive/stages/阶段06~12C_*.md` | SYSTEM | 历史阶段评估与稳定化报告（已归档，仅历史追溯，不属于活动规范） | REVIEW_REQUIRED |
+| `任务记录/历史阶段/阶段06~12C_*.md`                                          | 早期阶段评估与稳定化报告（历史阶段记录，不属于活动规范）                       | REVIEW_REQUIRED |
 | `rag/prompts/rag_answer.md` | WORKFLOW | RAG 回答提示词 | CONTROLLED_WRITE |
 | `prompts/wiki_compile.md` | WORKFLOW | Wiki 编译提示词 | CONTROLLED_WRITE |
 | `prompts/处理单篇资料.md` 等 | WORKFLOW | 各类任务提示词 | CONTROLLED_WRITE |
 | `templates/*.md` | WORKFLOW | 笔记模板（知识/任务/问题/复盘/决策/功能模块） | CONTROLLED_WRITE |
-| `任务记录/*.md` | LOG | AI 任务处理记录与更新建议 | SAFE_WRITE（追加，不覆盖历史） |
-| `archive/` | ARCHIVE | 归档文件 | SAFE_WRITE（只移动进来，不删除） |
+| `任务记录/Phase X/*.md` | LOG | 阶段工程记录（目标/过程/验证/结论） | SAFE_WRITE（追加，不覆盖历史） |
+| `任务记录/archive/` | ARCHIVE | 废弃资产归档 | SAFE_WRITE（只移动进来，不删除） |
 
 ### .agents
 
@@ -335,7 +338,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 
 ### 必须人工审核
 
-- 删除知识或归档 `90_System/archive`；
+- 删除知识或归档 `90_System/任务记录/archive`；
 - 合并冲突知识、改变核心 Wiki 结论；
 - 修改 `reviewed` / `stable` 笔记；
 - 修改系统架构、AI Policy、`AGENTS.md`、Knowledge OS 文档；
@@ -379,7 +382,7 @@ RAG / Vector Index（update_index.py 增量索引，index_manifest.json 记录�
 
 ## 十二、AI 禁止操作
 
-1. 不得随意删除知识、目录或文件（只能移动到 `90_System/archive`）；
+1. 不得随意删除知识、目录或文件（只能移动到 `90_System/任务记录/archive`）；
 2. 不得为了方便创建重复目录或 `xxx_final / xxx_v2 / xxx_new` 类文件；
 3. 不得修改 Source of Truth（`00_Inbox` / `10_Sources` / `个人笔记` / 外部导入文件）；
 4. 不得直接修改 Embedding、手工修改 Vector DB；
@@ -571,9 +574,15 @@ Knowledge OS（本文档：定义知识库如何工作）
 ├── 40_Outputs/                  # 学习总结/ 技术方案/ 项目报告/ 对外材料 + reviews/（复盘与检查）
 │   └── reviews/                 # 每周复盘/（YYYY/WNN/weekly-review.md + snapshot.json） 知识缺口/ 过期内容检查
 ├── 90_System/                   # 系统运行
-│   ├── archive/                 # 归档（agents/ 早期 Agent 文档、stages/ 历史阶段报告，仅历史追溯）
+
 │   ├── prompts/                 # 任务类提示词（Knowledge Compiler / 复盘 / 项目检查）
-│   ├── scripts/ templates/ 任务记录/
+│   ├── scripts/ templates/
+│   ├── 任务记录/               # 阶段与任务工程记录（记录系统职责见 任务记录/README.md）
+│   │   ├── Phase 2/           # Phase 工程记录（阶段总结/归档报告）
+│   │   ├── Phase 3/           # Phase 工程记录（当前：Git/Phase/Baseline/Tag 治理，阶段14~22D；ACTIVE）
+│   │   ├── 历史阶段/          # 早期阶段报告（阶段06~12C、阶段13）
+│   │   ├── archive/           # 废弃资产（agents/ 早期 Agent 文档，仅历史追溯）
+│   │   └── *.md               # 日常任务记录（inbox_processor_log / Wiki更新建议 等）
 │   ├── KNOWLEDGE_OS.md          # 本文档（系统级唯一入口）
 │   ├── control_center/          # 人机协同管理 UI/API（阶段⑦）
 │   └── rag/                     # RAG + LLM-Wiki 引擎（ingestion / indexing / retrieval / interface / prompts / tests）
@@ -616,6 +625,100 @@ Knowledge OS（本文档：定义知识库如何工作）
 9. 其他 Agent / Skill 引用 Knowledge OS 时只引用路径与章节号，不得复制章节内容。
 10. Knowledge OS 与实际目录结构不一致时必须报告漂移，不得静默修改任一方。
 
+## 二十八、Git / Phase / Baseline / Tag 版本治理
+
+> 本章定义 Knowledge OS 的版本治理体系，是 Commit / Baseline / Tag / Phase / Project Summary 的唯一权威依据。根 `AGENTS.md`、`90_System/任务记录/README.md`、`90_System/rag/AGENTS.md` 只引用本章，不复制内容。
+
+### 1. 三层版本体系
+
+```text
+Git Commit        = 记录一次实际变更（变化历史）
+Baseline          = 经过验收、可认为稳定的状态快照（稳定状态）
+Git Tag           = 指向正式稳定里程碑的 Git 指针（正式稳定点）
+Project Summary   = 解释为什么该状态稳定、项目完成了什么（项目完成语义）
+Phase             = 系统治理/建设生命周期
+Skill             = 自动执行项目收尾流程（未来 project-finalization，本阶段不创建）
+```
+
+### 2. Git Commit 规范
+
+- 定义：Commit = 一次逻辑变更的历史记录。
+- 一个 commit 尽量只表达一个逻辑变更；禁止 `git add -A` 一把梭。
+- commit message 格式：`[<phase|project>] <type>: <摘要>`，type ∈ `feat / fix / docs / chore / refactor / test`。
+  - 示例：`[Phase 3] chore: 历史记录体系迁移`、`[Project] feat: 企业微信远程 Codex 项目总结验收 + 基线`、`[Wiki] docs: 新增与审核 Wiki`。
+  - 无 Phase 归属时用 `[Project]`。
+- 分批提交（Batch）纪律：每批先列文件清单 → `git diff` / `git diff --cached` → 精确 `git add <明确文件列表>` → 敏感信息扫描 → commit → `git show --stat` 验证。
+- 不自动 commit、不 push、不创建 remote（当前仓库无 remote，见根 `AGENTS.md`）。
+- 运行时/派生文件（`.obsidian/graph.json`、`activity_log.jsonl`、`.changelog_state.json`、`review_records.json`、RAG Evaluation 运行产物等）禁止作为正式成果提交。
+
+### 3. Baseline 规范
+
+- 定义：Baseline = 已完成验收、状态稳定、可用于未来对照的正式状态快照。
+- 必须包含字段：`baseline_id`、`status`、`created_at`、`purpose`、`scope`、`git.commit`、`git.tag`（若存在）、`validation`（验收矩阵）、`files`（关键文件 hash）、`known_limitations`、`security`。
+- 创建条件：验收通过 → 现场重算 hash → 生成后回读验证 → 不包含 secret → 进入 Git。
+- 位置约定：`90_System/任务记录/<项目或阶段>/正式基线/Baseline-<yyyymmdd>.{md,json}`；JSON 必须机器可读。
+- 命名：`<scope>-<yyyymmdd>`，如 `rc-codex-wecom-20260820`。
+- Baseline 记录 Vault 外部文件 hash 时，仅作为"生成基线时的本机外部状态证据"（`external_state: machine-local`），不得宣称跨机完全可复现。
+
+### 4. Git Tag 规范
+
+- 定义：Tag = Git 中正式稳定里程碑的指针。
+- 命名：`baseline/<baseline_id>`，如 `baseline/rc-codex-wecom-20260820`。
+- 规则：
+  - 不为每个 commit / 每次 weekly review / 每个 evaluation run 创建 tag。
+  - 仅对正式稳定里程碑使用；一个正式 Baseline 对应一个正式 Tag。
+  - Tag 必须指向 Baseline 生成时（metadata 完整）的 commit。
+  - Baseline Tag 不要求永久等于仓库最新 HEAD；后续开发不影响已建 Tag；系统发生验收级变化时创建新 Baseline + 新 Tag。
+  - Eval Baseline（`bl-eval-*`）属于 RAG 质量基线，与 Git Baseline / Tag 体系分离，不打 Git tag。
+
+### 5. Phase 生命周期
+
+```text
+PLANNED → ACTIVE → VALIDATING → BASELINED → CLOSED
+```
+
+- PLANNED：目标、范围、验收标准已定义。
+- ACTIVE：正在实施。
+- VALIDATING：功能完成，进入验收，不再新增正常功能。
+- BASELINED：验收通过，已生成 Project Summary + Baseline，并形成对应 Git commit；如该里程碑需要正式 Tag，则已 tag。
+- CLOSED：人工确认正式关闭。**AI 不擅自把 Phase 置为 CLOSED。**
+
+### 6. Project Summary 规范
+
+- 定义：项目总结验收报告 = 项目完成语义与长期 AI 回顾入口。
+- 必须至少包含：项目目标、最终架构、实施过程、问题/根因/修复、最终配置、安全边界、验收矩阵、已知限制、后续注意事项、Git/Baseline/Tag 信息、AI 回顾路径。
+- 模板：`90_System/templates/项目总结验收报告模板.md`。
+
+### 7. Project Finalization 标准收尾流程
+
+```text
+项目完成 → Git status → 验收 → Project Summary → Baseline → 现场 hash → Git Commit → 必要时 Tag → 人工确认 → CLOSED
+```
+
+- 强制：检查工作树、验证、生成 Summary、稳定项目生成 Baseline；commit 不得覆盖用户修改。
+- push 非默认动作；Tag 只用于正式里程碑。
+- 工作区有未提交用户修改时：只读审计、不覆盖、不擅自 commit。
+
+### 8. AI 回顾路径
+
+接手项目/系统改造时按顺序读取：
+
+```text
+1. 项目总结验收报告
+2. 最新 Baseline.md → Baseline.json
+3. Phase 当前状态（任务记录/Phase X/阶段总结）
+4. Git log / Tag（git log --oneline；git tag）
+5. 必要时查看历史阶段/故障记录
+```
+
+- 若 `当前 Git HEAD ≠ Baseline Tag`：先看 `git log baseline/<id>..HEAD` 差异；已验收变更走新 Baseline 流程；未验收变更禁止覆盖基线。
+- 若 `当前文件 hash ≠ Baseline hash`：先只读诊断；未记录的漂移不覆盖基线，报告用户后再判定。
+
+### 9. 与现行规则的关系
+
+- 根 `AGENTS.md`、`90_System/任务记录/README.md`、`90_System/rag/AGENTS.md` 只引用本章，不复制内容。
+- Phase 3 当前状态 ACTIVE，包含阶段14~22D 历史成果；`Git / Baseline / Tag Governance implementation is in progress`。
+- 本阶段不创建 `project-finalization` Skill（下一阶段任务）。
 ---
 
 *本文档由 AI 起草（2026-08-10），本阶段（2026-08-10）已完成架构审查与固化：修正 RAG 活动索引描述、完善 Source of Truth 判定、增加修改风险等级与自维护规则。当前状态 `draft`，待人工审核后升级为 `stable`。*

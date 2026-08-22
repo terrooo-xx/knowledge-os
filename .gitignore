@@ -28,3 +28,28 @@ __pycache__/
 
 # Control Center 启动器运行时日志
 90_System/control_center/launcher.log
+
+# Control Center runtime（跨进程 preflight 锁等临时文件）
+90_System/control_center/runtime/
+
+# Obsidian 本地 UI 状态（历史遗留，已 untrack）
+.obsidian/graph.json
+
+# Control Center 运行时审计日志与 preflight 记录
+90_System/control_center/activity_log.jsonl
+90_System/control_center/review_records.json
+
+# Changelog 脚本运行状态
+90_System/scripts/.changelog_state.json
+
+# RAG Evaluation 运行产物与机器状态（审计/治理文档 audit|governance|wiki_compilation 除外）
+40_Outputs/RAG Evaluation/runs/
+40_Outputs/RAG Evaluation/baselines/
+40_Outputs/RAG Evaluation/diff/
+40_Outputs/RAG Evaluation/judge_variance/
+40_Outputs/RAG Evaluation/baseline.json
+40_Outputs/RAG Evaluation/baseline.md
+40_Outputs/RAG Evaluation/evaluation_state.json
+40_Outputs/RAG Evaluation/latest.json
+40_Outputs/RAG Evaluation/latest_diff.json
+40_Outputs/RAG Evaluation/latest_judge_variance.json

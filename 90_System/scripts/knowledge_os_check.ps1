@@ -64,7 +64,7 @@ $ExpectedSecondDirs = @(
     '30_Projects/移动底盘控制器/硬件选型','30_Projects/移动底盘控制器/项目适配',
     '40_Outputs/学习总结','40_Outputs/技术方案','40_Outputs/项目报告','40_Outputs/对外材料',
     '40_Outputs/reviews/每周复盘','40_Outputs/reviews/知识缺口','40_Outputs/reviews/过期内容检查',
-    '90_System/archive','90_System/archive/agents','90_System/archive/stages','90_System/prompts','90_System/scripts','90_System/templates','90_System/任务记录','90_System/rag',
+    '90_System/prompts','90_System/scripts','90_System/templates','90_System/任务记录','90_System/任务记录/Phase 2','90_System/任务记录/Phase 3','90_System/任务记录/历史阶段','90_System/任务记录/archive/agents','90_System/rag',
     '90_System/rag/rag_engine','90_System/rag/llm','90_System/rag/scripts','90_System/rag/tests','90_System/rag/prompts','90_System/rag/interface','90_System/rag/database','90_System/rag/cache',
     '.agents/skills'
 )

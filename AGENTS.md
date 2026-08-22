@@ -43,7 +43,7 @@
 1. 处理新资料前，先搜索现有 Wiki。
 2. 优先更新已有知识页，不随意创建近义重复文件。
 3. 原始资料不能被直接覆盖或删除。
-4. 没有长期价值但需要保留的资料移动到 `90_System/archive`。
+4. 没有长期价值但需要保留的资料移动到 `90_System/任务记录/archive`。
 5. 技术结论应尽量保留来源。
 6. 官方文档、数据手册、标准和源代码优先级最高。
 7. 社区文章和 AI 回答只能作为辅助资料。
@@ -132,3 +132,14 @@
 - `update_wiki` 只生成更新建议和可审查内容，用户确认后才可修改 Wiki。
 - Wiki 正文必须来自 Inbox 资料或已有 Wiki，禁止用 LLM 自身知识补写无来源细节。
 - 增量 RAG 使用 `index_manifest.json`，未变化文档不重新 embedding。
+
+## Git 版本治理规则
+
+- 版本治理体系（Commit / Baseline / Tag / Phase / Project Summary）的唯一权威依据是 `90_System/KNOWLEDGE_OS.md` 第二十八章；本文件只引用，不复制。
+- 禁止自动 commit、禁止 push；当前仓库无 remote，不创建。
+- commit message 格式：`[<phase|project>] <type>: <摘要>`（type ∈ feat / fix / docs / chore / refactor / test）。
+- 一个 commit 只表达一个逻辑变更；禁止 `git add -A`；必须按明确文件清单精确 `git add`。
+- 提交前必须：列文件清单 → `git diff` → `git diff --cached` → 敏感信息扫描 → 确认无 USER_WORK / IGNORE 混入。
+- 运行时/派生文件（`.obsidian/graph.json`、`activity_log.jsonl`、`.changelog_state.json`、`review_records.json`、RAG Evaluation 运行产物等）禁止作为正式成果提交。
+- 正式里程碑使用 Tag：`baseline/<baseline_id>`；不为每个 commit / weekly review / evaluation run 创建 tag。
+- Phase 状态流转（尤其 CLOSED）必须人工确认；AI 不擅自关闭 Phase。

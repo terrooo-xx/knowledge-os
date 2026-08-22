@@ -1,5 +1,161 @@
 # 知识库变更记录
 
+## 2026-08-22
+
+### 新增
+- 90_System/templates/项目总结验收报告模板.md
+- 10_Sources/FreeRTOS/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf</li>
+  <li>10_Sources/FreeRTOS/FreeRTOS_Task_Notifications.html</li>
+  </ul>
+  </details>
+- 10_Sources/STM32/STM32_CrossSeries_Timer_Overview_AN4776.pdf
+- 10_Sources/工具链/
+- 20_Wiki/01_计算机基础/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/01_计算机基础/Git基础配置.md</li>
+  <li>20_Wiki/01_计算机基础/WSL安装Ubuntu.md</li>
+  </ul>
+  </details>
+- 20_Wiki/03_STM32/STM32定时器PWM输出.md
+- 20_Wiki/04_FreeRTOS/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/04_FreeRTOS/FreeRTOS任务通知.md</li>
+  <li>20_Wiki/04_FreeRTOS/FreeRTOS栈溢出检查.md</li>
+  </ul>
+  </details>
+- 40_Outputs/RAG Evaluation/
+- 90_System/rag/evaluation/
+- 90_System/rag/rag_engine/（9 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/rag_engine/evaluation.py</li>
+  <li>90_System/rag/rag_engine/evaluation_baseline.py</li>
+  <li>90_System/rag/rag_engine/evaluation_governance.py</li>
+  <li>90_System/rag/rag_engine/gap_diagnosis.py</li>
+  <li>90_System/rag/rag_engine/golden_set.py</li>
+  <li>90_System/rag/rag_engine/index_fingerprint.py</li>
+  <li>90_System/rag/rag_engine/judge_variance.py</li>
+  <li>90_System/rag/rag_engine/source_acquisition.py</li>
+  <li>90_System/rag/rag_engine/wiki_compilation.py</li>
+  </ul>
+  </details>
+- 90_System/rag/scripts/（8 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/scripts/diagnose_gaps.py</li>
+  <li>90_System/rag/scripts/evaluate_benchmark.py</li>
+  <li>90_System/rag/scripts/evaluation_baseline.py</li>
+  <li>90_System/rag/scripts/evaluation_diff.py</li>
+  <li>90_System/rag/scripts/evaluation_governance.py</li>
+  <li>90_System/rag/scripts/judge_variance.py</li>
+  <li>90_System/rag/scripts/source_acquisition.py</li>
+  <li>90_System/rag/scripts/wiki_compile_gaps.py</li>
+  </ul>
+  </details>
+- 90_System/rag/tests/（20 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/test_benchmark_metrics.py</li>
+  <li>90_System/rag/tests/test_control_center_guide.py</li>
+  <li>90_System/rag/tests/test_control_center_guide_navigation.py</li>
+  <li>90_System/rag/tests/test_control_center_layout.py</li>
+  <li>90_System/rag/tests/test_control_center_rag_evaluation_view.py</li>
+  <li>90_System/rag/tests/test_evaluation_baseline.py</li>
+  <li>90_System/rag/tests/test_evaluation_diff.py</li>
+  <li>90_System/rag/tests/test_evaluation_diff_classification.py</li>
+  <li>90_System/rag/tests/test_evaluation_governance.py</li>
+  <li>90_System/rag/tests/test_golden_set.py</li>
+  <li>90_System/rag/tests/test_index_fingerprint.py</li>
+  <li>90_System/rag/tests/test_judge_variance.py</li>
+  <li>90_System/rag/tests/test_knowledge_gap_pipeline.py</li>
+  <li>90_System/rag/tests/test_query_coverage_matrix.py</li>
+  <li>90_System/rag/tests/test_rag_evaluation.py</li>
+  <li>90_System/rag/tests/test_source_acquisition.py</li>
+  <li>90_System/rag/tests/test_source_acquisition_git.py</li>
+  <li>90_System/rag/tests/test_source_verified.py</li>
+  <li>90_System/rag/tests/test_wiki_benchmark_validation.py</li>
+  <li>90_System/rag/tests/test_wiki_compilation.py</li>
+  </ul>
+  </details>
+- 90_System/任务记录/Remote Codex + 企业微信/
+- 90_System/任务记录/历史阶段/（13 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/历史阶段/阶段14_RAG_Evaluation_与_Query_Benchmark.md</li>
+  <li>90_System/任务记录/历史阶段/阶段15_Knowledge_Gap_闭环_与_Wiki_补全验证.md</li>
+  <li>90_System/任务记录/历史阶段/阶段16_Source_Acquisition_Golden_Set_与_Evaluation_稳定性.md</li>
+  <li>90_System/任务记录/历史阶段/阶段17_Source_Wiki_Benchmark_验证.md</li>
+  <li>90_System/任务记录/历史阶段/阶段18_Final_Baseline_STABLE_固化.md</li>
+  <li>90_System/任务记录/历史阶段/阶段18_Wiki_批准_回归验证_与_Baseline固化.md</li>
+  <li>90_System/任务记录/历史阶段/阶段19_Baseline_Regression_Governance.md</li>
+  <li>90_System/任务记录/历史阶段/阶段20_Governance_Scheduler_与_Index_Fingerprint.md</li>
+  <li>90_System/任务记录/历史阶段/阶段21_知识治理_Git_P1_与_Governance_闭环.md</li>
+  <li>90_System/任务记录/历史阶段/阶段22A_Control_Center_Source_Verified_与_RAG_Evaluation_UI修复.md</li>
+  <li>90_System/任务记录/历史阶段/阶段22B_Control_Center_使用指南.md</li>
+  <li>90_System/任务记录/历史阶段/阶段22C_使用指南_Docs_风格导航改造.md</li>
+  <li>90_System/任务记录/历史阶段/阶段22D_Control_Center_固定布局_App_Shell.md</li>
+  </ul>
+  </details>
+
+### 修改
+- 20_Wiki/01_计算机基础/CPU与寄存器.md
+- 20_Wiki/03_STM32/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/03_STM32/STM32 USART配置与使用.md</li>
+  <li>20_Wiki/03_STM32/STM32时钟树.md</li>
+  </ul>
+  </details>
+- 90_System/rag/tests/test_control_center.py
+
+### 删除
+- 90_System/control_center/activity_log.jsonl
+
+## 2026-08-14
+
+### 新增
+- 90_System/rag/prompts/weekly_insight.md
+- 90_System/rag/rag_engine/evidence_window.py
+- 90_System/rag/scripts/review/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/scripts/review/health.py</li>
+  <li>90_System/rag/scripts/review/insight.py</li>
+  </ul>
+  </details>
+- 90_System/rag/tests/（8 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/test_control_center_ui_labels.py</li>
+  <li>90_System/rag/tests/test_evidence_window.py</li>
+  <li>90_System/rag/tests/test_health_engine.py</li>
+  <li>90_System/rag/tests/test_retrieval_paths.py</li>
+  <li>90_System/rag/tests/test_retrieval_trace.py</li>
+  <li>90_System/rag/tests/test_weekly_insight.py</li>
+  <li>90_System/rag/tests/test_weekly_review_automation.py</li>
+  <li>90_System/rag/tests/test_weekly_review_trends.py</li>
+  </ul>
+  </details>
+
+### 修改
+- 20_Wiki/02_嵌入式基础/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md</li>
+  <li>20_Wiki/02_嵌入式基础/LED限流电阻选型.md</li>
+  <li>20_Wiki/02_嵌入式基础/锂电池参数计算.md</li>
+  </ul>
+  </details>
+- 20_Wiki/03_STM32/STM32CubeMX定时器配置.md
+- 90_System/rag/interface/knowledge_service.py
+- 90_System/rag/rag_engine/retrieval.py
+- 90_System/rag/scripts/review/run_weekly_review.ps1
+
 ## 2026-08-13
 
 ### 新增
@@ -20,9 +176,89 @@
   <li>90_System/任务记录/Phase 2/Phase 2-归档报告.md</li>
   </ul>
   </details>
+- 90_System/control_center/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/control_center/register_review_preflight_task.ps1</li>
+  <li>90_System/control_center/review_preflight_cli.py</li>
+  <li>90_System/control_center/review_records.json</li>
+  </ul>
+  </details>
+- 90_System/rag/prompts/review_judge.md
+- 90_System/rag/tests/（6 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/test_review_context.py</li>
+  <li>90_System/rag/tests/test_review_judge.py</li>
+  <li>90_System/rag/tests/test_review_preflight.py</li>
+  <li>90_System/rag/tests/test_review_preflight_cli.py</li>
+  <li>90_System/rag/tests/test_weekly_review_dashboard.py</li>
+  <li>90_System/rag/tests/test_weekly_review_phase_a.py</li>
+  </ul>
+  </details>
+- 90_System/任务记录/Phase 3/
+- 90_System/任务记录/README.md
+
+### 修改
+- .gitignore
+- AGENTS.md
+- 90_System/KNOWLEDGE_OS.md
+- 90_System/control_center/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/control_center/server.py</li>
+  <li>90_System/control_center/service.py</li>
+  </ul>
+  </details>
+- 90_System/control_center/static/index.html
+- 90_System/rag/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/AGENTS.md</li>
+  <li>90_System/rag/config.yaml</li>
+  </ul>
+  </details>
+- 90_System/rag/rag_engine/judge.py
+- 90_System/rag/scripts/review/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/scripts/review/metrics.py</li>
+  <li>90_System/rag/scripts/review/weekly_review.py</li>
+  </ul>
+  </details>
+- 90_System/任务记录/archive/agents/（4 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/archive/agents/ingest_agent.md</li>
+  <li>90_System/任务记录/archive/agents/retrieval_agent.md</li>
+  <li>90_System/任务记录/archive/agents/review_agent.md</li>
+  <li>90_System/任务记录/archive/agents/wiki_compile_agent.md</li>
+  </ul>
+  </details>
+- 90_System/任务记录/历史阶段/（12 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/历史阶段/阶段06_PDF与Source转写与Fallback评估.md</li>
+  <li>90_System/任务记录/历史阶段/阶段07_Knowledge_OS_Control_Center.md</li>
+  <li>90_System/任务记录/历史阶段/阶段08_Knowledge_OS_稳定化与闭环验证.md</li>
+  <li>90_System/任务记录/历史阶段/阶段09_Evidence_Intelligence与知识回答安全增强.md</li>
+  <li>90_System/任务记录/历史阶段/阶段10.5_Control_Center启动体验优化.md</li>
+  <li>90_System/任务记录/历史阶段/阶段10_Knowledge_OS_v1.0基线与生产运行验证.md</li>
+  <li>90_System/任务记录/历史阶段/阶段11A_Agent知识接口.md</li>
+  <li>90_System/任务记录/历史阶段/阶段11B_Codex_MCP集成.md</li>
+  <li>90_System/任务记录/历史阶段/阶段12A_Knowledge_OS查询性能基准与瓶颈分析.md</li>
+  <li>90_System/任务记录/历史阶段/阶段12B_Knowledge_OS查询性能优化.md</li>
+  <li>90_System/任务记录/历史阶段/阶段12C_跨项目Codex集成与实际使用验证.md</li>
+  <li>90_System/任务记录/历史阶段/阶段13_架构去重与结构治理报告.md</li>
+  </ul>
+  </details>
+
+### 删除
+- 90_System/archive/.gitkeep
 
 ### 提交
 - 提交 45f829e：Phase 2 完成：Knowledge OS、Weekly Review、Control Center 与 MCP
+- 提交 de3ed55：Phase 2 归档：归档报告
 
 ## 2026-08-12
 
