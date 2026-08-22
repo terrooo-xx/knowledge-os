@@ -29,7 +29,17 @@
   </ul>
   </details>
 - 40_Outputs/RAG Evaluation/
-- 90_System/rag/evaluation/
+- 90_System/rag/evaluation/（6 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/evaluation/</li>
+  <li>90_System/rag/evaluation/benchmark.yaml</li>
+  <li>90_System/rag/evaluation/gaps.yaml</li>
+  <li>90_System/rag/evaluation/golden.yaml</li>
+  <li>90_System/rag/evaluation/source_acquisition.yaml</li>
+  <li>90_System/rag/evaluation/wiki_compilation.yaml</li>
+  </ul>
+  </details>
 - 90_System/rag/rag_engine/（9 个文件）
   <details><summary>查看明细</summary>
   <ul>
@@ -121,6 +131,32 @@
   <li>90_System/任务记录/Remote Codex + 企业微信/正式基线/Baseline-20260820.md</li>
   </ul>
   </details>
+- 40_Outputs/RAG Evaluation/audit/eval-20260814T232719/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/RAG Evaluation/audit/eval-20260814T232719/audit_report.md</li>
+  <li>40_Outputs/RAG Evaluation/audit/eval-20260814T232719/gaps.json</li>
+  </ul>
+  </details>
+- 40_Outputs/RAG Evaluation/governance/（7 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase20.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase21.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase22a.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase22b.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase22c.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_phase22d.md</li>
+  <li>40_Outputs/RAG Evaluation/governance/audit_report.md</li>
+  </ul>
+  </details>
+- 40_Outputs/RAG Evaluation/wiki_compilation/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/RAG Evaluation/wiki_compilation/audit_report.md</li>
+  <li>40_Outputs/RAG Evaluation/wiki_compilation/wiki_compilation.yaml</li>
+  </ul>
+  </details>
 
 ### 修改
 - 20_Wiki/01_计算机基础/CPU与寄存器.md
@@ -148,6 +184,7 @@
 - 提交 543c469：[Phase 3] docs: 阶段14~22D 治理与 RAG Evaluation 记录入库
 - 提交 e7ff10d：[Project] feat: 企业微信远程 Codex 项目总结验收 + rc-codex-wecom-20260820 基线
 - 提交 242f619：[Project] docs: rc-codex-wecom-20260820 Baseline metadata 补全（git 关联 + post-baseline drift 说明）
+- 提交 f9a1130：[Project] docs: Baseline git.commit 指向 metadata commit（242f619）
 
 ## 2026-08-14
 

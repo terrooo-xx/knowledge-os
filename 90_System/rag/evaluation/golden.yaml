@@ -1,0 +1,126 @@
+# Knowledge OS RAG Evaluation Golden Set（人工标注集，v2）
+#
+# 用途：人工 Ground Truth，用于验证「系统回答是否真正正确」而非仅依赖 Judge。
+# 本文件由 codex-audit 于 2026-08-15 基于真实 Wiki 内容 + 外部官方资料 + 实际回答
+# 完成第一版人工标注；仍建议人工复核（可直接编辑本 YAML）。
+#
+# ground_truth.answerable：该问题在「有可靠来源」的前提下是否可回答（外部知识判断）
+# ground_truth.acceptable_paths：可接受的回答路径：wiki | raw | wiki_then_raw | either
+# review.answer_correct：系统实际产出答案是否正确（未产出答案=null，不是 false）
+# review.evidence_supported：检索证据是否真正支持答案
+# review.citation_correct：引用来源是否与答案一致
+
+golden_version: "2.0"
+created: "2026-08-14"
+reviewed_at: "2026-08-15"
+entries:
+  - id: q_freertos_scheduler
+    query: "FreeRTOS 任务调度是怎么工作的？"
+    ground_truth:
+      answerable: true
+      expected_source: wiki
+      acceptable_paths: [wiki, wiki_then_raw]
+      relevant_sources:
+        - "20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md"
+    review:
+      answerable: true
+      answer_correct: true
+      evidence_supported: true
+      citation_correct: true
+      evidence_quality: complete
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "系统已回答：正确复述抢占式优先级调度、同优先级时间片、启动流程与任务状态；证据与答案一致"
+
+  - id: q_stm32_usart
+    query: "STM32 USART 串口怎么配置？"
+    ground_truth:
+      answerable: true
+      expected_source: wiki
+      acceptable_paths: [wiki]
+      relevant_sources:
+        - "20_Wiki/03_STM32/STM32 USART配置与使用.md"
+    review:
+      answerable: true
+      answer_correct: true
+      evidence_supported: true
+      citation_correct: true
+      evidence_quality: complete
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "系统已回答：正确覆盖异步模式、PA9/PA10、全局中断、接收中断与回调步骤；证据与答案一致"
+
+  - id: q_freertos_stack_overflow
+    query: "FreeRTOS 栈溢出检查如何配置？"
+    ground_truth:
+      answerable: true
+      expected_source: wiki
+      acceptable_paths: [wiki, wiki_then_raw]
+      relevant_sources:
+        - "10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf"
+        - "20_Wiki/04_FreeRTOS/FreeRTOS栈溢出检查.md"
+    review:
+      answerable: false
+      answer_correct: null
+      evidence_supported: false
+      citation_correct: null
+      evidence_quality: partial
+      review_required: true
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "阶段17 新增 FreeRTOS栈溢出检查.md 后该 Query 已 RECOVERED（基准 82.1%）；原人工标注基于旧状态，需人工复核 answer_correct/evidence_supported（不自动改标注）"
+
+  - id: q_stm32_low_power
+    query: "STM32 低功耗待机模式如何配置？"
+    ground_truth:
+      answerable: true
+      expected_source: either
+      acceptable_paths: [either, wiki_then_raw]
+      relevant_sources:
+        - "https://www.st.com/resource/en/application_note/dm00148033-stm32l4-and-stm32l4-ultralowpower-features-overview-stmicroelectronics.pdf"
+    review:
+      answerable: false
+      answer_correct: null
+      evidence_supported: false
+      citation_correct: null
+      evidence_quality: irrelevant
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "系统判 knowledge_missing；外部确认 STM32 有 sleep/stop/standby 低功耗模式（官方 AN/Reference Manual），当前 KB 无该主题"
+
+  - id: q_px4_ekf
+    query: "PX4 无人机 EKF 卡尔曼滤波参数怎么调？"
+    ground_truth:
+      answerable: true
+      expected_source: unknown
+      acceptable_paths: [either]
+      relevant_sources:
+        - "https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf"
+    review:
+      answerable: false
+      answer_correct: null
+      evidence_supported: false
+      citation_correct: null
+      evidence_quality: irrelevant
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "系统判 knowledge_missing；外部确认 PX4 官方 EKF2 调参文档存在（问题可回答但复杂），当前 KB 无来源"
+
+  - id: q_drone_power
+    query: "四旋翼无人机电池容量怎么选？"
+    ground_truth:
+      answerable: true
+      expected_source: wiki
+      acceptable_paths: [wiki, wiki_then_raw]
+      relevant_sources:
+        - "30_Projects/无人机飞控/硬件选型.md"
+        - "20_Wiki/02_嵌入式基础/锂电池参数计算.md"
+    review:
+      answerable: true
+      answer_correct: null
+      evidence_supported: true
+      citation_correct: true
+      evidence_quality: complete
+    reviewer: "manual(codex)"
+    date: "2026-08-15"
+    notes: "Judge Variance 案例：top-5 证据一致（硬件选型 4S 电池 + 锂电池参数计算），Judge 判定 passed/insufficient 跨 run 波动；before 曾正确回答、after/deep 被拒；不据此判定知识退化"

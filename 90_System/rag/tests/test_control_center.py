@@ -30,12 +30,14 @@ def _tmp_env(tmp: str):
 
 
 def _patch(tmp: str):
-    old_root, old_log, old_gap = service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path
+    old_root, old_log, old_gap, old_eval = (service.VAULT_ROOT, service.ACTIVITY_LOG,
+                                            service._gap_path, service.EVAL_ROOT)
     root = Path(tmp)
     service.VAULT_ROOT = root
     service.ACTIVITY_LOG = root / "activity_log.jsonl"
     service._gap_path = lambda: root / "gaps.yaml"
-    return old_root, old_log, old_gap
+    service.EVAL_ROOT = root / "RAG Evaluation"  # 隔离 governance state（approve 触发 evaluation_required）
+    return old_root, old_log, old_gap, old_eval
 
 
 def test_build_actions_from_real_vault():
@@ -62,7 +64,7 @@ def test_approve_is_idempotent():
             recs = service._activity_records()
             assert sum(1 for r in recs if r["action_id"] == aid and r["result"] == "success") == 1
         finally:
-            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path = old
+            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path, service.EVAL_ROOT = old
 
 
 def test_reject_keeps_status_and_logs():
@@ -76,7 +78,7 @@ def test_reject_keeps_status_and_logs():
             assert "status: draft" in wp.read_text(encoding="utf-8")
             assert any(x["user_decision"] == "reject" for x in service._activity_records())
         finally:
-            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path = old
+            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path, service.EVAL_ROOT = old
 
 
 def test_resolve_gap_is_idempotent():
@@ -92,7 +94,7 @@ def test_resolve_gap_is_idempotent():
             assert r2["result"] == "already_done"
             assert gaps.read_text(encoding="utf-8").count("status: resolved") == 1
         finally:
-            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path = old
+            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path, service.EVAL_ROOT = old
 
 
 def test_batch_approve_requires_confirm_and_is_per_item():
@@ -118,7 +120,7 @@ def test_batch_approve_requires_confirm_and_is_per_item():
             recs = service._activity_records()
             assert sum(1 for x in recs if x["action_id"] == aid and x["result"] == "success") == 1
         finally:
-            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path = old
+            service.VAULT_ROOT, service.ACTIVITY_LOG, service._gap_path, service.EVAL_ROOT = old
 
 
 def test_unknown_action_errors():

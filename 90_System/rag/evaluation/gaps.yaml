@@ -1,0 +1,395 @@
+- id: gap_freertos_config_debug
+  domain: freertos
+  title: FreeRTOS 实战配置与调试
+  status: resolved
+  priority: P0
+  signals:
+    query_count: 2
+    knowledge_missing_count: 2
+    evidence_insufficient_count: 1
+    judge_rejected_count: 1
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: true
+  wiki_exists: true
+  wiki_target:
+    existing: true
+    path: 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+  recommended_action: expand_wiki
+  problem:
+  - 已有 Wiki（CubeMX配置FreeRTOS）只列了 MINIMAL_STACK_SIZE / RECORD_STACK_HIGH_ADDRESS，缺少栈溢出检测与排查步骤
+  - 任务通知有 Inbox Source 但未编译为 Wiki
+  sources:
+  - 00_Inbox/待处理文件/FreeRTOS任务通知补充资料.md
+  evidence:
+    query_ids:
+    - q_freertos_stack_overflow
+    - q_freertos_task_notification
+    failure_types:
+    - RAW_EVIDENCE_INSUFFICIENT
+    - RAW_JUDGE_REJECTED
+    failure_kinds:
+    - evidence_gap
+    - judge_gap
+    existing_wikis:
+    - 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
+    - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+    - 20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md
+    retrieval_traces:
+      q_freertos_stack_overflow:
+        path: wiki_fallback
+        initial_path: wiki_first
+        fallback_reason: judge_rejected
+        wiki_confidence: 1.0
+        failure: RAW_EVIDENCE_INSUFFICIENT
+        failure_kind: evidence_gap
+      q_freertos_task_notification:
+        path: wiki_fallback
+        initial_path: wiki_first
+        fallback_reason: judge_rejected
+        wiki_confidence: 0.8697
+        failure: RAW_JUDGE_REJECTED
+        failure_kind: judge_gap
+  before:
+    answered: 2
+    total: 2
+    remaining_failures: 0
+    recovered: 0
+  after:
+    answered: 2
+    total: 2
+    remaining_failures: 0
+    recovered: 0
+  resolved_by: evaluation_diff
+  resolved_at: '2026-08-16T13:52:07'
+  created: '2026-08-15T00:19:53'
+  notes: 栈溢出检测无可靠来源，需先获取来源；任务通知可直接用 Inbox 资料编译 Draft Wiki
+- id: gap_git_config
+  domain: tooling
+  title: Obsidian Git 配置
+  status: resolved
+  priority: P1
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 1
+    judge_rejected_count: 0
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: true
+  wiki_exists: false
+  wiki_target:
+    existing: false
+  recommended_action: create_wiki
+  problem:
+  - 有 PDF Source（Git 身份配置）但未编译为 Wiki
+  sources:
+  - 00_Inbox/待处理文件/个人笔记/个人数据库Obsidian/Git 配置.note.pdf
+  evidence:
+    query_ids:
+    - q_git_config
+    failure_types:
+    - RAW_EVIDENCE_INSUFFICIENT
+    failure_kinds:
+    - evidence_gap
+    existing_wikis:
+    - 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
+    - 20_Wiki/03_STM32/STM32-DMA-配置与使用.md
+    - 20_Wiki/03_STM32/STM32CubeMX定时器配置.md
+    - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+    retrieval_traces:
+      q_git_config:
+        path: wiki_fallback
+        initial_path: wiki_first
+        fallback_reason: evidence_insufficient
+        wiki_confidence: 1.0
+        failure: RAW_EVIDENCE_INSUFFICIENT
+        failure_kind: evidence_gap
+  before:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 1
+  after:
+    answered: 1
+    total: 1
+    remaining_failures: 0
+    recovered: 1
+  resolved_by: evaluation_diff
+  resolved_at: '2026-08-16T13:52:07'
+  created: '2026-08-15T00:19:53'
+  notes: ''
+- id: gap_px4_ekf
+  domain: drone
+  title: PX4 EKF 卡尔曼滤波调参
+  status: open
+  priority: P2
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 0
+    judge_rejected_count: 0
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: false
+  wiki_exists: false
+  wiki_target:
+    existing: false
+  recommended_action: acquire_source
+  problem:
+  - 完全缺资料（已在 knowledge_gaps.yaml 记录）
+  sources: []
+  evidence:
+    query_ids:
+    - q_px4_ekf
+    failure_types:
+    - RAW_EVIDENCE_INSUFFICIENT
+    failure_kinds:
+    - knowledge_gap
+    existing_wikis:
+    - 20_Wiki/02_嵌入式基础/DRV8845电机驱动.md
+    - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+    - 20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md
+    - 30_Projects/无人机飞控/00_项目索引.md
+    - 30_Projects/无人机飞控/硬件选型.md
+    retrieval_traces:
+      q_px4_ekf:
+        path: raw
+        initial_path: wiki_first
+        fallback_reason: below_threshold
+        wiki_confidence: 0.6
+        failure: RAW_EVIDENCE_INSUFFICIENT
+        failure_kind: knowledge_gap
+  before:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  after:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  resolved_by: null
+  resolved_at: null
+  created: '2026-08-15T00:19:53'
+  notes: ''
+- id: gap_ros2_nav2
+  domain: robot
+  title: ROS2 Nav2 代价地图配置
+  status: open
+  priority: P2
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 1
+    judge_rejected_count: 0
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: false
+  wiki_exists: false
+  wiki_target:
+    existing: false
+  recommended_action: acquire_source
+  problem:
+  - 完全缺资料（已在 knowledge_gaps.yaml 记录）
+  sources: []
+  evidence:
+    query_ids:
+    - q_ros2_nav2
+    failure_types:
+    - RAW_EVIDENCE_INSUFFICIENT
+    failure_kinds:
+    - evidence_gap
+    existing_wikis:
+    - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+    - 20_Wiki/02_嵌入式基础/电容选型.md
+    - 30_Projects/移动底盘控制器/硬件选型/工控机选型.md
+    - 30_Projects/移动底盘控制器/项目适配/适配电机选型.md
+    - 30_Projects/移动底盘控制器/项目适配/项目适配场景.md
+    retrieval_traces:
+      q_ros2_nav2:
+        path: wiki_fallback
+        initial_path: wiki_first
+        fallback_reason: judge_rejected
+        wiki_confidence: 0.8058
+        failure: RAW_EVIDENCE_INSUFFICIENT
+        failure_kind: evidence_gap
+  before:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  after:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  resolved_by: null
+  resolved_at: null
+  created: '2026-08-15T00:19:53'
+  notes: ''
+- id: gap_stm32_cubemx_pwm
+  domain: stm32
+  title: STM32CubeMX 定时器 PWM 输出
+  status: resolved
+  priority: P1
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 0
+    judge_rejected_count: 1
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: true
+  wiki_exists: true
+  wiki_target:
+    existing: true
+    path: 20_Wiki/03_STM32/STM32CubeMX定时器配置.md
+  recommended_action: expand_wiki
+  problem:
+  - Wiki 有 PWM 模式选项，但缺少「输出 PWM 的完整配置步骤」（分频/ARR/占空比/引脚映射）
+  sources:
+  - 00_Inbox/待处理文件/个人笔记/STM32/STM32cubeMx使用笔记/STM32CubeMx定时器（Timers)配置选项.note.pdf
+  evidence:
+    query_ids:
+    - q_stm32_timer_pwm
+    failure_types:
+    - RAW_JUDGE_REJECTED
+    failure_kinds:
+    - judge_gap
+    existing_wikis:
+    - 20_Wiki/03_STM32/STM32 USART配置与使用.md
+    - 20_Wiki/03_STM32/STM32CubeMX定时器配置.md
+    - 20_Wiki/03_STM32/STM32时钟树.md
+    - 30_Projects/移动底盘控制器/硬件选型/STM32主控选型.md
+    retrieval_traces:
+      q_stm32_timer_pwm:
+        path: wiki_fallback
+        initial_path: wiki_first
+        fallback_reason: judge_rejected
+        wiki_confidence: 1.0
+        failure: RAW_JUDGE_REJECTED
+        failure_kind: judge_gap
+  before:
+    answered: 1
+    total: 1
+    remaining_failures: 0
+    recovered: 0
+  after:
+    answered: 1
+    total: 1
+    remaining_failures: 0
+    recovered: 0
+  resolved_by: evaluation_diff
+  resolved_at: '2026-08-16T13:52:07'
+  created: '2026-08-15T00:19:53'
+  notes: ''
+- id: gap_stm32_low_power
+  domain: stm32
+  title: STM32 低功耗模式配置
+  status: open
+  priority: P2
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 0
+    judge_rejected_count: 1
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: false
+  wiki_exists: false
+  wiki_target:
+    existing: false
+  recommended_action: acquire_source
+  problem:
+  - 完全缺资料：低功耗待机模式无 Wiki 无 Source
+  sources: []
+  evidence:
+    query_ids:
+    - q_stm32_low_power
+    failure_types:
+    - RAW_JUDGE_REJECTED
+    failure_kinds:
+    - judge_gap
+    existing_wikis:
+    - 20_Wiki/03_STM32/STM32-DMA-配置与使用.md
+    - 20_Wiki/03_STM32/STM32时钟树.md
+    - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+    - 20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md
+    retrieval_traces:
+      q_stm32_low_power:
+        path: raw
+        initial_path: wiki_first
+        fallback_reason: below_threshold
+        wiki_confidence: 0.6171
+        failure: RAW_JUDGE_REJECTED
+        failure_kind: judge_gap
+  before:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  after:
+    answered: 0
+    total: 1
+    remaining_failures: 1
+    recovered: 0
+  resolved_by: null
+  resolved_at: null
+  created: '2026-08-15T00:19:53'
+  notes: ''
+- id: gap_wsl_ubuntu
+  domain: tooling
+  title: WSL 安装 Ubuntu
+  status: resolved
+  priority: P2
+  signals:
+    query_count: 1
+    knowledge_missing_count: 1
+    evidence_insufficient_count: 0
+    judge_rejected_count: 0
+    retrieval_gap_count: 0
+    system_error_count: 0
+  source_available: false
+  wiki_exists: false
+  wiki_target:
+    existing: false
+  recommended_action: acquire_source
+  problem:
+  - 完全缺资料（已在 knowledge_gaps.yaml 记录）
+  sources: []
+  evidence:
+    query_ids:
+    - q_wsl_ubuntu
+    failure_types:
+    - RAW_EVIDENCE_INSUFFICIENT
+    failure_kinds:
+    - knowledge_gap
+    existing_wikis:
+    - 20_Wiki/02_嵌入式基础/AS5600磁编码器.md
+    - 20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md
+    - 20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md
+    - 30_Projects/移动底盘控制器/功能说明.md
+    retrieval_traces:
+      q_wsl_ubuntu:
+        path: raw
+        initial_path: wiki_first
+        fallback_reason: below_threshold
+        wiki_confidence: 0.6597
+        failure: RAW_EVIDENCE_INSUFFICIENT
+        failure_kind: knowledge_gap
+  before:
+    answered: 1
+    total: 1
+    remaining_failures: 0
+    recovered: 0
+  after:
+    answered: 1
+    total: 1
+    remaining_failures: 0
+    recovered: 0
+  resolved_by: evaluation_diff
+  resolved_at: '2026-08-16T13:52:07'
+  created: '2026-08-15T00:19:53'
+  notes: ''

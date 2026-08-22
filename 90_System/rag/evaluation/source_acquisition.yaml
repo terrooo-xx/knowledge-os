@@ -1,0 +1,216 @@
+# Knowledge OS Source Acquisition Registry
+#
+# 每个 P0/P1（及部分 P2）Knowledge Gap 关联的 Source Acquisition Task。
+# 原则：不假装 URL 已验证。source_status: missing | candidate | acquired | verified
+#   - candidate：官方/高可信来源 URL 已检索登记，但内容未人工核验、未本地获取
+#   - acquired：本地已获取（10_Sources / 00_Inbox）
+#   - verified：人工核验内容且可用于 Stable Wiki（本阶段不自动 verified）
+# source_type 优先级：official_docs > datasheet > reference_manual > project_docs >
+#                     trusted_tutorial > unknown
+# sufficiency 只记录 high/medium/low/unknown，不做综合分数。
+
+created: '2026-08-15'
+sources:
+- id: src_freertos_stack_overflow
+  gap_id: gap_freertos_config_debug
+  title: FreeRTOS 堆栈使用与栈溢出检查（官方 Reference Manual）
+  priority: P0
+  source_status: acquired
+  source_type: reference_manual
+  source:
+    title: FreeRTOS Reference Manual V8.2.1
+    url: https://www.freertos.org/media/2025/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    local_path: 10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    authority: FreeRTOS (Amazon Web Services)
+    date: '2025'
+  verification:
+    verified: false
+    reviewer: ''
+    notes: 本地已获取（1.67MB PDF，pypdf 可解析，298 chunks，含 stack overflow 章节）；内容未人工逐页核验
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: high
+    source_recency: high
+    source_extractability: high
+  reason: P0：Wiki 仅有 MINIMAL_STACK_SIZE / RECORD_STACK_HIGH_ADDRESS，缺 configCHECK_FOR_STACK_OVERFLOW
+    与钩子函数、排查方法
+- id: src_freertos_task_notifications
+  gap_id: gap_freertos_config_debug
+  title: FreeRTOS 任务通知（官方 Reference Manual + 本地薄来源）
+  priority: P0
+  source_status: acquired
+  source_type: reference_manual
+  source:
+    title: FreeRTOS Reference Manual V8.2.1（Task Notifications 章节）
+    url: https://www.freertos.org/media/2025/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    local_path: 10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    authority: FreeRTOS (Amazon Web Services)
+    date: '2025'
+  verification:
+    verified: false
+    reviewer: ''
+    notes: Reference Manual 已获取并含 task notification 章节；Inbox 薄来源（3 要点）仍在；官方网页为 JS
+      渲染（extractability=low）
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: high
+    source_recency: high
+    source_extractability: high
+  reason: P0：查询问『任务通知怎么使用』，本地薄来源只有概念与启用条件，Reference Manual 提供 xTaskNotify/NotifyWait
+    等用法
+- id: src_git_config
+  gap_id: gap_git_config
+  title: Obsidian Git 配置（官方插件文档 + 官方 README + 本地薄 PDF）
+  priority: P1
+  source_status: verified
+  source_type: trusted_tutorial
+  source:
+    title: Obsidian-Git Getting Started（官方插件文档）
+    url: https://publish.obsidian.md/git-doc/Start+here
+    local_path: 10_Sources/工具链/Obsidian-Git_GettingStarted.md
+    authority: Obsidian Git plugin (Vinzent03)
+    date: null
+    retrieved_at: '2026-08-16'
+  related_sources:
+  - title: Obsidian-Git plugin README（官方仓库）
+    url: https://github.com/Vinzent03/obsidian-git
+    local_path: 10_Sources/工具链/Obsidian-Git_README.md
+    authority: Obsidian Git plugin (Vinzent03)
+    retrieved_at: '2026-08-16'
+  - title: Git 配置.note.pdf（个人笔记，薄来源）
+    url: null
+    local_path: 00_Inbox/待处理文件/个人笔记/个人数据库Obsidian/Git 配置.note.pdf
+    authority: 个人笔记
+    retrieved_at: null
+  verification:
+    verified: true
+    reviewer: user
+    notes: 已获取官方 Getting Started 原文（raw markdown，8242 字节：桌面端新建仓库/克隆远程/认证/移动端限制）与官方仓库
+      README（7752 字节：命令清单、自动 commit-and-sync、启动自动 pull）；保留本地薄 PDF（245 字：git 身份配置）；内容未人工逐段核验
+    verified_at: '2026-08-17 17:04:12'
+    verified_by: user
+  sufficiency:
+    source_relevance: high
+    source_authority: medium
+    source_completeness: high
+    source_recency: unknown
+    source_extractability: high
+  reason: P1：查询问『Obsidian 的 Git 怎么配置』，薄 PDF 只覆盖身份配置与 .git 识别；官方文档补齐插件安装/仓库初始化/远程/认证/自动同步流程
+- id: src_stm32_cubemx_pwm
+  gap_id: gap_stm32_cubemx_pwm
+  title: STM32 定时器 PWM 输出（ST 官方应用笔记）
+  priority: P1
+  source_status: acquired
+  source_type: official_docs
+  source:
+    title: STM32 cross-series timer overview (AN4776 / DM00042534)
+    url: https://www.st.com/resource/en/application_note/dm00042534-stm32-cross-series-timer-overview-stmicroelectronics.pdf
+    local_path: 10_Sources/STM32/STM32_CrossSeries_Timer_Overview_AN4776.pdf
+    authority: STMicroelectronics
+    date: null
+  verification:
+    verified: false
+    reviewer: ''
+    notes: ST 官方 timer overview PDF 已获取（711KB，pypdf 可解析，48 chunks，含 PWM mode 章节）；另有本地
+      CubeMX 定时器 PDF
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: high
+    source_recency: unknown
+    source_extractability: high
+  reason: P1：Wiki 有 PWM 模式选项，缺分频/ARR/占空比/引脚映射的完整配置步骤
+- id: src_stm32_low_power
+  gap_id: gap_stm32_low_power
+  title: STM32 低功耗模式（ST AN4621）
+  priority: P2
+  source_status: candidate
+  source_type: reference_manual
+  source:
+    title: STM32L4 and STM32L4 ultra-low-power features overview (AN4621)
+    url: https://www.st.com/resource/en/application_note/dm00148033-stm32l4-and-stm32l4-ultralowpower-features-overview-stmicroelectronics.pdf
+    local_path: null
+    authority: STMicroelectronics
+    date: null
+  verification:
+    verified: false
+    reviewer: ''
+    notes: 官方应用笔记（L4 系列）；通用 sleep/stop/standby 需参考对应系列 Reference Manual
+  sufficiency:
+    source_relevance: medium
+    source_authority: high
+    source_completeness: unknown
+    source_recency: unknown
+    source_extractability: unknown
+  reason: P2：完全缺资料；低功耗待机模式配置
+- id: src_px4_ekf
+  gap_id: gap_px4_ekf
+  title: PX4 EKF2 调参（官方用户指南）
+  priority: P2
+  source_status: candidate
+  source_type: official_docs
+  source:
+    title: Using PX4's Navigation Filter (EKF2) - PX4 User Guide
+    url: https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf
+    local_path: null
+    authority: PX4 (Dronecode)
+    date: null
+  verification:
+    verified: false
+    reviewer: ''
+    notes: 官方 PX4 用户指南 EKF 调参页
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: unknown
+    source_recency: unknown
+    source_extractability: unknown
+  reason: P2：已在 knowledge_gaps.yaml 记录的知识缺口，无本地来源
+- id: src_ros2_nav2
+  gap_id: gap_ros2_nav2
+  title: ROS2 Nav2 代价地图配置（官方文档）
+  priority: P2
+  source_status: candidate
+  source_type: official_docs
+  source:
+    title: Nav2 Configuration Guide - costmap_2d
+    url: https://docs.nav2.org/configuration/packages/costmap-plugins/index.html
+    local_path: null
+    authority: ROS 2 Navigation (Open Navigation)
+    date: null
+  verification:
+    verified: false
+    reviewer: ''
+    notes: 官方 Nav2 配置指南；代价地图插件参数
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: unknown
+    source_recency: unknown
+    source_extractability: unknown
+  reason: P2：完全缺资料；Nav2 代价地图配置
+- id: src_wsl_ubuntu
+  gap_id: gap_wsl_ubuntu
+  title: WSL 安装 Ubuntu（微软官方文档）
+  priority: P2
+  source_status: acquired
+  source_type: official_docs
+  source:
+    title: Install WSL - Microsoft Learn
+    url: https://learn.microsoft.com/windows/wsl/install
+    local_path: 10_Sources/工具链/Microsoft_Install_WSL.html
+    authority: Microsoft
+    date: '2025'
+  verification:
+    verified: false
+    reviewer: ''
+    notes: 官方页面已下载到 10_Sources（trafilatura 可解析，9626 字，含 wsl --install 步骤）；内容未人工逐段核验
+  sufficiency:
+    source_relevance: high
+    source_authority: high
+    source_completeness: high
+    source_recency: high
+    source_extractability: high
+  reason: P2：完全缺资料；WSL 安装 Ubuntu

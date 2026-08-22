@@ -25,6 +25,8 @@ store:
 
 retrieval:
   wiki_first: true
+  # wiki 命中但证据/Judge 不足时，回退到 RAW（经 BGE Reranker）补充/替换；不降低任何阈值
+  wiki_fallback_on_insufficient: true
   confidence_threshold: 0.78
   top_k: 5
   dense_weight: 0.6
@@ -37,6 +39,17 @@ inbox:
 evidence_judge:
   enabled: true
   top_k: 5
+
+# Evidence Context Expansion（邻接 Chunk 扩展为完整语义窗口）
+# prev_chunks/next_chunks: 命中 chunk 前后扩展的邻接 chunk 数
+# max_evidence_chars: 单个 Evidence Window 最大字符数（整 chunk 保留，不句中硬切）
+# use_for_answer: 是否让 LLM Answer 直接消费扩展窗口（默认否，保持 Judge/Answer 行为不变）
+evidence_window:
+  enabled: true
+  prev_chunks: 1
+  next_chunks: 1
+  max_evidence_chars: 3000
+  use_for_answer: false
 
 reranker:
   enabled: true
@@ -58,6 +71,20 @@ llm:
 wiki:
   default_domain: "01_计算机基础"
   status: draft
+# Review Preflight（自动 LLM Judge 预处理）
+# max_per_run: 每轮 preflight 最多 Judge 的候选数（避免单次请求无限调用 LLM）
+# judge_timeout_seconds: 判定“judging 中”记录超时的秒数（进程异常后可接管重跑）
+# failed_retry_minutes: Judge 失败记录在该时间后允许自动重试
+review_preflight:
+  enabled: true
+  max_per_run: 8
+  judge_timeout_seconds: 180
+  failed_retry_minutes: 15
+  # staleness_hours: Control Center 提示“数据不新鲜”的阈值（仅提示，不自动触发 LLM）
+  staleness_hours: 24
+  # schedule_minutes: 仅用于 register_review_preflight_task.ps1 注册 Windows 定时任务
+  schedule_minutes: 30
+
 # 周期性复盘（Weekly Review）
 # weekday: monday..sunday（ISO 周中英文）；time 为本地 24 小时制
 # stale_threshold_days：超过该天数未更新的 Wiki 标记为“复查风险”，非“已过期”

@@ -1,0 +1,329 @@
+# Knowledge OS RAG Query Benchmark 数据集
+#
+# 用途：RAG Evaluation / Query Benchmark 的输入。每条查询会在真实生产检索链
+# （Wiki-first → Quality Gate → RAW fallback → Reranker → Evidence → Judge）上执行，
+# 用于度量当前检索质量，而不是作为"ground truth"评判系统。
+#
+# 字段说明：
+#   id               唯一查询标识
+#   query            真实查询语句（中文）
+#   category         知识领域（用于 By Domain 统计）
+#   project          关联项目（可选）
+#   query_type       fact | configuration | procedure | troubleshooting |
+#                    comparison | concept | cross_document | unknown
+#   difficulty       easy | medium | hard
+#   expected_source  wiki | wiki_or_raw | raw | either | unknown
+#                    （预期最合理的命中来源；不是强制 ground truth）
+#   expected_answerable true | false | unknown
+#                    （人工/启发式预期系统是否可回答；unknown=无法确认）
+#   expected         标注来源：heuristic（基于现有知识面的启发式判断）|
+#                    manual（人工标注，见 golden.yaml）| unknown
+#   notes            备注（可选）
+#
+# 注意：expected_* 只是参照，不假装是 ground truth。最终以真实执行结果为准。
+
+benchmark_version: "1.0"
+created: "2026-08-14"
+queries:
+  # ------------------------------------------------------------ FreeRTOS
+  - id: q_freertos_scheduler
+    query: "FreeRTOS 任务调度是怎么工作的？"
+    category: freertos
+    query_type: concept
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md 有完整说明"
+
+  - id: q_freertos_preemption
+    query: "FreeRTOS 抢占式优先级调度是什么意思？"
+    category: freertos
+    query_type: concept
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "FreeRTOS任务调度与状态 含优先级抢占说明"
+
+  - id: q_freertos_task_states
+    query: "FreeRTOS 任务有哪些状态？"
+    category: freertos
+    query_type: concept
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "Running/Ready/Blocked/Suspended/Deleted 均在 Wiki 中"
+
+  - id: q_cubemx_freertos_cmsis
+    query: "CubeMX 配置 FreeRTOS 时 CMSIS-RTOS 接口选 v1 还是 v2？"
+    category: freertos
+    query_type: configuration
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "CubeMX配置FreeRTOS.md 明确推荐 v2"
+
+  - id: q_freertos_stack_overflow
+    query: "FreeRTOS 栈溢出检查如何配置？"
+    category: freertos
+    query_type: troubleshooting
+    difficulty: hard
+    expected_source: either
+    expected_answerable: unknown
+    expected: heuristic
+    notes: "真实历史查询：曾走 wiki_fallback(judge_rejected)→knowledge_missing；需真实执行确认"
+
+  - id: q_freertos_task_notification
+    query: "FreeRTOS 任务通知怎么使用？"
+    category: freertos
+    query_type: concept
+    difficulty: medium
+    expected_source: unknown
+    expected_answerable: unknown
+    expected: heuristic
+    notes: "00_Inbox 有 FreeRTOS任务通知补充资料.md，但未进 main 索引；预期可能 missing"
+
+  # ------------------------------------------------------------ STM32
+  - id: q_stm32_usart
+    query: "STM32 USART 串口怎么配置？"
+    category: stm32
+    query_type: configuration
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "STM32 USART配置与使用.md 有完整步骤"
+
+  - id: q_stm32_usart_interrupt
+    query: "STM32 串口接收中断怎么开启？"
+    category: stm32
+    query_type: procedure
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "USART Wiki 含中断开启步骤"
+
+  - id: q_stm32_dma
+    query: "STM32 DMA 怎么配置和使用？"
+    category: stm32
+    query_type: configuration
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "STM32-DMA-配置与使用.md 有核心机制与步骤"
+
+  - id: q_stm32_timer_pwm
+    query: "STM32CubeMX 定时器怎么输出 PWM？"
+    category: stm32
+    query_type: configuration
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "STM32CubeMX定时器配置.md 含 PWM Generation 说明"
+
+  - id: q_stm32_low_power
+    query: "STM32 低功耗待机模式如何配置？"
+    category: stm32
+    query_type: configuration
+    difficulty: hard
+    expected_source: either
+    expected_answerable: false
+    expected: heuristic
+    notes: "真实历史查询：path=raw，judge=insufficient，final=knowledge_missing；知识库无该主题"
+
+  # ------------------------------------------------------------ 驱动 / 硬件
+  - id: q_drv8845
+    query: "DRV8845 电机驱动怎么控制？"
+    category: driver
+    query_type: configuration
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "DRV8845电机驱动.md 有控制逻辑"
+
+  - id: q_drv8845_pwm
+    query: "DRV8845 怎么用 PWM 调速？"
+    category: driver
+    query_type: procedure
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "I0x/I1x 作为低电平有效 PWM 使能端"
+
+  - id: q_as5600
+    query: "AS5600 磁编码器怎么和 STM32 连接？"
+    category: driver
+    query_type: configuration
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "AS5600磁编码器.md 有电路要点"
+
+  - id: q_mpu6050
+    query: "MPU-6050 是什么？"
+    category: driver
+    query_type: fact
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "MPU-6050惯性测量单元.md"
+
+  - id: q_led_resistor
+    query: "LED 限流电阻怎么选？"
+    category: hardware
+    query_type: procedure
+    difficulty: easy
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "LED限流电阻选型.md"
+
+  - id: q_lipo_calc
+    query: "锂电池放电时间怎么计算？"
+    category: hardware
+    query_type: procedure
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "锂电池参数计算.md 有公式"
+
+  - id: q_dcdc_ldo
+    query: "DC-DC 和 LDO 有什么区别，怎么选？"
+    category: hardware
+    query_type: comparison
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "DC-DC与LDO选择.md"
+
+  - id: q_capacitor
+    query: "电容怎么选型？"
+    category: hardware
+    query_type: concept
+    difficulty: medium
+    expected_source: either
+    expected_answerable: true
+    expected: heuristic
+    notes: "Wiki 有电容选型.md，raw_vector_db 有 电容.note.pdf；either"
+
+  # ------------------------------------------------------------ 通信协议
+  - id: q_ppm_sbus
+    query: "PPM 和 S.Bus 接收机信号有什么区别？"
+    category: protocol
+    query_type: comparison
+    difficulty: medium
+    expected_source: wiki
+    expected_answerable: true
+    expected: heuristic
+    notes: "PPM与S.Bus接收机信号.md 有对比"
+
+  # ------------------------------------------------------------ 移动底盘 / 跨文档
+  - id: q_chassis_control
+    query: "移动底盘控制器的实时运动控制用什么实现？"
+    category: chassis
+    project: 移动底盘控制器
+    query_type: concept
+    difficulty: medium
+    expected_source: wiki_or_raw
+    expected_answerable: true
+    expected: heuristic
+    notes: "30_Projects/移动底盘控制器/功能说明.md：实时运动控制模块"
+
+  - id: q_chassis_stm32
+    query: "移动底盘控制器为什么选择 STM32 做主控？"
+    category: chassis
+    project: 移动底盘控制器
+    query_type: cross_document
+    difficulty: hard
+    expected_source: wiki_or_raw
+    expected_answerable: true
+    expected: heuristic
+    notes: "30_Projects/移动底盘控制器/硬件选型/STM32主控选型.md"
+
+  - id: q_chassis_ipo
+    query: "移动底盘控制器用什么工控机？"
+    category: chassis
+    project: 移动底盘控制器
+    query_type: configuration
+    difficulty: medium
+    expected_source: wiki_or_raw
+    expected_answerable: true
+    expected: heuristic
+    notes: "30_Projects/移动底盘控制器/硬件选型/工控机选型.md"
+
+  # ------------------------------------------------------------ 无人机 / 跨文档
+  - id: q_drone_power
+    query: "四旋翼无人机电池容量怎么选？"
+    category: drone
+    project: 无人机飞控
+    query_type: cross_document
+    difficulty: hard
+    expected_source: wiki_or_raw
+    expected_answerable: true
+    expected: heuristic
+    notes: "跨 无人机飞控/硬件选型（4S 电池）与 锂电池参数计算"
+
+  - id: q_drone_imu
+    query: "无人机双 IMU 方案有什么作用？"
+    category: drone
+    project: 无人机飞控
+    query_type: concept
+    difficulty: medium
+    expected_source: wiki_or_raw
+    expected_answerable: true
+    expected: heuristic
+    notes: "30_Projects/无人机飞控/硬件选型.md 有双 IMU 说明"
+
+  # ------------------------------------------------------------ Knowledge Missing
+  - id: q_px4_ekf
+    query: "PX4 无人机 EKF 卡尔曼滤波参数怎么调？"
+    category: drone
+    project: 无人机飞控
+    query_type: configuration
+    difficulty: hard
+    expected_source: unknown
+    expected_answerable: false
+    expected: heuristic
+    notes: "已在 knowledge_gaps.yaml 中记录为知识缺口"
+
+  - id: q_ros2_nav2
+    query: "ROS2 Nav2 代价地图怎么配置？"
+    category: robot
+    query_type: configuration
+    difficulty: hard
+    expected_source: unknown
+    expected_answerable: false
+    expected: heuristic
+    notes: "已在 knowledge_gaps.yaml 中记录为知识缺口"
+
+  - id: q_wsl_ubuntu
+    query: "WSL 里怎么装 Ubuntu？"
+    category: tooling
+    query_type: configuration
+    difficulty: medium
+    expected_source: unknown
+    expected_answerable: false
+    expected: heuristic
+    notes: "已在 knowledge_gaps.yaml 中记录为知识缺口"
+
+  - id: q_git_config
+    query: "Obsidian 的 Git 怎么配置？"
+    category: tooling
+    query_type: configuration
+    difficulty: medium
+    expected_source: raw
+    expected_answerable: unknown
+    expected: heuristic
+    notes: "raw_vector_db 有 Git 配置.note.pdf；知识缺口记录为 pending；无法确认能否回答"

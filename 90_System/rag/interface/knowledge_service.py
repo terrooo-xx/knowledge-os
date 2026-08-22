@@ -161,4 +161,7 @@ def knowledge_search(
         "gap": {"status": "pending"} if status not in ("answerable", "answer_generation_timeout") else None,
         "source_trace": sorted({e["source"] for e in ev_list if e["source"]}),
         "reason": evidence.get("reason"),
+        "evidence_windows": result.get("evidence_windows") or [],
+        "retrieval_trace": result.get("retrieval_trace"),
+        "retrieval_gate": result.get("retrieval_gate"),
     }

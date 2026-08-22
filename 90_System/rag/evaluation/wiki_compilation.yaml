@@ -1,0 +1,326 @@
+created: '2026-08-16T13:38:15'
+gaps:
+- gap_id: gap_freertos_config_debug
+  priority: P0
+  title: FreeRTOS 实战配置与调试
+  wiki_tasks:
+  - task_id: wt_freertos_stack_overflow
+    title: FreeRTOS 栈溢出检查
+    wiki_action: NEW_WIKI
+    wiki_target_path: 20_Wiki/04_FreeRTOS/FreeRTOS栈溢出检查.md
+    source:
+      title: FreeRTOS Reference Manual V8.2.1
+      local_path: 10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf
+      page: 274-275
+      section: Stack overflow checking
+      url: https://www.freertos.org/media/2025/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    query_ids:
+    - q_freertos_stack_overflow
+    requirements:
+    - requirement_id: so_req_1
+      query: q_freertos_stack_overflow
+      required_fact: configCHECK_FOR_STACK_OVERFLOW 配置常量选择是否启用检测
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '274'
+      covered: true
+      notes: Which (if any) option is used is configured by configCHECK_FOR_STACK_OVERFLOW
+    - requirement_id: so_req_2
+      query: q_freertos_stack_overflow
+      required_fact: 启用时必须提供栈溢出钩子 vApplicationStackOverflowHook(TaskHandle_t*, signed
+        char*)
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '274'
+      covered: true
+      notes: Hook 原型 Listing 201
+    - requirement_id: so_req_3
+      query: q_freertos_stack_overflow
+      required_fact: 方法1（=1）快但可能漏检；方法2（=2）额外校验栈尾 n 字节模式
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '275'
+      covered: true
+      notes: Method one/two 区别
+    - requirement_id: so_req_4
+      query: q_freertos_stack_overflow
+      required_fact: 检测到溢出时内核调用 hook，传入任务句柄与任务名
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '274'
+      covered: true
+      notes: pxTask / pcTaskName 参数
+    - requirement_id: so_req_5
+      query: q_freertos_stack_overflow
+      required_fact: CubeMX 中该配置项的具体位置/验证方法
+      source_location: {}
+      covered: false
+      notes: Source 未明确 CubeMX 界面位置；需 CubeMX 文档/人工确认
+    coverage_matrix:
+    - query_id: q_freertos_stack_overflow
+      before:
+        final_status: answered
+        source: wiki
+        failure: null
+      wiki_version: draft
+      requirements:
+        so_req_1: covered
+        so_req_2: covered
+        so_req_3: covered
+        so_req_4: covered
+        so_req_5: missing
+      expected_after:
+        likely_recoverable: unknown
+      after:
+        final_status: answered
+        change: UNCHANGED_ANSWERED
+        recovered: false
+        regression_class: null
+    missing_knowledge:
+    - CubeMX 中该配置项的具体位置/验证方法
+    coverage_note: ''
+  - task_id: wt_freertos_task_notification
+    title: FreeRTOS 任务通知
+    wiki_action: EXPAND_EXISTING_WIKI
+    wiki_target_path: 20_Wiki/04_FreeRTOS/FreeRTOS任务通知.md
+    source:
+      title: FreeRTOS Reference Manual V8.2.1
+      local_path: 10_Sources/FreeRTOS/FreeRTOS_Reference_Manual_V8.2.1.pdf
+      page: 82-86
+      section: RTOS task notifications
+      url: https://www.freertos.org/media/2025/FreeRTOS_Reference_Manual_V8.2.1.pdf
+    query_ids:
+    - q_freertos_task_notification
+    requirements:
+    - requirement_id: tn_req_1
+      query: q_freertos_task_notification
+      required_fact: 任务通知是轻量级任务间通信，比信号量高效；可替代部分信号量/事件组
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '82'
+      covered: true
+      notes: eSetBits 可用作更快的事件组替代
+    - requirement_id: tn_req_2
+      query: q_freertos_task_notification
+      required_fact: 启用条件 configUSE_TASK_NOTIFICATIONS（默认启用，设 0 每任务省 8B）
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '82'
+      covered: true
+      notes: FreeRTOSConfig.h 中设置
+    - requirement_id: tn_req_3
+      query: q_freertos_task_notification
+      required_fact: 发送 API xTaskNotify/xTaskNotifyAndQuery + eAction 五种动作 + 返回值 pdPASS/pdFAIL
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: 82,85
+      covered: true
+      notes: eSetBits/eIncrement/eSetValueWithOverwrite/eSetValueWithoutOverwrite/eNoAction
+    - requirement_id: tn_req_4
+      query: q_freertos_task_notification
+      required_fact: 简单场景用 xTaskNotifyGive 替代二进制/计数信号量
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '82'
+      covered: true
+      notes: simpler xTaskNotifyGive()
+    - requirement_id: tn_req_5
+      query: q_freertos_task_notification
+      required_fact: 接收 API xTaskNotifyWait / ulTaskNotifyTake
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '86'
+      covered: true
+      notes: example 中提及读取方式
+    - requirement_id: tn_req_6
+      query: q_freertos_task_notification
+      required_fact: 典型调用示例（Listing 54：eSetBits/eNoAction/eSetValueWithOverwrite/WithoutOverwrite）
+      source_location:
+        title: FreeRTOS Reference Manual V8.2.1
+        page: '86'
+      covered: true
+      notes: Example use of xTaskNotify()
+    coverage_matrix:
+    - query_id: q_freertos_task_notification
+      before:
+        final_status: answered
+        source: wiki
+        failure: null
+      wiki_version: draft
+      requirements:
+        tn_req_1: covered
+        tn_req_2: covered
+        tn_req_3: covered
+        tn_req_4: covered
+        tn_req_5: covered
+        tn_req_6: covered
+      expected_after:
+        likely_recoverable: 'true'
+      after:
+        final_status: answered
+        change: UNCHANGED_ANSWERED
+        recovered: false
+        regression_class: null
+    missing_knowledge: []
+    coverage_note: ''
+- gap_id: gap_git_config
+  priority: P1
+  title: Obsidian Git 配置
+  wiki_tasks:
+  - task_id: wt_git_config
+    title: Obsidian Git 配置
+    wiki_action: EXPAND_EXISTING_WIKI
+    wiki_target_path: 20_Wiki/01_计算机基础/Git基础配置.md
+    source:
+      title: Obsidian-Git Getting Started（官方插件文档）
+      local_path: 10_Sources/工具链/Obsidian-Git_GettingStarted.md
+      page: null
+      section: Create new local repository / For existing remote repository
+      url: https://publish.obsidian.md/git-doc/Start+here
+    query_ids:
+    - q_git_config
+    requirements:
+    - requirement_id: git_req_1
+      query: q_git_config
+      required_fact: git user.name / user.email 身份配置
+      source_location:
+        title: Git 配置.note.pdf
+      covered: true
+      notes: 本地 PDF 唯一实质内容；Getting Started 移动端 Commit Author 亦涉及
+    - requirement_id: git_req_2
+      query: q_git_config
+      required_fact: 识别仓库（.git 文件夹、显示隐藏文件）
+      source_location:
+        title: Git 配置.note.pdf
+      covered: true
+      notes: Windows/Mac 显示隐藏文件；Getting Started 提示克隆时保留 .git
+    - requirement_id: git_req_3
+      query: q_git_config
+      required_fact: Obsidian-Git 插件安装与启用（社区插件 → Browse → Git → Enable）
+      source_location:
+        title: Obsidian-Git Getting Started（官方插件文档）
+        section: Start with existing remote repository
+      covered: true
+      notes: Enable community plugins. Browse plugins to install Git. Enable Git
+    - requirement_id: git_req_4
+      query: q_git_config
+      required_fact: 仓库初始化与远程配置：Initialize a new repo → Push 添加 origin；或 Clone existing
+        remote repo（https/ssh URL 带 .git 后缀）；Edit remotes
+      source_location:
+        title: Obsidian-Git Getting Started（官方插件文档）
+        section: Create new local repository / For existing remote repository
+      covered: true
+      notes: origin 名称 + push URL；克隆 URL https://github.com/<user>/<repo>.git 或 git@github.com:<user>/<repo>.git
+    - requirement_id: git_req_5
+      query: q_git_config
+      required_fact: 自动同步：Commit-and-sync（commit all + pull + push）；自动定时同步与启动自动 pull；常用命令
+      source_location:
+        title: Obsidian-Git plugin README（官方仓库）
+        section: Key Features / Available Commands
+      covered: true
+      notes: README：Automatic commit-and-sync、Auto-pull on Obsidian startup；Commit-and-sync
+        命令
+    - requirement_id: git_req_6
+      query: q_git_config
+      required_fact: 认证：桌面 HTTPS/SSH（指向 Authentication Guide）；GitHub 个人访问令牌最小权限（metadata
+        读 + contents/commit status 读写）
+      source_location:
+        title: Obsidian-Git Getting Started（官方插件文档）
+        section: Start with existing remote repository / Authentication
+      covered: true
+      notes: 移动端必须用 PAT；桌面端 HTTPS/SSH 详见官方 Authentication 指南
+    coverage_matrix:
+    - query_id: q_git_config
+      before:
+        final_status: knowledge_missing
+        source: raw
+        failure: RAW_JUDGE_REJECTED
+      wiki_version: draft
+      requirements:
+        git_req_1: covered
+        git_req_2: covered
+        git_req_3: covered
+        git_req_4: covered
+        git_req_5: covered
+        git_req_6: covered
+      expected_after:
+        likely_recoverable: 'true'
+      after:
+        final_status: answered
+        change: RECOVERED
+        recovered: true
+        regression_class: null
+    missing_knowledge: []
+    coverage_note: Source 已补齐（官方 Getting Started + README），覆盖插件安装/仓库初始化/远程/认证/自动同步；Wiki
+      保持 draft + review_required，不自动 approve
+- gap_id: gap_stm32_cubemx_pwm
+  priority: P1
+  title: STM32CubeMX 定时器 PWM 输出
+  wiki_tasks:
+  - task_id: wt_stm32_pwm
+    title: STM32 定时器 PWM 输出
+    wiki_action: NEW_WIKI
+    wiki_target_path: 20_Wiki/03_STM32/STM32定时器PWM输出.md
+    source:
+      title: STM32 cross-series timer overview (AN4013 Rev 14)
+      local_path: 10_Sources/STM32/STM32_CrossSeries_Timer_Overview_AN4776.pdf
+      page: 16-17
+      section: 2.5 Timer in PWM mode
+      url: https://www.st.com/resource/en/application_note/dm00042534-stm32-cross-series-timer-overview-stmicroelectronics.pdf
+    query_ids:
+    - q_stm32_timer_pwm
+    requirements:
+    - requirement_id: pwm_req_1
+      query: q_stm32_timer_pwm
+      required_fact: PWM 输出配置步骤（引脚 CCS/CCxP → OCxM 选 PWM1/2 → ARR/CCRx → 预装载 → 计数模式
+        → CCxE → CEN）
+      source_location:
+        title: STM32 cross-series timer overview
+        page: '17'
+      covered: true
+      notes: AN4013 §2.5 配置步骤 1-7
+    - requirement_id: pwm_req_2
+      query: q_stm32_timer_pwm
+      required_fact: 频率/占空比关系：CK_CNT=CK_PSC/(PSC+1)；CCx update rate=CK_CNT/ARR；CCRx
+        决定脉冲宽度
+      source_location:
+        title: STM32 cross-series timer overview
+        page: '16'
+      covered: true
+      notes: output compare timing 公式
+    - requirement_id: pwm_req_3
+      query: q_stm32_timer_pwm
+      required_fact: 边沿对齐（up/down）与中心对齐（CMS!=00）计数模式
+      source_location:
+        title: STM32 cross-series timer overview
+        page: '17'
+      covered: true
+      notes: PWM edge/center aligned
+    - requirement_id: pwm_req_4
+      query: q_stm32_timer_pwm
+      required_fact: CubeMX 界面配置项（Channel=PWM Generation 等）
+      source_location: {}
+      covered: false
+      notes: AN4013 为寄存器级；CubeMX 界面配置见现有 reviewed Wiki（不可 AI 修改），需人工合并确认
+    coverage_matrix:
+    - query_id: q_stm32_timer_pwm
+      before:
+        final_status: answered
+        source: wiki
+        failure: null
+      wiki_version: draft
+      requirements:
+        pwm_req_1: covered
+        pwm_req_2: covered
+        pwm_req_3: covered
+        pwm_req_4: missing
+      expected_after:
+        likely_recoverable: unknown
+      after:
+        final_status: answered
+        change: UNCHANGED_ANSWERED
+        recovered: false
+        regression_class: null
+    missing_knowledge:
+    - CubeMX 界面配置项（Channel=PWM Generation 等）
+    coverage_note: ''
