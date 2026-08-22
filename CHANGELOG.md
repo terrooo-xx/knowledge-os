@@ -132,6 +132,13 @@
   </ul>
   </details>
 - 90_System/rag/tests/test_control_center.py
+- 90_System/任务记录/Remote Codex + 企业微信/正式基线/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/Remote Codex + 企业微信/正式基线/Baseline-20260820.json</li>
+  <li>90_System/任务记录/Remote Codex + 企业微信/正式基线/Baseline-20260820.md</li>
+  </ul>
+  </details>
 
 ### 删除
 - 90_System/control_center/activity_log.jsonl
@@ -139,6 +146,7 @@
 ### 提交
 - 提交 ccfcf50：[Phase 3] chore: 历史记录体系迁移
 - 提交 543c469：[Phase 3] docs: 阶段14~22D 治理与 RAG Evaluation 记录入库
+- 提交 e7ff10d：[Project] feat: 企业微信远程 Codex 项目总结验收 + rc-codex-wecom-20260820 基线
 
 ## 2026-08-14
 

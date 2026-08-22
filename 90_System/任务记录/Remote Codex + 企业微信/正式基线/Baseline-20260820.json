@@ -61,6 +61,18 @@
     }
   },
   "status": "STABLE",
+  "git": {
+    "commit": "e7ff10d728238ef82763f93b030b92865f9521fb",
+    "tag": "baseline/rc-codex-wecom-20260820"
+  },
+  "external_state": "machine-local",
+  "post_baseline_drift": {
+    "detected_at": "2026-08-22",
+    "external_hash_check": "7/8 MATCH",
+    "drifted_file": "C:\\Users\\陶权煜\\.codex\\config.toml",
+    "baseline_historical_snapshot": "unchanged",
+    "note": "符合已知 Codex App 重写 config.toml 模式；不代表 2026-08-20 Baseline 错误；不重建 Baseline"
+  },
   "baseline_id": "rc-codex-wecom-20260820",
   "autostart": {
     "trigger": "logon",
