@@ -12,7 +12,16 @@
   </ul>
   </details>
 - 10_Sources/STM32/STM32_CrossSeries_Timer_Overview_AN4776.pdf
-- 10_Sources/工具链/
+- 10_Sources/工具链/（5 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>10_Sources/工具链/</li>
+  <li>10_Sources/工具链/Microsoft_Install_WSL.html</li>
+  <li>10_Sources/工具链/Obsidian-Git_GettingStarted.md</li>
+  <li>10_Sources/工具链/Obsidian-Git_README.md</li>
+  <li>10_Sources/工具链/Obsidian-Git_GettingStarted.html</li>
+  </ul>
+  </details>
 - 20_Wiki/01_计算机基础/（2 个文件）
   <details><summary>查看明细</summary>
   <ul>
@@ -157,8 +166,34 @@
   <li>40_Outputs/RAG Evaluation/wiki_compilation/wiki_compilation.yaml</li>
   </ul>
   </details>
+- .agents/skills/project-finalization/SKILL.md
+- 40_Outputs/reviews/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/reviews/Gate1_Closeout_2026-08-22.md</li>
+  <li>40_Outputs/reviews/Gate1_Repo_Audit_2026-08-22.md</li>
+  <li>40_Outputs/reviews/Global_Health_Audit_Gate0_2026-08-22.md</li>
+  </ul>
+  </details>
+- 40_Outputs/reviews/每周复盘/2026/W33/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/reviews/每周复盘/2026/W33/insight.json</li>
+  <li>40_Outputs/reviews/每周复盘/2026/W33/snapshot.json</li>
+  <li>40_Outputs/reviews/每周复盘/2026/W33/weekly-review.md</li>
+  </ul>
+  </details>
+- 40_Outputs/reviews/每周复盘/2026/W34/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/reviews/每周复盘/2026/W34/insight.json</li>
+  <li>40_Outputs/reviews/每周复盘/2026/W34/snapshot.json</li>
+  <li>40_Outputs/reviews/每周复盘/2026/W34/weekly-review.md</li>
+  </ul>
+  </details>
 
 ### 修改
+- .gitignore
 - 20_Wiki/01_计算机基础/CPU与寄存器.md
 - 20_Wiki/03_STM32/（2 个文件）
   <details><summary>查看明细</summary>
@@ -167,7 +202,14 @@
   <li>20_Wiki/03_STM32/STM32时钟树.md</li>
   </ul>
   </details>
-- 90_System/rag/tests/test_control_center.py
+- 90_System/rag/tests/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/tests/test_control_center.py</li>
+  <li>90_System/rag/tests/test_weekly_review_dashboard.py</li>
+  <li>90_System/rag/tests/test_weekly_review_trends.py</li>
+  </ul>
+  </details>
 - 90_System/任务记录/Remote Codex + 企业微信/正式基线/（2 个文件）
   <details><summary>查看明细</summary>
   <ul>
@@ -187,6 +229,7 @@
 - 提交 f9a1130：[Project] docs: Baseline git.commit 指向 metadata commit（242f619）
 - 提交 2fc85ed：[Phase 3] feat: RAG Evaluation 与 Governance 引擎
 - 提交 8fc7ef0：[Phase 3] feat: Control Center RAG Evaluation UI 与 preflight
+- 提交 86b25ae：[Wiki] docs: 新增与审核 Wiki
 
 ## 2026-08-14
 

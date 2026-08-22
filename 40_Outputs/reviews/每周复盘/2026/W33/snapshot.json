@@ -1,0 +1,352 @@
+{
+  "snapshot_schema_version": "1.0",
+  "metrics_schema_version": "1.0",
+  "period": "2026-W33",
+  "generated_at": "2026-08-14T13:59:41",
+  "wiki_total": 20,
+  "wiki_draft": 13,
+  "wiki_reviewed": 4,
+  "wiki_stable": 3,
+  "review_pending": 10,
+  "review": {
+    "judge_passed": 8,
+    "needs_review": 10,
+    "judge_failed": 0,
+    "judging": 0,
+    "not_judged": 0,
+    "total": 18,
+    "candidates": 18,
+    "pending_human": 10,
+    "human_review_total": 10,
+    "items": [
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/AS5600磁编码器.md",
+        "title": "AS5600磁编码器",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/CLion嵌入式开发环境.md",
+        "title": "CLion嵌入式开发环境",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "approve",
+        "reason": "警告 1 项"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/DC-DC与LDO选择.md",
+        "title": "DC-DC与LDO选择",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/DC电源插座引脚.md",
+        "title": "DC电源插座引脚",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/LED限流电阻选型.md",
+        "title": "LED限流电阻选型",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "approve",
+        "reason": "警告 1 项"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/MPU-6050惯性测量单元.md",
+        "title": "MPU-6050惯性测量单元",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/电容选型.md",
+        "title": "电容选型",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/电机驱动选型.md",
+        "title": "电机驱动选型",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/02_嵌入式基础/锂电池参数计算.md",
+        "title": "锂电池参数计算",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "approve",
+        "reason": "警告 1 项"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/03_STM32/STM32CubeMX定时器配置.md",
+        "title": "STM32CubeMX定时器配置",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "approve",
+        "reason": "警告 1 项"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/04_FreeRTOS/CubeMX配置FreeRTOS.md",
+        "title": "CubeMX配置FreeRTOS",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "review",
+        "reason": "部分一致；证据部分支持；缺失 11 项；来源不支持 1 项；警告 2 项"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/04_FreeRTOS/FreeRTOS任务调度与状态.md",
+        "title": "FreeRTOS任务调度与状态",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "wiki_review:20_Wiki/05_通信协议/PPM与S.Bus接收机信号.md",
+        "title": "PPM与S.Bus接收机信号",
+        "type": "wiki_review",
+        "judge_status": "completed",
+        "classification": "judge_passed",
+        "recommendation": "approve",
+        "reason": "AI 已验证（consistent / sufficient）"
+      },
+      {
+        "action_id": "gap:Obsidian 的 Git 怎么配置？",
+        "title": "Obsidian 的 Git 怎么配置？",
+        "type": "knowledge_gap",
+        "judge_status": "blocked",
+        "classification": "needs_review",
+        "recommendation": null,
+        "reason": "无法进行 LLM Judge（无可读取来源证据，无法进行 LLM Judge）"
+      },
+      {
+        "action_id": "gap:PX4 无人机 EKF 卡尔曼滤波参数怎么调？",
+        "title": "PX4 无人机 EKF 卡尔曼滤波参数怎么调？",
+        "type": "knowledge_gap",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "review",
+        "reason": "证据不足；缺失 4 项；警告 1 项"
+      },
+      {
+        "action_id": "gap:PX4 EKF 卡尔曼滤波参数怎么调？",
+        "title": "PX4 EKF 卡尔曼滤波参数怎么调？",
+        "type": "knowledge_gap",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "review",
+        "reason": "证据不足；缺失 3 项；警告 2 项"
+      },
+      {
+        "action_id": "gap:WSL 里怎么装 Ubuntu？",
+        "title": "WSL 里怎么装 Ubuntu？",
+        "type": "knowledge_gap",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "review",
+        "reason": "证据不足；缺失 4 项；警告 1 项"
+      },
+      {
+        "action_id": "gap:ROS2 Nav2 代价地图怎么配置？",
+        "title": "ROS2 Nav2 代价地图怎么配置？",
+        "type": "knowledge_gap",
+        "judge_status": "completed",
+        "classification": "needs_review",
+        "recommendation": "review",
+        "reason": "证据不足；缺失 1 项；警告 1 项"
+      }
+    ]
+  },
+  "baseline": {
+    "is_baseline_period": true,
+    "note": "初始化基线，暂不作为正常周增长趋势使用"
+  },
+  "knowledge_gaps_pending": 5,
+  "knowledge_gaps_total": 6,
+  "stale_items": [
+    {
+      "path": "20_Wiki/03_STM32/STM32-DMA-配置与使用.md",
+      "status": "stable",
+      "risk_factors": [
+        "review_required"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "无人机飞控",
+      "status": "planning",
+      "phase": "架构设计",
+      "progress": null,
+      "next_step": null,
+      "blockers": [],
+      "updated": "2026-08-12"
+    },
+    {
+      "name": "移动底盘控制器",
+      "status": "planning",
+      "phase": "架构设计",
+      "progress": null,
+      "next_step": null,
+      "blockers": [],
+      "updated": "2026-08-12"
+    }
+  ],
+  "health_score": 74,
+  "health": {
+    "status": "ok",
+    "errors": 0,
+    "warnings": 0
+  },
+  "health_algorithm_version": "health_v1",
+  "health_status": "attention",
+  "health_dimensions": {
+    "knowledge_quality": {
+      "score": 61,
+      "status": "attention",
+      "available": true,
+      "weight": 0.2,
+      "label": "Knowledge Quality",
+      "detail": {
+        "reviewed_stable_ratio": 0.35,
+        "reviewed_stable": 7,
+        "total": 20
+      }
+    },
+    "review_health": {
+      "score": 56,
+      "status": "warning",
+      "available": true,
+      "weight": 0.2,
+      "label": "Review Health",
+      "detail": {
+        "backlog_ratio": 0.556,
+        "failure_ratio": 0.0,
+        "pending_human": 10,
+        "judge_failed": 0,
+        "candidates": 18
+      }
+    },
+    "knowledge_gaps": {
+      "score": 47,
+      "status": "warning",
+      "available": true,
+      "weight": 0.15,
+      "label": "Knowledge Gaps",
+      "detail": {
+        "backlog_ratio": 0.833,
+        "resolution_ratio": 0.167,
+        "pending": 5,
+        "resolved": 1,
+        "total": 6
+      }
+    },
+    "freshness": {
+      "score": 92,
+      "status": "excellent",
+      "available": true,
+      "weight": 0.15,
+      "label": "Freshness",
+      "detail": {
+        "stale_ratio": 0.05,
+        "stale": 1,
+        "total": 20
+      }
+    },
+    "project_activity": {
+      "score": 100,
+      "status": "excellent",
+      "available": true,
+      "weight": 0.1,
+      "label": "Project Activity",
+      "detail": {
+        "phase_coverage": 1.0,
+        "recently_updated_ratio": 1.0,
+        "blocked_ratio": 0.0
+      }
+    },
+    "system_reliability": {
+      "score": 100,
+      "status": "excellent",
+      "available": true,
+      "weight": 0.2,
+      "label": "System Reliability",
+      "detail": {
+        "errors": 0,
+        "warnings": 0,
+        "status": "ok"
+      }
+    }
+  },
+  "health_factors": [
+    {
+      "type": "negative",
+      "metric": "review_pending",
+      "value": 10,
+      "impact": "medium"
+    },
+    {
+      "type": "negative",
+      "metric": "gaps_pending",
+      "value": 5,
+      "impact": "medium"
+    },
+    {
+      "type": "negative",
+      "metric": "stale",
+      "value": 1,
+      "impact": "medium"
+    },
+    {
+      "type": "positive",
+      "metric": "judge_failed",
+      "value": 0,
+      "impact": "medium"
+    },
+    {
+      "type": "positive",
+      "metric": "system_health",
+      "value": 0,
+      "impact": "low"
+    },
+    {
+      "type": "positive",
+      "metric": "gaps_resolved",
+      "value": 1,
+      "impact": "low"
+    }
+  ],
+  "insight_status": "available",
+  "insight_prompt_version": "weekly_insight_v1",
+  "growth_delta": {
+    "new_wiki": 20,
+    "updated_wiki": 0
+  },
+  "activity_count": 122
+}

@@ -1,0 +1,145 @@
+{
+  "period": "2026-W33",
+  "schema_version": "1.0",
+  "prompt_version": "weekly_insight_v1",
+  "model": "deepseek:deepseek-chat",
+  "status": "available",
+  "reason": null,
+  "generated_at": "2026-08-14T14:03:11",
+  "insight": {
+    "schema_version": "1.0",
+    "prompt_version": "weekly_insight_v1",
+    "model": "deepseek:deepseek-chat",
+    "summary": "2026-W33 知识库新增 20 篇 wiki（无更新），总数为 20；审核积压 10 项、知识缺口待处理 5 项、stale 1 项，健康评分 74 分处于 attention 状态，其中 review_health 56 分（warning）、knowledge_gaps 47 分（warning）、knowledge_quality 61 分（attention），freshness 92 分、project_activity 与 system_reliability 均为 100 分（excellent）。",
+    "changes": [
+      {
+        "title": "新增 20 篇 wiki，无更新",
+        "detail": "本周 wiki 总数 20，新增 20，更新 0。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "wiki_new",
+            "current": 20
+          },
+          {
+            "type": "metric",
+            "metric": "wiki_updated",
+            "current": 0
+          },
+          {
+            "type": "metric",
+            "metric": "wiki_total",
+            "current": 20
+          }
+        ]
+      },
+      {
+        "title": "审核积压 10 项，通过 8 项",
+        "detail": "review_pending 为 10，judge_passed 为 8，judge_failed 为 0。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "review_pending",
+            "current": 10
+          },
+          {
+            "type": "metric",
+            "metric": "judge_passed",
+            "current": 8
+          },
+          {
+            "type": "metric",
+            "metric": "judge_failed",
+            "current": 0
+          }
+        ]
+      },
+      {
+        "title": "知识缺口待处理 5 项，已解决 1 项",
+        "detail": "gaps_pending 为 5，gaps_resolved 为 1。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "gaps_pending",
+            "current": 5
+          },
+          {
+            "type": "metric",
+            "metric": "gaps_resolved",
+            "current": 1
+          }
+        ]
+      }
+    ],
+    "attention": [
+      {
+        "priority": "high",
+        "title": "审核积压 10 项",
+        "reason": "review_pending 为 10，且 review_health 维度评分 56 分（warning），需要处理。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "review_pending",
+            "current": 10
+          },
+          {
+            "type": "metric",
+            "metric": "review_health",
+            "current": 56
+          }
+        ]
+      },
+      {
+        "priority": "high",
+        "title": "知识缺口待处理 5 项",
+        "reason": "gaps_pending 为 5，且 knowledge_gaps 维度评分 47 分（warning），为最低维度。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "gaps_pending",
+            "current": 5
+          },
+          {
+            "type": "metric",
+            "metric": "knowledge_gaps",
+            "current": 47
+          }
+        ]
+      },
+      {
+        "priority": "medium",
+        "title": "stale 复查风险 1 项",
+        "reason": "stale 为 1，freshness 维度评分 92 分（excellent），但存在 1 项 stale 需关注。",
+        "evidence": [
+          {
+            "type": "metric",
+            "metric": "stale",
+            "current": 1
+          },
+          {
+            "type": "metric",
+            "metric": "freshness",
+            "current": 92
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "priority": "high",
+        "action": "优先处理 10 项待审核内容，降低 review_pending 积压。",
+        "reason": "review_pending 为 10，且 review_health 评分 56 分（warning），影响整体健康。"
+      },
+      {
+        "priority": "high",
+        "action": "推进 5 项知识缺口的解决，提升 knowledge_gaps 维度评分。",
+        "reason": "gaps_pending 为 5，knowledge_gaps 评分 47 分（warning），为最低维度。"
+      },
+      {
+        "priority": "medium",
+        "action": "复查并处理 1 项 stale 内容，保持 freshness 优秀状态。",
+        "reason": "stale 为 1，虽 freshness 评分 92 分，但需防止风险扩大。"
+      }
+    ]
+  }
+}

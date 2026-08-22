@@ -191,8 +191,8 @@ def test_dashboard_trend_structure():
     d = service.weekly_review_dashboard()
     assert "trend" in d and "wow" in d["trend"] and "four_week" in d["trend"]
     assert "wow_by_period" in d["trend"] and "availability" in d["trend"]
-    # real env: only W33 baseline -> no fake history
-    assert d["has_trend"] is False
+    # real env: W33 基线 + W34 已有历史；WoW 因基线边界仍不编造
+    assert d["has_trend"] is True
     assert d["trend"]["wow"]["review_pending"]["available"] is False
 
 

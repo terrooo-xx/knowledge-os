@@ -53,3 +53,9 @@ __pycache__/
 40_Outputs/RAG Evaluation/latest.json
 40_Outputs/RAG Evaluation/latest_diff.json
 40_Outputs/RAG Evaluation/latest_judge_variance.json
+# Python 测试缓存（显式声明，不依赖 pytest 自动生成的内层 .gitignore）
+.pytest_cache/
+
+# 00_Inbox 私人原始资料（个人笔记 PDF 等），不进入 Git；
+# 只忽略 待处理文件/个人笔记 子树，保留 .gitkeep 与已跟踪的正式 md
+00_Inbox/待处理文件/个人笔记/

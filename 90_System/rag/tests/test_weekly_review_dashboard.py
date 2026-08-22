@@ -70,14 +70,16 @@ def test_projects_no_fake_progress():
 
 def test_baseline_true_no_fake_trend():
     d = service.weekly_review_dashboard()
-    assert d["baseline"]["is_baseline_period"] is True  # only W33 snapshot exists
-    assert d["status"]["baseline"] is True
-    # Phase C contract: trend is a structured dict with available=false (no fake history)
-    assert d["has_trend"] is False
+    # W33 为基线，W34 为基线后首个正常周期（is_baseline_period=False）
+    assert d["baseline"]["is_baseline_period"] is False
+    assert d["status"]["baseline"] is False
+    # Phase C contract: 有真实历史（W33+W34）时 has_trend=True，但 WoW/4 周仍不编造
+    assert d["has_trend"] is True
     assert isinstance(d["trend"], dict)
-    assert d["trend"]["wow"]["review_pending"]["available"] is False
-    assert d["trend"]["four_week"]["review_pending"]["available"] is False
-    assert d["trend"]["availability"]["has_history"] is False
+    assert d["trend"]["wow"]["review_pending"]["available"] is False  # baseline boundary
+    assert d["trend"]["four_week"]["review_pending"]["available"] is False  # <4 周
+    assert d["trend"]["availability"]["has_history"] is True
+    assert d["trend"]["availability"]["period_count"] >= 2
     flat = json.dumps(d, ensure_ascii=False)
     assert "↑" not in flat and "↓" not in flat  # no fabricated arrows in serialized payload
 
@@ -91,7 +93,7 @@ def test_http_route():
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/weekly_review/dashboard", timeout=30) as r:
             data = json.loads(r.read().decode("utf-8"))
         assert data["ok"] is True
-        assert data["period"] == "2026-W33"
+        assert data["period"] == "2026-W34"
     finally:
         srv.shutdown()
 
@@ -100,7 +102,7 @@ def test_historical_preserved_with_links():
     d = service.weekly_review_dashboard()
     assert len(d["historical"]) >= 1
     latest = d["historical"][0]
-    assert latest["period"] == "2026-W33"
+    assert latest["period"] == "2026-W34"
     assert latest.get("report_path")
     assert d["report_path"]  # View Full Weekly Review link available
 
