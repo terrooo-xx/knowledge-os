@@ -82,7 +82,13 @@
   <li>90_System/rag/tests/test_wiki_compilation.py</li>
   </ul>
   </details>
-- 90_System/任务记录/Remote Codex + 企业微信/
+- 90_System/任务记录/Remote Codex + 企业微信/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/Remote Codex + 企业微信/</li>
+  <li>90_System/任务记录/Remote Codex + 企业微信/项目总结验收报告.md</li>
+  </ul>
+  </details>
 - 90_System/任务记录/历史阶段/（13 个文件）
   <details><summary>查看明细</summary>
   <ul>
@@ -108,6 +114,13 @@
   <li>90_System/任务记录/Phase 3/阶段总结.md</li>
   </ul>
   </details>
+- 90_System/任务记录/Remote Codex + 企业微信/正式基线/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/任务记录/Remote Codex + 企业微信/正式基线/Baseline-20260820.json</li>
+  <li>90_System/任务记录/Remote Codex + 企业微信/正式基线/Baseline-20260820.md</li>
+  </ul>
+  </details>
 
 ### 修改
 - 20_Wiki/01_计算机基础/CPU与寄存器.md
@@ -125,6 +138,7 @@
 
 ### 提交
 - 提交 ccfcf50：[Phase 3] chore: 历史记录体系迁移
+- 提交 543c469：[Phase 3] docs: 阶段14~22D 治理与 RAG Evaluation 记录入库
 
 ## 2026-08-14
 

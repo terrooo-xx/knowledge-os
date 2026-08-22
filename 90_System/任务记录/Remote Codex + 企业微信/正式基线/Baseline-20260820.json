@@ -1,0 +1,76 @@
+{
+  "validation": {
+    "p4_2": "PASS",
+    "p1": "PASS",
+    "p4": "PASS",
+    "p3": "PASS",
+    "p0": "PASS",
+    "p4_3": "PASS",
+    "p2": "PASS"
+  },
+  "created_at": "2026-08-20T22:50:16+08:00",
+  "software": {
+    "python": "3.14.6",
+    "cc_connect": "v1.5.0",
+    "codex": "0.147.0 (npm; cc-connect uses); app runtime 0.148.0-alpha.15"
+  },
+  "mcp": {
+    "server": "knowledge-os",
+    "tool": "knowledge_search",
+    "profile": "knowledge"
+  },
+  "workspace": {
+    "base_dir": "C:/Users/陶权煜/Documents/Codex",
+    "mode": "multi-workspace",
+    "bindings": {
+      "wecom:TaoQuanYu": "C:\\Users\\陶权煜\\Desktop\\移动底盘控制器"
+    }
+  },
+  "files": {
+    "C:\\Users\\陶权煜\\Documents\\Codex\\knowledge_os_mcp_bridge.py": {
+      "sha256": "2E15C430C96C9FBB5243D6D063CBB9954B021363D58C02307FF21AEE67AB109F",
+      "size": 5605
+    },
+    "C:\\Users\\陶权煜\\.codex\\config.toml": {
+      "sha256": "4586C35E5A88CCD25A9F9FA04B9045F9D9A60B83F07D035BB021083092A8D5AA",
+      "size": 3761
+    },
+    "C:\\Users\\陶权煜\\.cc-connect\\workspace_bindings.json": {
+      "sha256": "DA1142E8200A5BCFF13342D44FED2D6B786012EF2D4513D5676DE8F988845F96",
+      "size": 220
+    },
+    "C:\\cc-connect-mcp\\codex_mcp_launcher.py": {
+      "sha256": "81CB814EFAF19227E945086E0643FC8E60F9E53EAD3E84EB9E6017EA3BB263EE",
+      "size": 1480
+    },
+    "C:\\cc-connect-mcp\\codex.cmd": {
+      "sha256": "2EBB7DBC22438EA6D02345267EF513C05C632BF7B0FE949266EBBC70449BCF7F",
+      "size": 70
+    },
+    "C:\\cc-connect-mcp\\start-cc-connect.ps1": {
+      "sha256": "EA27661CE8900B0CB8E61CB267E3EB381EB0D67C4AC1866A9A501D7F51B5CD58",
+      "size": 1441
+    },
+    "C:\\Users\\陶权煜\\.cc-connect\\config.toml": {
+      "sha256": "12372C3E2CEB458C7DD10421D901CB1B64FA70F31671170D070D98AE1C7A3802",
+      "size": 1358
+    },
+    "C:\\Users\\陶权煜\\.codex\\knowledge.config.toml": {
+      "sha256": "AB5D528910CC08002DDDF46019CA068B632DD71D77132429972E694AA3D2FF68",
+      "size": 384
+    }
+  },
+  "status": "STABLE",
+  "baseline_id": "rc-codex-wecom-20260820",
+  "autostart": {
+    "trigger": "logon",
+    "task_name": "cc-connect-autostart"
+  },
+  "security": {
+    "shell": false,
+    "sandbox_mode": "workspace-write",
+    "yolo": false,
+    "deepseek_api_key_present": true,
+    "admin_from": false
+  }
+}
