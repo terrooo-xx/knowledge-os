@@ -25,6 +25,7 @@
 - 提交 50559e2：docs: sync system profile to current head
 - 提交 0400f30：docs: publish readme and governance reports
 - 提交 220a17c：docs: sync system profile to current head
+- 提交 5d6075d：docs: add gate 4 preflight report
 
 ## 2026-08-24
 
