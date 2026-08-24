@@ -19,6 +19,7 @@
 
 ### 提交
 - 提交 0f3d418：docs: establish system cognition governance
+- 提交 2dc9477：docs: sync system profile to current head
 
 ## 2026-08-24
 

@@ -102,14 +102,33 @@ def _dynamic_block() -> str:
     return "\n".join(lines)
 
 
+# profile self-sync files: changes here do NOT invalidate the profile
+_PROFILE_ONLY = {
+    "90_System/system_profile.md",
+    "90_System/scripts/system_profile_generator.py",
+    "CHANGELOG.md",
+}
+
+
 def check() -> str:
+    """CURRENT if source_commit == HEAD, or if the only commits between them are
+    profile self-sync / changelog updates (profile describes the same system)."""
     text = PROFILE.read_text(encoding="utf-8")
     fm = _parse_frontmatter(text)
     src = fm.get("source_commit", "").strip("`")
     head = _head()
     if not src or src == "UNKNOWN":
         return "PROFILE-UNREADABLE"
-    return "CURRENT" if src == head else "STALE"
+    if src == head:
+        return "CURRENT"
+    # commits between src..HEAD that only touch profile/changelog -> still current
+    code, out = _run(["git", "-C", str(VAULT), "diff", "--name-only", src, head])
+    if code != 0:
+        return "STALE"
+    changed = {l.strip() for l in out.splitlines() if l.strip()}
+    if changed and changed <= _PROFILE_ONLY:
+        return "CURRENT"
+    return "STALE"
 
 
 def update() -> str:
