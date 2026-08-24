@@ -1,5 +1,10 @@
 # 知识库变更记录
 
+## 2026-08-24
+
+### 新增
+- 40_Outputs/reviews/Gate2_Publish_2026-08-22.md
+
 ## 2026-08-22
 
 ### 新增
@@ -230,6 +235,7 @@
 - 提交 2fc85ed：[Phase 3] feat: RAG Evaluation 与 Governance 引擎
 - 提交 8fc7ef0：[Phase 3] feat: Control Center RAG Evaluation UI 与 preflight
 - 提交 86b25ae：[Wiki] docs: 新增与审核 Wiki
+- 提交 842b1b8：chore: finalize github release candidate
 
 ## 2026-08-14
 
