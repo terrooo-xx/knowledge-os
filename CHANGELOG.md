@@ -1,5 +1,21 @@
 # 知识库变更记录
 
+## 2026-08-25
+
+### 新增
+- 40_Outputs/reviews/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/reviews/System_Profile_Governance_2026-08-25.md</li>
+  <li>40_Outputs/reviews/Bootstrap_Upgrade_Release_2026-08-24.md</li>
+  </ul>
+  </details>
+- 90_System/system_profile.md
+
+### 修改
+- AGENTS.md
+- README.md
+
 ## 2026-08-24
 
 ### 新增
@@ -30,6 +46,7 @@
 - 提交 9cf811d：docs: add gate 2 publish report
 - 提交 2945da6：docs: add gate 3 bootstrap preflight
 - 提交 873b7a5：[Phase 3] feat: Knowledge OS Bootstrap (Gate 3)
+- 提交 82e7383：feat: upgrade bootstrap with codex cc-switch deepseek
 
 ## 2026-08-22
 

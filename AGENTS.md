@@ -133,10 +133,101 @@
 - Wiki 正文必须来自 Inbox 资料或已有 Wiki，禁止用 LLM 自身知识补写无来源细节。
 - 增量 RAG 使用 `index_manifest.json`，未变化文档不重新 embedding。
 
+## AI Context Loading Protocol（任务开始必读）
+
+复杂任务开始时，按顺序建立系统上下文（避免每次从零扫描全库）：
+
+```text
+1. 读取 AGENTS.md（操作规则）
+2. 读取 90_System/KNOWLEDGE_OS.md（架构宪法：应是什么）
+3. 读取 90_System/system_profile.md（当前全貌：现在是什么）
+4. 检查 profile freshness：
+   python 90_System/scripts/system_profile_generator.py --check
+   - CURRENT  → 建立总体上下文
+   - STALE    → 先对变化区域做验证，再进入任务
+5. 进入任务相关的深度源码审阅
+```
+
+`system_profile` 是「避免从零认识项目」，不是「替代读源码」；任务相关部分仍须以源码/运行结果为准。
+
+## Source of Truth Hierarchy
+
+1. 当前源码 / 当前运行结果（最高）
+2. 当前配置（config.yaml / config.local.yaml 等）
+3. `90_System/KNOWLEDGE_OS.md`（架构与权限宪法）
+4. `90_System/system_profile.md`（当前状态摘要——**不是高于源码的真相**）
+5. 最新正式审计/治理报告（40_Outputs/reviews/）
+6. 历史任务记录（90_System/任务记录/）
+7. README / HOME
+8. 旧报告 / 历史聊天（最低，仅参考）
+
+若 Profile 与源码冲突：**源码优先，随后更新 Profile**。
+
+## System Profile 更新规则
+
+- `system_profile.md` 是版本绑定的当前状态快照（frontmatter 含 `source_commit`）。
+- 什么变化必须更新 Profile：架构变化、目录职责变化、RAG pipeline 变化、Control Center 变化、MCP 变化、
+  Codex/AI Runtime 变化、Bootstrap 变化、Python/model 要求变化、Git boundary 变化、Baseline 变化、
+  新核心组件加入/删除、新电脑前置环境变化。
+- 动态字段刷新：`python 90_System/scripts/system_profile_generator.py --update`；稳定描述人工维护。
+- 提交含架构/状态变化前，先 `--update` 再提交。
+
+## Change Impact Rules
+
+| 修改 | 需要更新 |
+|---|---|
+| 架构变化 | KNOWLEDGE_OS.md + system_profile.md |
+| 新核心组件 | system_profile.md + AGENTS.md（必要时） |
+| Bootstrap 变化 | system_profile.md + Bootstrap 文档 |
+| AI Runtime 变化 | system_profile.md |
+| Baseline 变化 | system_profile.md + Baseline evidence |
+| Git boundary 变化 | system_profile.md + Governance |
+| README-only 修改 | README，不要求更新 Profile |
+
+## Verification Protocol
+
+按变更范围升级验证（不要每个小文档编辑都跑完整 RAG Regression）：
+
+- **Local verification**（文档/注释/小改动）：无测试要求，但须检查 git diff。
+- **Component verification**（代码/配置/脚本改动）：运行相关 pytest + 相关脚本健康检查。
+- **System verification**（RAG/Control Center/MCP/Bootstrap/架构）：pytest 全套 + `rag_health_check.py` +
+  `wiki_health_check.py` + 必要时 Baseline Regression（`evaluate_benchmark.py`，REAL_REGRESSION=0 为门禁）。
+
+修改后流程：修改 → 相关测试 → Health Check → 必要时 Baseline Regression → 检查 git diff →
+更新 System Profile（如涉及）→ 任务完成报告。
+
+## Machine-local / Secret Boundary
+
+```text
+Git assets ≠ Runtime ≠ Machine-local ≠ Secrets ≠ Private data
+```
+
+- Git assets：正式知识/代码/配置/审计证据（进 Git）。
+- Runtime：vector db / cache / eval runs / activity_log 等（gitignored，可重建）。
+- Machine-local：Python、模型缓存、~/.codex、~/.cc-switch、Scheduler、config.local.yaml（gitignored）。
+- Secrets：API Key / Token / 密码 / 私钥（绝不进 Git/Vault/日志/报告；只检查存在性）。
+- Private data：00_Inbox 个人笔记 PDF 等（gitignored，不自动纳入）。
+
+禁止：把 API Key 写入 Git、把 Codex/CC Switch user 配置放入 Vault、把模型缓存/venv 放入 Git、
+把私人 Inbox 自动纳入 Git、把 machine-local 配置复制进 Vault。
+
+## Bootstrap 规则
+
+- Bootstrap（90_System/scripts/bootstrap.ps1 + bootstrap_helper.py）职责：**恢复运行环境**。
+- 自动安装：Codex（npm）；自动配置：venv/deps/models/reranker/index/Codex config/DeepSeek provider/MCP/approval/scheduler/Control Center。
+- 用户提供：GitHub 认证、DeepSeek API Key、Python 3.14.x（必须预装）、CC Switch 官方安装器（若缺失）。
+- Bootstrap 不负责：知识内容管理、Wiki approval、Git commit/push、Secret 上传、私人资料恢复。
+- 新电脑前置环境定义见 `system_profile.md` 第 16 章与 Bootstrap 报告。
+
+## 任务完成定义
+
+任务结束必须报告：新建文件 / 修改文件 / 移动文件 / 跳过文件 / 发现的问题 / 待人工确认事项。
+涉及系统变化时，明确：Health Check 结果、Baseline 是否受影响、System Profile 是否需要更新、是否已更新。
+
 ## Git 版本治理规则
 
 - 版本治理体系（Commit / Baseline / Tag / Phase / Project Summary）的唯一权威依据是 `90_System/KNOWLEDGE_OS.md` 第二十八章；本文件只引用，不复制。
-- 禁止自动 commit、禁止 push；当前仓库无 remote，不创建。
+- 禁止自动 commit、禁止 push；**仅当任务明确授权 commit/push 时才执行**。当前仓库已有 remote（`origin = https://github.com/terrooo-xx/knowledge-os`，PRIVATE）。
 - commit message 格式：`[<phase|project>] <type>: <摘要>`（type ∈ feat / fix / docs / chore / refactor / test）。
 - 一个 commit 只表达一个逻辑变更；禁止 `git add -A`；必须按明确文件清单精确 `git add`。
 - 提交前必须：列文件清单 → `git diff` → `git diff --cached` → 敏感信息扫描 → 确认无 USER_WORK / IGNORE 混入。
