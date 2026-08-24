@@ -27,6 +27,7 @@ param(
     [switch]$SkipIndex,
     [switch]$SkipBaseline,
     [switch]$SkipDeps,
+    [switch]$SkipAI,
     [switch]$CreateVenv,
     [string]$VaultRoot = ""
 )
@@ -292,6 +293,120 @@ $launcher = Test-Path (Join-Path $SystemDir "control_center\start_control_center
 $ccPass = Show-Result "Control Center" $(if ($ccProbe -eq 200) {"PASS"} else {"NOT RUNNING"}) "port=$ccPort launcher=$launcher"
 $overall += $ccPass
 
+# ---------- 8.5 AI Runtime (Codex / CC Switch / DeepSeek / MCP) ----------
+$aiStatus = "SKIPPED"
+if (-not $SkipAI) {
+    Write-Host "`n== AI Runtime =="
+    $aiFails = @()
+
+    # --- Codex ---
+    $cdx = Invoke-Helper "detect-codex"
+    if ($cdx.ok) {
+        $null = Show-Result "Codex" "PASS" ("{0} @ {1}" -f $cdx.version, $cdx.path)
+    } else {
+        if (-not $CheckOnly) {
+            Write-Host "Codex not found. Attempting npm install (requires Node.js)..."
+            $npm = Get-Command npm -ErrorAction SilentlyContinue
+            if ($npm) {
+                & npm install -g @openai/codex 2>&1 | Out-Null
+                $cdx = Invoke-Helper "detect-codex"
+            }
+        }
+        if ($cdx.ok) { $null = Show-Result "Codex" "PASS" ("installed {0}" -f $cdx.version) }
+        else {
+            $null = Show-Result "Codex" "FAIL" "not installed; Bootstrap attempted npm install (no Node?) - install Codex CLI then re-run"
+            $aiFails += "codex"
+        }
+    }
+
+    # --- CC Switch ---
+    $ccs = Invoke-Helper "detect-ccswitch"
+    if ($ccs.ok) {
+        $ccVer = "?"
+        if ($ccs.exe -and (Test-Path $ccs.exe)) {
+            $vi = (Get-Item $ccs.exe).VersionInfo
+            if ($vi.FileVersion) { $ccVer = $vi.FileVersion }
+        }
+        $null = Show-Result "CC Switch" "PASS" ("{0} @ {1}" -f $ccVer, $ccs.exe)
+    } else {
+        $null = Show-Result "CC Switch" "FAIL" "not found; install CC Switch (no verified URL hardcoded - use official release), then re-run"
+        $aiFails += "ccswitch"
+    }
+
+    # --- DeepSeek provider (via CC Switch) ---
+    $ds = Invoke-Helper "ccswitch-deepseek"
+    if ($ds.ok -and $ds.provider) {
+        $keyState = if ($ds.api_key_present) { "key present" } else { "key MISSING" }
+        $routingState = if ($ds.needs_routing) { "ROUTING REQUIRED" } else { "native responses (no protocol routing)" }
+        $null = Show-Result "DeepSeek Provider" "PASS" ("{0} wire={1} model={2} {3}" -f $ds.provider.name, $ds.provider.wire_api, $ds.provider.model, $keyState)
+        $null = Show-Result "Routing" "PASS" ("{0} | proxy={1} active_base_url={2}" -f $routingState, $(if ($ds.proxy.enabled) {"enabled:" + $ds.proxy.listen} else {"disabled"}), $ds.active_codex_base_url)
+        if (-not $ds.api_key_present) {
+            $null = Show-Result "DeepSeek Key" "WARN" "provider has no API key - configure in CC Switch (secure storage); core KOS still runs"
+            $aiFails += "deepseek-key"
+        }
+    } else {
+        $null = Show-Result "DeepSeek Provider" "FAIL" "not found in CC Switch; create DeepSeek provider in CC Switch UI"
+        $aiFails += "deepseek-provider"
+    }
+
+    # --- DeepSeek key validation (env) ---
+    $vk = Invoke-Helper "validate-deepseek-key"
+    if ($vk.ok) {
+        $null = Show-Result "DeepSeek API" "PASS" "key validated (HTTP 200; value never shown)"
+    } else {
+        $null = Show-Result "DeepSeek API" "WARN" ($vk.error)
+        $aiFails += "deepseek-api"
+    }
+
+    # --- MCP + approval ---
+    $homeDir = $HOME
+    $codexCfg = Join-Path $homeDir ".codex\knowledge.config.toml"
+    $mcpOk = $false
+    if (Test-Path $codexCfg) {
+        $cfgText = Get-Content -LiteralPath $codexCfg -Raw -Encoding UTF8
+        $mcpOk = ($cfgText -match "mcp_servers.knowledge-os") -and ($cfgText -match 'default_tools_approval_mode\s*=\s*"approve"')
+    }
+    $ccMcp = Invoke-Helper "ccswitch-mcp"
+    $ccMcpEnabled = if ($ccMcp.ok) { $ccMcp.enabled_codex } else { $false }
+    if ($mcpOk) {
+        $null = Show-Result "MCP/Approval" "PASS" "knowledge.config.toml ok (knowledge-os + approve); CC-Switch mcp enabled=$ccMcpEnabled"
+    } else {
+        $null = Show-Result "MCP/Approval" "FAIL" "knowledge.config.toml missing/incomplete"
+        $aiFails += "mcp"
+    }
+
+    # --- E2E (cwd != Vault) ---
+    if (-not $CheckOnly) {
+        $e2eDir = "C:\Temp\KnowledgeOS-Gate4-AI-Test"
+        if (-not (Test-Path $e2eDir)) { New-Item -ItemType Directory -Path $e2eDir -Force | Out-Null }
+        Write-Host "E2E Test1: Codex -> DeepSeek (minimal request)..."
+        $oldEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        $t1 = cmd /c 'echo. | codex exec --skip-git-repo-check -s read-only "只回复两个字：正常"' 2>&1 | Out-String
+        $t1ok = ($LASTEXITCODE -eq 0) -and ($t1 -match "正常")
+        Write-Host ("  Test1 Codex->DeepSeek: " + $(if ($t1ok) {"PASS"} else {"FAIL"}))
+        if (-not $t1ok) { $aiFails += "e2e1" }
+        Write-Host "E2E Test2: Codex -> knowledge_search (cwd!=Vault)..."
+        Push-Location $e2eDir
+        $t2 = cmd /c 'echo. | codex -p knowledge exec --skip-git-repo-check -s read-only "只调用 knowledge_search 查询 FreeRTOS 任务调度是怎么工作的？ mode=fast，返回 status 和 judge.relevance。"' 2>&1 | Out-String
+        Pop-Location
+        $t2ok = ($LASTEXITCODE -eq 0) -and ($t2 -match "answerable") -and ($t2 -match "relevant")
+        Write-Host ("  Test2 Codex->MCP: " + $(if ($t2ok) {"PASS"} else {"FAIL"}))
+        if (-not $t2ok) { $aiFails += "e2e2" }
+        $ErrorActionPreference = $oldEAP
+    } else {
+        Write-Host "E2E: skipped in CheckOnly mode"
+    }
+
+    if ($aiFails.Count -eq 0) { $aiStatus = "READY" }
+    elseif ($aiFails.Count -le 2) { $aiStatus = "DEGRADED" }
+    else { $aiStatus = "BLOCKED" }
+    $null = Show-Result "AI Runtime" $aiStatus ("Codex/CCSwitch/DeepSeek/MCP/E2E")
+} else {
+    $null = Show-Result "AI Runtime" "SKIPPED" "(-SkipAI)"
+}
+$overall += ($aiStatus -eq "READY")
+
 # ---------- 9. Health Check (runtime) ----------
 Write-Host "`n== BOOTSTRAP HEALTH CHECK =="
 $health = Invoke-Helper "health-summary"
@@ -338,6 +453,7 @@ Write-Host (" Secrets          : " + $(if ($secPass) {"PASS"} else {"FAIL"}))
 Write-Host (" Index            : " + $(if ($idxPass) {"PASS"} else {"FAIL"}))
 Write-Host (" Scheduler        : " + $(if ($schedPass) {"PASS"} else {"FAIL"}))
 Write-Host (" Codex/MCP        : " + $(if ($mcpPass) {"PASS"} else {"FAIL"}))
+Write-Host (" AI Runtime       : " + $aiStatus)
 Write-Host (" Control Center   : " + $(if ($ccPass) {"PASS"} else {"NOT RUNNING"}))
 Write-Host (" Health Check     : " + $(if ($healthPass) {"PASS"} else {"FAIL"}))
 Write-Host (" Baseline Verify  : " + $(if ($baselinePass) {"PASS"} else {"FAIL"}))

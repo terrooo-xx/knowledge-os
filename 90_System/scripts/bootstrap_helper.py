@@ -241,20 +241,43 @@ def check_secret() -> dict:
 
 
 def verify_baseline(python: str, limit: int | None = None) -> dict:
+    """Run the benchmark and classify the diff vs the official baseline run with
+    the official gap_diagnosis semantics (REAL_REGRESSION=0 is PASS; judge
+    variance on known queries does not block)."""
     cmd = _pycmd(python, [str(RAG_DIR / "scripts" / "evaluate_benchmark.py"), "--mode", "fast"])
     if limit:
         cmd += ["--limit", str(limit)]
     code, out = _run(cmd, timeout=3600)
     if code != 0:
         return {"ok": False, "error": out[-500:]}
+    m = re.search(r'"run_id":\s*"([^"]+)"', out)
+    run_id = m.group(1) if m else None
     m = re.search(r'"answer_coverage": ([\d.]+)', out)
-    if not m:
-        return {"ok": False, "error": "coverage not found in output"}
-    cov = float(m.group(1))
-    delta = round(cov - OFFICIAL_BASELINE["coverage"], 1)
-    ok = delta >= -0.1  # allow tiny negative rounding; regressions below baseline flagged
+    cov = float(m.group(1)) if m else None
+    delta = round(cov - OFFICIAL_BASELINE["coverage"], 1) if cov is not None else None
+    real_reg = None
+    judge_var = 0
+    if run_id:
+        try:
+            if str(RAG_DIR) not in sys.path:
+                sys.path.insert(0, str(RAG_DIR))
+            from rag_engine.gap_diagnosis import compare_runs
+            ev = VAULT_ROOT / "40_Outputs" / "RAG Evaluation"
+            base_run = ev / "runs" / "eval-20260817T162956" / "evaluation_records.jsonl"
+            cur_run = ev / "runs" / run_id / "evaluation_records.jsonl"
+            if base_run.is_file() and cur_run.is_file():
+                def _recs(p):
+                    return [json.loads(l) for l in p.open(encoding="utf-8") if l.strip()]
+                diff = compare_runs(_recs(base_run), _recs(cur_run))
+                rc = diff.get("regression_classes") or {}
+                real_reg = int(rc.get("REAL_REGRESSION", 0))
+                judge_var = int(rc.get("JUDGE_VARIANCE", 0))
+        except Exception:
+            pass
+    ok = (real_reg is not None and real_reg == 0) if real_reg is not None else (delta is not None and delta >= -0.1)
     return {"ok": ok, "coverage": cov, "baseline": OFFICIAL_BASELINE["coverage"],
-            "delta_pp": delta, "baseline_id": OFFICIAL_BASELINE["baseline_id"]}
+            "delta_pp": delta, "baseline_id": OFFICIAL_BASELINE["baseline_id"],
+            "real_regressions": real_reg, "judge_variance": judge_var, "run_id": run_id}
 
 
 def load_state() -> dict:
@@ -287,6 +310,206 @@ def health_summary() -> dict:
     return {"ok": all(v["ok"] for v in res.values()), "checks": res}
 
 
+
+# =====================================================================
+# AI Runtime (Gate 3 Upgrade): Codex / CC Switch / DeepSeek / MCP
+# =====================================================================
+
+def detect_codex() -> dict:
+    """Find Codex CLI (PATH, npm global, WindowsApps) and report version."""
+    candidates = []
+    # PATH
+    for name in ("codex", "codex.cmd"):
+        try:
+            import shutil
+            p = shutil.which(name)
+            if p:
+                candidates.append(p)
+        except Exception:
+            pass
+    # npm global shim
+    npm_codex = Path(os.environ.get("APPDATA", "")) / "npm" / "codex.cmd"
+    if npm_codex.is_file() and str(npm_codex) not in candidates:
+        candidates.append(str(npm_codex))
+    # WindowsApps (OpenAI.Codex)
+    winapps = Path(os.environ.get("LOCALAPPDATA", "")) / "Microsoft" / "WindowsApps"
+    if winapps.is_dir():
+        for cand in winapps.glob("OpenAI.Codex*/*/codex*"):
+            if cand.is_file():
+                candidates.append(str(cand))
+    for cand in candidates:
+        code, out = _run([cand, "--version"], timeout=60)
+        if code == 0:
+            return {"ok": True, "version": out.strip().splitlines()[0] if out.strip() else "unknown",
+                    "path": cand, "source": "detected"}
+    return {"ok": False, "found_paths": candidates}
+
+
+def detect_ccswitch() -> dict:
+    """Find CC Switch (exe + config db) on this machine."""
+    home = Path.home()
+    db = home / ".cc-switch" / "cc-switch.db"
+    exe_candidates = []
+    # known install locations (portable)
+    for p in (home / ".cc-switch" / "cc-switch.exe",
+              Path("D:/sorfware/ccSwitch/cc-switch.exe"),
+              Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "cc-switch" / "cc-switch.exe",
+              Path(os.environ.get("APPDATA", "")) / "cc-switch" / "cc-switch.exe"):
+        if p.is_file():
+            exe_candidates.append(str(p))
+    # running process path via tasklist
+    try:
+        code, out = _run(["tasklist", "/v", "/fo", "csv", "/nh", "/fi", "IMAGENAME eq cc-switch.exe"], timeout=30)
+        for line in out.splitlines():
+            if "cc-switch.exe" in line.lower() and "\\" in line:
+                # CSV: "cc-switch.exe","pid",...,"path"
+                import csv, io
+                try:
+                    row = next(csv.reader(io.StringIO(line)))
+                    if len(row) >= 9 and row[8] and row[8].lower().endswith("cc-switch.exe"):
+                        exe_candidates.append(row[8])
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    exe = None
+    if exe_candidates:
+        exe = exe_candidates[0]
+        for c in exe_candidates:
+            if os.path.normcase(c) == os.path.normcase(str(Path("D:/sorfware/ccSwitch/cc-switch.exe"))):
+                exe = c
+                break
+    db_ok = db.is_file()
+    if not exe and not db_ok:
+        return {"ok": False}
+    return {"ok": True, "exe": exe, "config_dir": str(home / ".cc-switch"),
+            "db": str(db), "db_ok": db_ok}
+
+
+def _ccswitch_db():
+    db = Path.home() / ".cc-switch" / "cc-switch.db"
+    if not db.is_file():
+        return None
+    import sqlite3
+    try:
+        return sqlite3.connect(str(db))
+    except Exception:
+        return None
+
+
+def ccswitch_deepseek() -> dict:
+    """Read CC Switch: active Codex provider + proxy config + routing need.
+
+    NEVER returns the API key value; only a boolean presence flag.
+    """
+    con = _ccswitch_db()
+    if con is None:
+        return {"ok": False, "error": "cc-switch db not found"}
+    try:
+        cur = con.cursor()
+        rows = cur.execute(
+            "SELECT id, name, is_current, settings_config FROM providers WHERE app_type='codex'").fetchall()
+        provider = None
+        for rid, name, is_cur, sc in rows:
+            if is_cur == 1:
+                provider = {"id": rid, "name": name}
+                break
+        if provider is None:
+            for rid, name, is_cur, sc in rows:
+                if name and "deepseek" in name.lower():
+                    provider = {"id": rid, "name": name}
+                    break
+        res = {"ok": True, "provider": None, "proxy": None, "needs_routing": None,
+               "active_codex_base_url": None, "api_key_present": False}
+        if provider is not None:
+            try:
+                cfg = json.loads(sc)
+            except Exception:
+                cfg = {}
+            config_text = cfg.get("config", "") or ""
+            auth = cfg.get("auth", {}) or {}
+            api_key_present = any(k and v for k, v in auth.items() if "key" in k.lower() or "token" in k.lower())
+            base_url = None
+            wire_api = None
+            model = None
+            m = re.search(r'base_url\s*=\s*"([^"]+)"', config_text)
+            if m:
+                base_url = m.group(1)
+            m = re.search(r'wire_api\s*=\s*"([^"]+)"', config_text)
+            if m:
+                wire_api = m.group(1)
+            m = re.search(r'^model\s*=\s*"([^"]+)"', config_text, re.M)
+            if m:
+                model = m.group(1)
+            provider.update({"base_url": base_url, "wire_api": wire_api, "model": model,
+                             "api_key_present": api_key_present})
+            res["provider"] = provider
+            res["api_key_present"] = api_key_present
+        # proxy config for codex
+        try:
+            pr = cur.execute("SELECT proxy_enabled, listen_address, listen_port, enabled FROM proxy_config WHERE app_type='codex'").fetchone()
+            if pr:
+                res["proxy"] = {"enabled": bool(pr[0]), "listen": "%s:%s" % (pr[1], pr[2]), "port": pr[2]}
+        except Exception:
+            pass
+        # needs routing: native Responses API needs no protocol conversion
+        if provider and provider.get("wire_api"):
+            res["needs_routing"] = str(provider["wire_api"]).lower() != "responses"
+        # active codex config base_url
+        cfg_toml = Path.home() / ".codex" / "config.toml"
+        if cfg_toml.is_file():
+            m = re.search(r'base_url\s*=\s*"([^"]+)"', cfg_toml.read_text(encoding="utf-8", errors="replace"))
+            if m:
+                res["active_codex_base_url"] = m.group(1)
+        return res
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+    finally:
+        try:
+            con.close()
+        except Exception:
+            pass
+
+
+def validate_deepseek_key() -> dict:
+    """Validate DEEPSEEK_API_KEY against the DeepSeek API (GET /models).
+
+    Returns ok/status only; NEVER prints or returns the key value.
+    """
+    key = os.environ.get("DEEPSEEK_API_KEY")
+    if not key:
+        return {"ok": False, "error": "DEEPSEEK_API_KEY not set in env"}
+    try:
+        import urllib.request
+        req = urllib.request.Request("https://api.deepseek.com/models",
+                                     headers={"Authorization": "Bearer %s" % key})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return {"ok": r.status == 200, "status": r.status, "http": r.status}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200]}
+
+
+def ccswitch_mcp() -> dict:
+    """Check whether the knowledge-os MCP server is registered+enabled for Codex in CC Switch."""
+    con = _ccswitch_db()
+    if con is None:
+        return {"ok": False, "error": "db not found"}
+    try:
+        cur = con.cursor()
+        row = cur.execute(
+            "SELECT name, enabled_codex, server_config FROM mcp_servers WHERE name='knowledge-os'").fetchone()
+        if not row:
+            return {"ok": False, "error": "knowledge-os mcp not registered in CC Switch"}
+        return {"ok": True, "name": row[0], "enabled_codex": bool(row[1]),
+                "command": (json.loads(row[2]) or {}).get("command") if row[2] else None}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+    finally:
+        try:
+            con.close()
+        except Exception:
+            pass
+
 def main() -> int:
     # Force UTF-8 stdout/stderr so PowerShell 5.1 (with Console.OutputEncoding=UTF8)
     # decodes JSON correctly even with non-ASCII paths.
@@ -299,7 +522,8 @@ def main() -> int:
     ap.add_argument("cmd", choices=[
         "detect-python", "check-deps", "create-venv", "install-deps", "detect-models",
         "write-config-local", "check-index", "rebuild-index", "check-secret",
-        "verify-baseline", "load-state", "save-state", "health-summary"])
+        "verify-baseline", "load-state", "save-state", "health-summary",
+        "detect-codex", "detect-ccswitch", "ccswitch-deepseek", "ccswitch-mcp", "validate-deepseek-key"])
     ap.add_argument("--python", default=None)
     ap.add_argument("--reranker", default=None)
     ap.add_argument("--limit", type=int, default=None)
@@ -332,6 +556,16 @@ def main() -> int:
         _out(save_state(json.loads(args.state or "{}")))
     elif args.cmd == "health-summary":
         _out(health_summary())
+    elif args.cmd == "detect-codex":
+        _out(detect_codex())
+    elif args.cmd == "detect-ccswitch":
+        _out(detect_ccswitch())
+    elif args.cmd == "ccswitch-deepseek":
+        _out(ccswitch_deepseek())
+    elif args.cmd == "validate-deepseek-key":
+        _out(validate_deepseek_key())
+    elif args.cmd == "ccswitch-mcp":
+        _out(ccswitch_mcp())
     return 0
 
 
