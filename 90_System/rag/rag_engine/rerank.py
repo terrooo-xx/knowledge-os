@@ -6,7 +6,12 @@ Thread-safe: model creation is guarded by a lock (double-checked).
 """
 from __future__ import annotations
 
+import os
 import threading
+
+# 与 embeddings.py 相同：默认离线加载本地模型，避免 HF hub 联网重试卡住。
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 _reranker_lock = threading.Lock()
 _reranker_model = None

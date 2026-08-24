@@ -3,6 +3,12 @@ from __future__ import annotations
 
 import os
 
+# 模型已本地缓存时默认离线加载，避免 sentence-transformers 启动时联网检查 HF hub
+# 而卡住（无网络/受限网络下 WinError 10013 + 重试）。Bootstrap 需要联网下载时显式
+# 设置 HF_HUB_OFFLINE="" 覆盖。setdefault 允许外部显式覆盖。
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 
 class EmbeddingError(RuntimeError):
     pass

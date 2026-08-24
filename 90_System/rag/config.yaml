@@ -54,7 +54,7 @@ evidence_window:
 reranker:
   enabled: true
   provider: bge
-  model: "C:/Users/陶权煜/.cache/modelscope/models/BAAI--bge-reranker-v2-m3/snapshots/master"
+  model: "BAAI/bge-reranker-v2-m3"  # portable default; machine-local override in config.local.yaml
   top_k: 5
 
 llm:

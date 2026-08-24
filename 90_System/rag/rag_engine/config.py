@@ -62,6 +62,18 @@ def _deep_merge(base: dict, override: dict) -> dict:
 
 
 def load_config(path: str | None = None) -> dict:
+    """Load config.yaml with machine-local overrides (config.local.yaml + env).
+
+    Priority (lowest -> highest):
+      1. built-in DEFAULTS
+      2. config.yaml            (tracked, portable defaults)
+      3. config.local.yaml      (machine-local, gitignored; written by Bootstrap)
+      4. env KNOWLEDGE_OS_RERANKER_MODEL  (explicit per-invocation override)
+
+    This lets a GitHub clone run on a new machine without editing tracked config:
+    Bootstrap discovers the local model location and writes config.local.yaml.
+    """
+    import os
     cfg = _deep_merge(DEFAULTS, {})
     if path and Path(path).is_file():
         try:
@@ -70,6 +82,13 @@ def load_config(path: str | None = None) -> dict:
             raise RuntimeError("PyYAML is required to load config.yaml") from exc
         with open(path, "r", encoding="utf-8") as fh:
             cfg = _deep_merge(cfg, yaml.safe_load(fh) or {})
+        local = Path(path).with_name("config.local.yaml")
+        if local.is_file():
+            with open(local, "r", encoding="utf-8") as fh:
+                cfg = _deep_merge(cfg, yaml.safe_load(fh) or {})
+    reranker_model = os.environ.get("KNOWLEDGE_OS_RERANKER_MODEL")
+    if reranker_model:
+        cfg.setdefault("reranker", {})["model"] = reranker_model
     return cfg
 
 

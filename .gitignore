@@ -59,3 +59,8 @@ __pycache__/
 # 00_Inbox 私人原始资料（个人笔记 PDF 等），不进入 Git；
 # 只忽略 待处理文件/个人笔记 子树，保留 .gitkeep 与已跟踪的正式 md
 00_Inbox/待处理文件/个人笔记/
+
+# Bootstrap 机器本地状态（venv / 本机覆盖配置 / 状态文件）
+90_System/.venv/
+90_System/rag/config.local.yaml
+90_System/scripts/.bootstrap_state.json

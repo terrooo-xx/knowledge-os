@@ -10,9 +10,23 @@
   <li>40_Outputs/reviews/Gate3_Bootstrap_Preflight_2026-08-24.md</li>
   </ul>
   </details>
+- 90_System/rag/requirements-lock.txt
+
+### 修改
+- .gitignore
+- 90_System/rag/config.yaml
+- 90_System/rag/rag_engine/（3 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>90_System/rag/rag_engine/config.py</li>
+  <li>90_System/rag/rag_engine/embeddings.py</li>
+  <li>90_System/rag/rag_engine/rerank.py</li>
+  </ul>
+  </details>
 
 ### 提交
 - 提交 9cf811d：docs: add gate 2 publish report
+- 提交 2945da6：docs: add gate 3 bootstrap preflight
 
 ## 2026-08-22
 

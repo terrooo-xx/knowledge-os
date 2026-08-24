@@ -1,0 +1,15 @@
+# Knowledge OS verified core dependency lock (Gate 3 Bootstrap)
+# Generated from the verified environment (Windows, Python 3.14.6) on 2026-08-24.
+# Purpose: reproducible install for a new machine. requirements.txt remains the
+# human-maintained direct-dependency source; this lock pins the verified versions.
+# Bootstrap: python -m pip install -r requirements-lock.txt
+PyYAML==6.0.3
+pypdf==6.15.0
+trafilatura==2.2.0
+openai==2.53.0
+sentence-transformers==5.7.0
+transformers==5.14.1
+torch==2.13.0
+numpy==2.5.0
+scikit-learn==1.9.0
+chromadb==1.5.9
