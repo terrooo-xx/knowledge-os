@@ -3,7 +3,16 @@
 ## 2026-08-24
 
 ### 新增
-- 40_Outputs/reviews/Gate2_Publish_2026-08-22.md
+- 40_Outputs/reviews/（2 个文件）
+  <details><summary>查看明细</summary>
+  <ul>
+  <li>40_Outputs/reviews/Gate2_Publish_2026-08-22.md</li>
+  <li>40_Outputs/reviews/Gate3_Bootstrap_Preflight_2026-08-24.md</li>
+  </ul>
+  </details>
+
+### 提交
+- 提交 9cf811d：docs: add gate 2 publish report
 
 ## 2026-08-22
 
