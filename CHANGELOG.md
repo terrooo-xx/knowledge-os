@@ -15,6 +15,10 @@
 ### 修改
 - AGENTS.md
 - README.md
+- 90_System/system_profile.md
+
+### 提交
+- 提交 0f3d418：docs: establish system cognition governance
 
 ## 2026-08-24
 

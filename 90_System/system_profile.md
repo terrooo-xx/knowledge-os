@@ -3,7 +3,7 @@ type: system-profile
 status: authoritative-current
 schema_version: 1
 generated_at: 2026-08-25
-source_commit: 82e7383149ac7156596c6f6fafd90e3f8b2a2b79
+source_commit: 0f3d4181fb1bd2745486a2c01c7b937948a10dd6
 source_tag: baseline/rc-codex-wecom-20260820
 rag_baseline: bl-eval-20260817T162956
 freshness_policy: update-on-system-change
@@ -203,12 +203,11 @@ Python 3.14.x；BGE embedding/reranker 模型缓存；DeepSeek API Key（env + C
 <!-- DYNAMIC-START -->
 ## 附：自动刷新动态字段（由 system_profile_generator.py --update 覆盖此区块）
 
-- source_commit: `82e7383149ac7156596c6f6fafd90e3f8b2a2b79`
+- source_commit: `0f3d4181fb1bd2745486a2c01c7b937948a10dd6`
 - source_tag: `baseline/rc-codex-wecom-20260820`
-- generated_at: 2026-08-25 00:09:03
+- generated_at: 2026-08-25 00:17:55
 - rag_baseline: `bl-eval-20260817T162956` coverage=89.3% status=STABLE
 - bootstrap_state: BOOTSTRAP READY (mode=full)
 - rag_health: ERROR=0 WARNING=0 PASS=8 INFO=1
 - wiki: draft=9, reviewed=13, stable=3, unknown=0
 <!-- DYNAMIC-END -->
-

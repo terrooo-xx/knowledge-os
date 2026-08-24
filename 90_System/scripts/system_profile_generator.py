@@ -61,7 +61,7 @@ def _parse_frontmatter(text: str) -> dict:
 def _dynamic_block() -> str:
     head = _head()
     tag = _tag()
-    lines = ["\n" + DYNAMIC_START, "## 附：自动刷新动态字段（由 system_profile_generator.py --update 覆盖此区块）", ""]
+    lines = [DYNAMIC_START, "## 附：自动刷新动态字段（由 system_profile_generator.py --update 覆盖此区块）", ""]
     lines.append(f"- source_commit: `{head}`")
     lines.append(f"- source_tag: `{tag}`")
     lines.append(f"- generated_at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -99,7 +99,7 @@ def _dynamic_block() -> str:
             pass
     lines.append("- wiki: " + ", ".join(f"{k}={v}" for k, v in wc.items()))
     lines.append(DYNAMIC_END)
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines)
 
 
 def check() -> str:
