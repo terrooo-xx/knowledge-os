@@ -3,11 +3,12 @@
 ## 2026-08-25
 
 ### 新增
-- 40_Outputs/reviews/（2 个文件）
+- 40_Outputs/reviews/（3 个文件）
   <details><summary>查看明细</summary>
   <ul>
   <li>40_Outputs/reviews/System_Profile_Governance_2026-08-25.md</li>
   <li>40_Outputs/reviews/Bootstrap_Upgrade_Release_2026-08-24.md</li>
+  <li>40_Outputs/reviews/Governance_Release_and_README_2026-08-25.md</li>
   </ul>
   </details>
 - 90_System/system_profile.md
@@ -20,6 +21,7 @@
 ### 提交
 - 提交 0f3d418：docs: establish system cognition governance
 - 提交 2dc9477：docs: sync system profile to current head
+- 提交 50559e2：docs: sync system profile to current head
 
 ## 2026-08-24
 
