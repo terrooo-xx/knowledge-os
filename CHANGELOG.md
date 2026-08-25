@@ -27,6 +27,7 @@
 - 提交 220a17c：docs: sync system profile to current head
 - 提交 5d6075d：docs: add gate 4 preflight report
 - 提交 b7837c6：docs: sync system profile to current head
+- 提交 5669fa7：docs: improve new machine setup guide
 
 ## 2026-08-24
 
