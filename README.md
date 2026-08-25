@@ -111,10 +111,151 @@ powershell -ExecutionPolicy Bypass -File 90_System/scripts/bootstrap.ps1
 
 ## New Machine Setup
 
-Bootstrap 前**必须预装**：Windows 10/11、PowerShell 5.1+、Git、GitHub 认证、Python 3.14.x。
-**用户提供**：DeepSeek API Key（CC Switch 缺失时还需其官方安装器）。
-**Bootstrap 自动**：venv / 依赖 / 模型 / Reranker / RAG 索引 / Codex（npm）/ MCP / approval / Scheduler / Control Center。
-完整矩阵见 [`90_System/system_profile.md`](90_System/system_profile.md)（第 16 章）。
+下面是在一台**全新 Windows 电脑**上从零恢复 Knowledge OS 的完整流程。
+仓库是 **Private Repository**，流程需要 GitHub 私库访问权限；请全程按步骤执行，不要跳步。
+
+### Prerequisites
+
+| Requirement | Required Before Bootstrap | Bootstrap Handles |
+|---|---|---|
+| Windows 10/11 | ✓ | — |
+| PowerShell 5.1+（Windows PowerShell 或 PS7） | ✓ | — |
+| Git | ✓ | — |
+| Internet | ✓ | — |
+| GitHub private repo access（gh 或 git credential） | ✓ | — |
+| Python 3.14.x | ✓ | —（Bootstrap 只检测，缺失会 FAIL） |
+| Node.js | 按当前 Codex 安装方式确定：**若 Codex 缺失，Bootstrap 用 npm 安装 `@openai/codex`，因此 Node.js 是该自动安装链路的前置依赖**；若 Codex 已装则不需要 | — / 检测 |
+| Codex | — | ✓（缺失时 npm 安装） |
+| CC Switch | 若缺失需用户提供官方安装器 | 检测 / 配置 |
+| Python venv（90_System/.venv） | — | ✓ |
+| Python dependencies（requirements-lock） | — | ✓ |
+| BGE / Reranker 模型 | — | ✓（检测 + config.local.yaml） |
+| RAG index（main_vector_db） | — | ✓（重建） |
+| Knowledge OS MCP / approval | — | ✓ |
+| Windows Scheduler（3 任务） | — | ✓ |
+| Control Center | — | ✓（检查/launcher） |
+| DeepSeek API Key | 用户输入 | 配置 / 验证 |
+
+> 完整矩阵见 [`90_System/system_profile.md`](90_System/system_profile.md) 第 16 章（版本绑定，`system_profile_generator.py --check` 验证新鲜度）。
+
+### Step 1 · Authenticate GitHub
+
+仓库为 Private，新电脑必须具备访问权限。推荐 GitHub CLI：
+
+```powershell
+gh auth login
+```
+
+> `gh` 不是 Knowledge OS 核心 runtime，但当前推荐用它完成私库认证（以及后续 `codex -p knowledge` 无额外认证需求）。
+> 不要在任何地方粘贴或发送你的 Token / 凭据。
+
+### Step 2 · Clone the Repository
+
+```powershell
+git clone https://github.com/terrooo-xx/knowledge-os.git
+cd knowledge-os
+```
+
+当前默认分支为 `master`。**不要 clone 到一个已有 Knowledge OS 环境的目录**；Gate 4 / 测试请使用全新目录。
+
+### Step 3 · Run Bootstrap Check（只读）
+
+第一次先做只读环境检查，不修改任何知识内容：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\90_System\scripts\bootstrap.ps1 -CheckOnly
+```
+
+关注输出中的：`Python / Node / Codex / CC Switch / Dependencies / Models / Reranker / MCP / Scheduler / Control Center / DeepSeek`。
+有缺失项时按下方步骤补齐，不要盲目重复运行。
+
+### Step 4 · Prepare Missing Prerequisites
+
+- **Python**：Bootstrap 不安装 Python。请先安装 **Python 3.14.x**，并确认：
+
+  ```powershell
+  python --version   # 目标 3.14.x
+  ```
+
+- **Node.js**：若 Codex 缺失，Bootstrap 会用 npm 安装 `@openai/codex`，因此需要 Node.js。先确认：
+
+  ```powershell
+  node --version
+  npm --version
+  ```
+
+  若没有 Node，请先安装 Node.js（LTS 即可），再继续。
+
+- **CC Switch**（若缺失）：Bootstrap 检测不到时会提示你提供**官方安装器**（Bootstrap 不硬编码/自动下载未验证的安装包）。安装后重新运行 Bootstrap。
+
+### Step 5 · Run Bootstrap
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\90_System\scripts\bootstrap.ps1
+```
+
+- 首次执行会准备运行环境（venv / 依赖 / 模型 / Reranker / RAG 索引 / Codex / MCP / Scheduler / Control Center）。
+- Bootstrap 尽量幂等：第二次运行以 Verify / Repair 为主。
+- 它**不会**提交 Git、不会 push GitHub、不会修改 Wiki、不会把 Secret 写入 Git。
+
+### Step 6 · Provide DeepSeek API Key
+
+首次运行若检测不到 `DEEPSEEK_API_KEY`，会提示你提供。Key 用于 AI Runtime / DeepSeek Provider。
+
+安全要求：
+- 不提交到 Git；不写入 README；不写入 Vault；不粘贴到聊天。
+- Bootstrap 会把它放入 machine-local 环境 / CC Switch 的安全存储（provider credential），**不会进入 Knowledge OS Git 仓库**。
+
+### Step 7 · CC Switch（按需）
+
+- 已安装 → Bootstrap 检测、配置、验证（DeepSeek Provider / MCP）。
+- 缺失 → Bootstrap 暂停并提示你提供官方安装器，安装后重跑。
+- Routing：Bootstrap 根据实际 Provider 配置（wire_api）判断是否需要 protocol routing，**不默认强制路由、不写死端口**。
+
+### Step 8 · Verify Bootstrap
+
+成功标志是脚本末尾输出 **`BOOTSTRAP READY`**（不是只看退出码 0）。确认 Python / Dependencies / Models / RAG / Index / MCP / Scheduler / Control Center / Codex / DeepSeek 全部达标。
+
+### Step 9 · Verify Codex → DeepSeek
+
+一个最小、无副作用的请求：
+
+```powershell
+codex exec --skip-git-repo-check -s read-only "只回复两个字：正常"
+```
+
+正常返回即说明 Codex → DeepSeek 链路可用（不会暴露 API Key）。
+
+### Step 10 · Verify Codex → Knowledge OS MCP
+
+在**独立项目目录**（不是 Vault 本身）验证知识服务：
+
+```powershell
+mkdir C:\Temp\KnowledgeOS-MCP-Test
+cd C:\Temp\KnowledgeOS-MCP-Test
+codex -p knowledge exec --skip-git-repo-check -s read-only "只调用 knowledge_search 查询 FreeRTOS 任务调度是怎么工作的？ mode=fast，返回 status 和 judge.relevance。"
+```
+
+期望：`status=answerable` 且 `judge.relevance=relevant`。这证明 `外部项目 → Codex → MCP knowledge_search → Knowledge OS` 全链路可用（cwd 独立于 Vault）。
+
+### Step 11 · Final Verification
+
+```text
+Bootstrap Check   → BOOTSTRAP READY
+Health Check      → rag_health_check / wiki_health_check / knowledge_os_check 通过
+RAG Baseline      → 按项目规则（REAL_REGRESSION = 0 为门禁，JUDGE_VARIANCE 不阻塞）
+Codex → DeepSeek  → 正常返回
+Codex → MCP       → answerable + judge relevant（cwd ≠ Vault）
+```
+
+### Troubleshooting
+
+- **`gh` 不存在**：GitHub CLI 不是 Knowledge OS 核心 runtime；但若用它做私库认证，需先安装并 `gh auth login`。
+- **Python 版本不对**：`python --version` 应为 `3.14.x`；Bootstrap 不会自动安装 Python。
+- **Node / npm 不存在**：若 Codex 缺失且 Bootstrap 走 npm 安装，先安装 Node.js，再重跑。
+- **CC Switch 缺失**：Bootstrap 会提示你提供官方安装器，安装后重跑。
+- **DeepSeek HTTP 402（Insufficient Balance）**：这是**上游账户余额/计费**问题，不是 Bootstrap 代码失败；先检查 DeepSeek 账户余额。
+- **Bootstrap 失败**：先运行 `bootstrap.ps1 -CheckOnly` 查看具体缺失项，按输出补齐后再重跑。
 
 ## Project Structure
 
