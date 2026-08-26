@@ -3,13 +3,14 @@
 ## 2026-08-25
 
 ### 新增
-- 40_Outputs/reviews/（4 个文件）
+- 40_Outputs/reviews/（5 个文件）
   <details><summary>查看明细</summary>
   <ul>
   <li>40_Outputs/reviews/System_Profile_Governance_2026-08-25.md</li>
   <li>40_Outputs/reviews/Bootstrap_Upgrade_Release_2026-08-24.md</li>
   <li>40_Outputs/reviews/Governance_Release_and_README_2026-08-25.md</li>
   <li>40_Outputs/reviews/Gate4_Preflight_2026-08-25.md</li>
+  <li>40_Outputs/reviews/README_Release_and_Gate4_Freeze_2026-08-25.md</li>
   </ul>
   </details>
 - 90_System/system_profile.md
@@ -28,6 +29,7 @@
 - 提交 5d6075d：docs: add gate 4 preflight report
 - 提交 b7837c6：docs: sync system profile to current head
 - 提交 5669fa7：docs: improve new machine setup guide
+- 提交 fc8e8cd：docs: sync system profile to current head
 
 ## 2026-08-24
 
