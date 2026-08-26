@@ -1,5 +1,13 @@
 # 知识库变更记录
 
+## 2026-08-26
+
+### 修改
+- 90_System/system_profile.md
+
+### 提交
+- 提交 e1477dd：docs: add gate 4 freeze report
+
 ## 2026-08-25
 
 ### 新增
